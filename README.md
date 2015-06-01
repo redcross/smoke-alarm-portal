@@ -1,6 +1,6 @@
 # Smoke Alarm Portal
 
-An open source web portal for receiving, geo-filtering, and tracking requests for smoke alarm installation.
+An open source web portal to handle requests for smoke alarm installation.
 
 ## Overview
 
