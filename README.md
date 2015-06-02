@@ -32,7 +32,7 @@ installation requests.  The workflow is:
 
 # Technologies Used
 
-_TBD: Node.js, MongoDB, Angular.js, and anything else a potential deployer would want to know._
+_TBD: Node.js, CouchDB, Angular.js, and anything else a potential deployer would want to know._
 
 # Installation and Deployment
 
