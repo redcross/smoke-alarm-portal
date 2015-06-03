@@ -8,9 +8,13 @@ The American Red Cross of Chicago and Northern Illinois (ARC-CNI)
 seeks to improve smoke alarm installation rates in the Red Cross North
 Central Division, which is comprised of 10 regions.  This software is
 a lightweight web portal for receiving and routing smoke alarm
-installation requests.  The workflow is:
+installation requests.
 
-* A user visits the front page and enters their installation request:
+## Features
+
+The expected user workflow is:
+
+* A person visits the front page and enters their installation request:
   name, address, phone number, and a "can receive txt messages"
   checkbox to indicate if that phone number can receive txts or not.
 
@@ -29,6 +33,14 @@ installation requests.  The workflow is:
   alarm installation in their region yet, but giving contact
   information for the relevant Red Cross office to talk to about smoke
   alarm installation for that location.
+
+For admins, there are some basic reports that can be generated:
+
+* Requests filtered by date range
+
+* _(optional)_ Requests filtered by state and county
+
+* _(optional)_ CSV export option for any set of report results
 
 # Technologies Used
 
