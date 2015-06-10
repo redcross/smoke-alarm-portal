@@ -13,5 +13,13 @@
     "jade": "~1.9.2",
     "morgan": "~1.5.3",
     "serve-favicon": "~2.2.1"
+  },
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "chai-as-promised": "^5.1.0",
+    "karma": "^0.12.36",
+    "karma-phantomjs-launcher": "^0.2.0",
+    "mocha": "^2.2.5",
+    "phantomjs": "^1.9.17"
   }
 }
