@@ -16,18 +16,14 @@ on Debian, run:
   answer](stackoverflow.com/questions/21168141/can-not-install-packages-using-node-package-manager-in-ubuntu)
   for more information about what's going on here.)
 
-        $ sudo apt-get install nodejs-legacy 
+        $ sudo apt-get install nodejs-legacy
 
-3. Use [npm](http://npmjs.org/) to install express
-
-        $ npm install express
-
-4. Get the requirements through npm.
+3. Get the required node modules by running npm.
 
         $ cd smoke-alarm-portal
-        $ npm install 
+        $ npm install
 
-# Start smoke-alarm-portal app
+4. Start smoke-alarm-portal app
 
         $ cd smoke-alarm-portal
         $ npm start
