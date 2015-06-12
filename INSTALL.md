@@ -18,9 +18,7 @@ on Debian, run:
 
         $ sudo apt-get install nodejs-legacy
 
-3. Install [CouchDB](http://guide.couchdb.org/draft/unix.html) using the following command
-
-        $ sudo apt-get install couchdb
+3. Install [CouchDB](http://wiki.apache.org/couchdb/Installing_on_Debian) by building from source with the instructions on the link. Do not install packages as they are likely to be very out of date.
 
 4. Start couchdb
 
