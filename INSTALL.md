@@ -8,13 +8,13 @@ much difficulty to most other Unix-like operating systems.
 
         $ git clone git@github.com:OpenTechStrategies/smoke-alarm-portal.git
 
-2. Install [Node](https://nodejs.org/download/) and npm (a package manager).  
+2. Install [Node](https://nodejs.org/download/) and npm (a package manager).
    On Debian, run:
 
         $ sudo apt-get install nodejs
         $ sudo apt-get install npm
 
-3. Install [CouchDB](http://wiki.apache.org/couchdb/Installing_on_Debian) by building from source with the instructions on the link. Do not install packages as they are likely to be very out of date.
+3. Install [CouchDB](https://cwiki.apache.org/confluence/display/COUCHDB/Debian) by building from source with the instructions on the link. Do not install packages as they are likely to be very out of date.
 
 4. Start couchdb
 
@@ -31,7 +31,7 @@ much difficulty to most other Unix-like operating systems.
    6a. If you get errors from `npm install`, starting with something like
    `sh: 1: node: not found`, you may need to install the legacy node
    package (see [the
-   package](https://packages.debian.org/sid/nodejs-legacy) 
+   package](https://packages.debian.org/sid/nodejs-legacy)
    and [this StackOverflow
    answer](stackoverflow.com/questions/21168141/can-not-install-packages-using-node-package-manager-in-ubuntu)
    for more information about what's going on here):
