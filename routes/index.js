@@ -25,7 +25,7 @@ router.post('/', function(req, res, next) {
 	  state: req.body.state,
 	  zip: req.body.zip,
 	  permission_to_text: req.body.permission_to_text,
-   }, 'Request from ' + req.body.name,
+   }, 'Request from ' + req.body.name + ' at ' +  new Date().toLocaleString(),
 	 function(err, body, header){
 	 	if (err) {
 	    console.log(err.message);
