@@ -24,6 +24,7 @@ router.post('/', function(req, res, next) {
 	  city: req.body.city,
 	  state: req.body.state,
 	  zip: req.body.zip,
+	  phone: req.body.phone,
 	  permission_to_text: req.body.permission_to_text,
    }, 'Request from ' + req.body.name + ' at ' +  new Date().toLocaleString(),
 	 function(err, body, header){
