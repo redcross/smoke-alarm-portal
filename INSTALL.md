@@ -14,7 +14,7 @@ much difficulty to most other Unix-like operating systems.
         $ sudo apt-get install nodejs
         $ sudo apt-get install npm
 
-3. Install (couchdb)[http://couchdb.org/] from source.  On Debian, you may need to install these dependencies first (before building couchdb).
+3. Install [couchdb](http://couchdb.org/) from source.  On Debian, you may need to install these dependencies first (before building couchdb).  There is more detailed information [here](https://cwiki.apache.org/confluence/display/COUCHDB/Debian).
 
         $ sudo apt-get install build-essential libtool autoconf automake autoconf-archive pkg-config
         # for Debian >-7.0
@@ -29,19 +29,28 @@ much difficulty to most other Unix-like operating systems.
         $ sudo apt-get install libcurl4-openssl-dev
         $ sudo apt-get install libmozjs185-dev
 
-4. Start couchdb
+5. You'll need to set up a couchdb user:
+   
+        $ sudo useradd -d /var/lib/couchdb couchdb
+        $ sudo mkdir -p /usr/local/{lib,etc}/couchdb /usr/local/var/{lib,log,run}/couchdb /var/lib/couchdb
+        $ sudo chown -R couchdb:couchdb /usr/local/{lib,etc}/couchdb /usr/local/var/{lib,log,run}/couchdb
+        $ sudo chmod -R g+rw /usr/local/{lib,etc}/couchdb /usr/local/var/{lib,log,run}/couchdb
 
-        $ couchdb
+6. Start couchdb
+         
+        # We shouldn't need to run this as root.  We'll update the install file
+        # when we change this.
+        $ sudo couchdb
 
-5. Create database using [Futon](https://wiki.apache.org/couchdb/Getting_started_with_Futon
-). Navigate to http://localhost:5984/\_utils/ on the local server. Click on the "Create Database" link at the upper left of the screen. Enter "smoke\_alarm\_requests" for the database name.
+7. Create database using [Futon](https://wiki.apache.org/couchdb/Getting_started_with_Futon
+). Navigate to http://localhost:5984/\_utils/ on the local server. Click on the "Create Database" link at the upper left of the screen. Enter "smoke\_alarm\_requests" for the database name
 
-6. Get the required node modules by running npm.
+8. Get the required node modules by running npm.
 
         $ cd smoke-alarm-portal
         $ npm install
 
-   6a. If you get errors from `npm install`, starting with something like
+   8a. If you get errors from `npm install`, starting with something like
    `sh: 1: node: not found`, you may need to install the legacy node
    package (see [the
    package](https://packages.debian.org/sid/nodejs-legacy)
@@ -51,7 +60,7 @@ much difficulty to most other Unix-like operating systems.
 
         $ sudo apt-get install nodejs-legacy
 
-7. Start smoke-alarm-portal app
+9. Start smoke-alarm-portal app
 
         $ cd smoke-alarm-portal
         $ npm start
