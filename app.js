@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var nano    = require('nano')('http://localhost:5984')
-  , db_name = "smoke_detector_requests"
+  , db_name = "smoke_alarm_requests"
   , db      = nano.use(db_name);
 
 

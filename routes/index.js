@@ -16,7 +16,7 @@ router.get('/thankyou', function(req, res, next) {
 /* POST to the server */
 router.post('/', function(req, res, next) {
 	// Get values from request
-	var requestDb = nano.use('smoke_detector_requests');
+	var requestDb = nano.use('smoke_alarm_requests');
 	requestDb.insert({
 	  name: req.body.name,
 	  address: req.body.address,

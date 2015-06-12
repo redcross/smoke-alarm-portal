@@ -34,7 +34,7 @@ much difficulty to most other Unix-like operating systems.
         $ couchdb
 
 5. Create database using [Futon](https://wiki.apache.org/couchdb/Getting_started_with_Futon
-). Navigate to http://localhost:5984/\_utils/ on the local server. Click on the "Create Database" link at the upper left of the screen. Enter "smoke\_detector\_requests" for the database name
+). Navigate to http://localhost:5984/\_utils/ on the local server. Click on the "Create Database" link at the upper left of the screen. Enter "smoke\_alarm\_requests" for the database name.
 
 6. Get the required node modules by running npm.
 
