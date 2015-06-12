@@ -4,7 +4,13 @@ var nano = require('nano')('http://localhost:5984');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: 'Red Cross' });
+});
+
+
+/* GET Thank You page. */
+router.get('/thankyou', function(req, res, next) {
+  res.render('thankyou', { title: 'Red Cross: Thank You' });
 });
 
 /* POST to the server */
@@ -25,7 +31,7 @@ router.post('/', function(req, res, next) {
 	    console.log(err.message);
 	    return;
   	}
-    res.redirect('/');
+    res.redirect('/thankyou');
 	});
 })
 module.exports = router;
