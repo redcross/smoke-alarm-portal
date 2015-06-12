@@ -20,6 +20,7 @@
     "karma": "^0.12.36",
     "karma-phantomjs-launcher": "^0.2.0",
     "mocha": "^2.2.5",
-    "phantomjs": "^1.9.17"
+    "phantomjs": "^1.9.17",
+    "supertest": "^1.0.1"
   }
 }
