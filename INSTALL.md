@@ -19,6 +19,7 @@ much difficulty to most other Unix-like operating systems.
         $ sudo apt-get install build-essential libtool autoconf automake autoconf-archive pkg-config
         # for Debian >-7.0
         $ sudo apt-get install lsb-release
+        $ sudo apt-get install erlang
         $ sudo apt-get install erlang-base-hipe
         $ sudo apt-get install erlang-dev
         $ sudo apt-get install erlang-manpages
