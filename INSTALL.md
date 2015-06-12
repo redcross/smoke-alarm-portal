@@ -18,12 +18,23 @@ on Debian, run:
 
         $ sudo apt-get install nodejs-legacy
 
-3. Get the required node modules by running npm.
+3. Install [CouchDB](http://guide.couchdb.org/draft/unix.html) using the following command
+
+        $ sudo apt-get install couchdb
+
+4. Start couchdb
+
+        $ couchdb
+
+5. Create database using [Futon](https://wiki.apache.org/couchdb/Getting_started_with_Futon
+). Navigate to http://localhost:5984/_utils/ on the local server. Click on the "Create Database" link at the upper left of the screen. Enter "smoke_detector_requests" for the database name
+
+6. Get the required node modules by running npm.
 
         $ cd smoke-alarm-portal
         $ npm install
 
-4. Start smoke-alarm-portal app
+7. Start smoke-alarm-portal app
 
         $ cd smoke-alarm-portal
         $ npm start
