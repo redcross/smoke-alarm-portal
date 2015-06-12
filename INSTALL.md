@@ -18,7 +18,19 @@ on Debian, run:
 
         $ sudo apt-get install nodejs-legacy
 
-3. Install [CouchDB](http://wiki.apache.org/couchdb/Installing_on_Debian) by building from source with the instructions on the link. Do not install packages as they are likely to be very out of date.
+3. Install (couchdb)[http://couchdb.org/] from source.  On Debian, you may need to install these dependencies first (before building couchdb).
+
+        $ sudo apt-get install build-essential libtool autoconf automake autoconf-archive pkg-config
+        # for Debian >-7.0
+        $ sudo apt-get install lsb-release
+        $ sudo apt-get install erlang-base-hipe
+        $ sudo apt-get install erlang-dev
+        $ sudo apt-get install erlang-manpages
+        $ sudo apt-get install erlang-eunit
+        $ sudo apt-get install erlang-nox
+        $ sudo apt-get install libicu-dev
+        $ sudo apt-get install libcurl4-openssl-dev
+        $ sudo apt-get install libmozjs185-dev
 
 4. Start couchdb
 
