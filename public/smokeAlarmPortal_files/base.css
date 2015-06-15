@@ -88,7 +88,7 @@ video {
 }
 
 body {
-    line-height: 1
+    line-height: 1;
 }
 
 ol,
@@ -242,7 +242,10 @@ html {
 }
 
 body {
-    background-color: transparent;
+/* Uncomment the line below when actual background image is obtained 
+    background-image: url("../images/install_alarm.jpg");*/
+
+    background-color: #DDD;
     color: #333;
     font: 13px/19.5px Arial, Helvetica, sans-serif;
     min-height: 100%;
@@ -260,7 +263,7 @@ h6 {
 }
 
 h1 {
-    margin-bottom: 13px;
+    margin: 10px 0px 20px;
     font-size: 26px;
     line-height: 32.5px
 }
@@ -2932,9 +2935,10 @@ body:first-of-type .content-search-common input {
 }
 
 #hdr {
-    height: 136px;
+    height: 91px;
     overflow: hidden;
-    min-width: 80em
+    margin: 0px 40px;
+/*    min-width: 80em */
 }
 
 #hdr.checkout-hdr {
@@ -2954,7 +2958,7 @@ body:first-of-type .content-search-common input {
     height: 91px;
     margin: 0 auto;
     overflow: hidden;
-    padding: 0 12px;
+/*    padding: 0 12px; */
     width: 968px
 }
 
@@ -3214,6 +3218,10 @@ body:first-of-type .content-search-common input {
 
 .recover-banner-module {
     background: #ed1b2e url('../images/bg/recover-banner-shadow-top.png?1360164509') no-repeat scroll 50% 0
+}
+
+#container {
+    margin: 0px 40px;
 }
 
 #container .recover-banner-module {
@@ -3592,24 +3600,31 @@ form.search-form input.search-submit {
 }
 
 .chapter-default .content {
+    padding: 10px 28px;
 }
 
 .chapter-default .primary-content {
     display: inline;
     float: right;
     margin-left: 0;
-    padding: 28px 0 0;
-    width: 774px
+/*    padding: 28px 0 0; */
+    width: 65%;
 }
 
 .chapter-default .sidebar {
     display: inline;
     float: left;
-    width: 194px
+    width: 25%;
 }
 
+/*
 .chapter-default .sidebar-inner {
-    padding-top: 20px
+    padding-top: 20px;
+}
+*/
+
+.chapter-default .sidebar-inner p {
+    font-size: 16px;
 }
 
 .our-work-default .content {
@@ -3664,7 +3679,8 @@ table {
     zoom: 1;
     width: 968px;
     margin: 0 auto;
-    padding: 0 12px
+/* Commented out line below in favor of giving .chapter-default .content a L/R padding of 28px
+    padding: 0 12px*/
 }
 
 .content-wrap:after,
@@ -4656,8 +4672,10 @@ ul.grids {
 }
 
 .sidebar .sidebar-module-wrap {
-    padding: 0 0 0 28px;
-    width: 155px
+/* changed the line below in favor of giving .chapter-default .content a L/R padding of 28px
+    padding: 0 0 0 28px; */
+    padding: 0px;
+    width: 255px;
 }
 
 .sidebar .sidebar-module {
@@ -4788,9 +4806,11 @@ ul.grids {
     background: transparent url('../images/bg/find-help-side-nav-current.jpg?1360164509') repeat-y scroll right top
 }
 
+/* I just commented out .default-chapter .sidebar-inner above, which this this then over-rides??
 .sidebar-inner {
     padding-top: 16px
 }
+*/
 
 .breadcrumb ul {
     margin: 0 0 1px;

@@ -41,6 +41,8 @@ block content
     meta(name='robots', content='')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(rel='shortcut icon', href='http://www.redcross.org/favicon.ico')
+    // Link to bootstrap css first to allow overrides farther down.
+    link(rel='stylesheet', type='text/css', href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css')
     link(rel='stylesheet', type='text/css', href='./smokeAlarmPortal_files/base.css')
     //if lte IE 7
       link(rel='stylesheet', type='text/css', href='/css/ie7.css')
@@ -48,7 +50,6 @@ block content
       link(rel='stylesheet', type='text/css', href='/css/ie8.css')
     //if IE 9
       link(rel='stylesheet', type='text/css', href='/css/ie9.css')
-    link(rel='stylesheet', type='text/css', href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css')
     // neustar pixel
     script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js')
     script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js')
@@ -66,29 +67,22 @@ block content
     #container
       .content-wrap.chapter-default.chapter-news.inner-right-rail
         .content
+          h1 American Red Cross of Chicago & Northern Illinois
           aside.sidebar(role='complementary')
             nav.sidebar-inner
               .sidebar-module-wrap
+                 p
+                   | Thank you for your interest in having one or more 10 year lithium-ion battery powered smoke alarms installed in your home.
+                 p
+                   | Please complete the information below and press “submit”. An American Red Cross representative will contact you shortly to confirm your registration into our wait list. Additional information on installation will be given at that time
           section.primary-content(role='main')
-            a#main(name='main')
             header#share-bar-0_gig_containerParent.primary-header
-              h1     American Red Cross of Chicago & Northern Illinois
               .right-rail-aspot-callout.clearfix
                 .callout-primary
                   form(action="/", method="POST", class="form-horizontal")
                     fieldset
                       .component(data-content='', data-title='Form Name', data-trigger='manual', data-html='true')
                         // Form Name
-                        legend Smoke Alarm Request Form
-                        p
-                          img#install-alarm(src='images/the_chosen_one.png', alt='Install An Alarm', width='521px')
-                        br
-                        div
-                          p
-                            | Thank you for your interest in having one or more 10 year lithium-ion battery powered smoke alarms installed in your home.
-                          p
-                            | Please complete the information below and press “submit”. An American Red Cross representative will contact you shortly to confirm your registration into our wait list. Additional information on installation will be given at that time
-                          h4 Your Information
                         .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true', data-original-title='', title='')
                           // Text input
                           .form-group
