@@ -14,7 +14,11 @@ much difficulty to most other Unix-like operating systems.
         $ sudo apt-get install nodejs
         $ sudo apt-get install npm
 
-3. Install [couchdb](http://couchdb.org/) from source.  On Debian, you may need to install these dependencies first (before building couchdb).  There is more detailed information [here](https://cwiki.apache.org/confluence/display/COUCHDB/Debian).
+   On Max OSX, use the Macintosh installer which can be downloaded from https://nodejs.org/download/. This will install both node and npm.
+
+3. Install [couchdb](http://couchdb.org/) from source.
+
+   On Debian, you may need to install these dependencies first (before building couchdb).  There is more detailed information [here](https://cwiki.apache.org/confluence/display/COUCHDB/Debian).
 
         $ sudo apt-get install build-essential libtool autoconf automake autoconf-archive pkg-config
         # for Debian >-7.0
@@ -29,28 +33,30 @@ much difficulty to most other Unix-like operating systems.
         $ sudo apt-get install libcurl4-openssl-dev
         $ sudo apt-get install libmozjs185-dev
 
-5. You'll need to set up a couchdb user:
+   On Mac OSX, use the Mac OSX installer which can be downloaded from http://couchdb.apache.org/#download. The installer should create the couchdb user automatically and start couchdb. You should now be able to skip directly to step 6 below and follow the remainder of the instructions to the end.
+
+4. You'll need to set up a couchdb user:
    
         $ sudo useradd -d /var/lib/couchdb couchdb
         $ sudo mkdir -p /usr/local/{lib,etc}/couchdb /usr/local/var/{lib,log,run}/couchdb /var/lib/couchdb
         $ sudo chown -R couchdb:couchdb /usr/local/{lib,etc}/couchdb /usr/local/var/{lib,log,run}/couchdb
         $ sudo chmod -R g+rw /usr/local/{lib,etc}/couchdb /usr/local/var/{lib,log,run}/couchdb
 
-6. Start couchdb
+5. Start couchdb
          
         # We shouldn't need to run this as root.  We'll update the install file
         # when we change this.
         $ sudo couchdb
 
-7. Create database using [Futon](https://wiki.apache.org/couchdb/Getting_started_with_Futon
+6. Create database using [Futon](https://wiki.apache.org/couchdb/Getting_started_with_Futon
 ). Navigate to http://localhost:5984/\_utils/ on the local server. Click on the "Create Database" link at the upper left of the screen. Enter "smoke\_alarm\_requests" for the database name
 
-8. Get the required node modules by running npm.
+7. Get the required node modules by running npm.
 
         $ cd smoke-alarm-portal
         $ npm install
 
-   8a. If you get errors from `npm install`, starting with something like
+   7a. If you get errors from `npm install`, starting with something like
    `sh: 1: node: not found`, you may need to install the legacy node
    package (see [the
    package](https://packages.debian.org/sid/nodejs-legacy)
@@ -60,7 +66,7 @@ much difficulty to most other Unix-like operating systems.
 
         $ sudo apt-get install nodejs-legacy
 
-9. Start smoke-alarm-portal app
+8. Start smoke-alarm-portal app
 
         $ cd smoke-alarm-portal
         $ npm start
