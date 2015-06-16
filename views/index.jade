@@ -2,15 +2,15 @@ extends layout
 
 block content
   #container.container-fluid
-    .row
+    #organization-name.row
       .col-sm-12
         h1 American Red Cross of Chicago & Northern Illinois
     .row
-      .col-sm-3
+      #instructions.col-sm-3
          p
            | Thank you for your interest in having one or more 10 year lithium-ion battery powered smoke alarms installed in your home.
          p
-           | Please complete the information below and press “submit”. An American Red Cross representative will contact you shortly to confirm your registration into our wait list. Additional information on installation will be given at that time
+           | Please complete the form on this page and click “submit”. An American Red Cross representative will contact you shortly to confirm your registration into our wait list. Additional information on installation will be given at that time
       .col-sm-9
         .container-fluid
           form(action="/", method="POST", class="form-horizontal")
@@ -69,14 +69,14 @@ block content
                       label.col-sm-3.control-label(for='zip') Phone #
                       .col-sm-6
                         input#phone.form-control.input-md(name='phone', type='text', placeholder='', class='required phoneUS valid')
+                    // Change to -xs- classes here to keep checkbox level with label even on extra-small screens.
                     .form-group
-                      label.col-sm-3.control-label(for='checkboxes') Permission to send text messages
-                      .col-sm-4
-                        label.checkbox-inline(for='checkboxes-0')
-                          input#checkboxes-0(type='checkbox', name='permission_to_text', value='yes')
+                      label.col-xs-3.control-label(for='checkboxes-0') Permission to send text messages
+                      .col-xs-6
+                        input#checkboxes-0.form-control(name='permission_to_text', type='checkbox', value='yes')
                     .form-group
                       label.col-sm-3.control-label(for='singlebutton')
-                      .col-sm-4
+                      .col-sm-6
                         button#singlebutton.btn.btn-primary(name='singlebutton') Submit
 
     script(type="text/javascript").

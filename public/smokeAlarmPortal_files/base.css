@@ -6,46 +6,43 @@ body {
     color: #333;
     font: 13px/19.5px Arial, Helvetica, sans-serif;
     min-height: 100%;
-    position: relative
+    position: relative;
 }
 
 #hdr {
     height: 91px;
     overflow: hidden;
     margin: 0px 40px;
-/*    min-width: 80em */
 }
 
 #hdr.checkout-hdr {
-    height: 125px
+    height: 125px;
 }
 
 #hdr.has-banner {
-    height: auto
+    height: auto;
 }
 
 #hdr.plain-hdr {
     background: #fff;
-    height: 91px
+    height: 91px;
 }
 
 .page-header {
     height: 91px;
     margin: 0 auto;
     overflow: hidden;
-/*    padding: 0 12px; */
-    width: 968px
 }
 
 .branding {
     display: inline;
     float: left;
     margin: 12px 0 8px;
-    padding: 0
+    padding: 0;
 }
 
 .branding .logo {
-    display: block
+    display: block;
 }
 
 #container {
@@ -55,7 +52,7 @@ body {
 #primary-nav {
     margin: 0 auto;
     padding: 0 12px 0 129px;
-    width: 1075px
+    width: 1075px;
 }
 
 #primary-nav:after {
@@ -67,13 +64,13 @@ body {
     line-height: 0;
     overflow: hidden;
     visibility: hidden;
-    width: 0
+    width: 0;
 }
 
 #primary-nav .nav-list {
     display: inline;
     float: left;
-    height: 41px
+    height: 41px;
 }
 
 #primary-nav .nav-item {
@@ -85,37 +82,52 @@ body {
     font-style: normal;
     font-size: 13px;
     line-height: 1;
-    text-transform: uppercase
+    text-transform: uppercase;
 }
 
 #primary-nav .nav-link {
     background: url('../images/bg/main-nav-delim.png?1360164509') no-repeat 100% 6px;
     color: #6d6e70;
     display: block;
-    padding: 14px 25px
+    padding: 14px 25px;
 }
 
 #primary-nav .nav-link:hover {
     border-bottom: 3px solid #ed1b2e;
     color: #ed1b2e;
     padding-bottom: 11px;
-    text-decoration: none
+    text-decoration: none;
 }
 
 #primary-nav .selected .nav-link {
     border-bottom: 3px solid #ed1b2e;
-    padding-bottom: 11px
+    padding-bottom: 11px;
 }
 
 #primary-nav .first {
     position: relative;
     left: -30px;
-    margin-right: -30px
+    margin-right: -30px;
 }
 
 #primary-nav div.search-form {
     display: inline;
     float: left;
     margin-top: 9px;
-    margin-left: 10px
+    margin-left: 10px;
+}
+
+#organization-name {
+    margin-bottom: 10px;
+}
+
+#instructions {
+    font-size: 15px;
+}
+
+/* These styles prevent bizarre checkbox appearances when zoom != 1 on OSX Chrome (and possibly other browsers) */
+#checkboxes-0 {
+    height: 16px;
+    width: 16px;
+    margin-top: 16px;
 }
