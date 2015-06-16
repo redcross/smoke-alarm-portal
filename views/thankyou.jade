@@ -1,86 +1,9 @@
 extends layout
 
 block content
-  body(data-context='', data-controller='chapter', data-action='chapterLanding', data-twttr-rendered='true', data-feedly-mini='yes')
-    #colorbox(style='padding-bottom: 16px; padding-right: 56px; display: none;')
-      #cboxWrapper
-        div
-          #cboxTopLeft(style='float: left;')
-          #cboxTopCenter(style='float: left;')
-          #cboxTopRight(style='float: left;')
-        div(style='clear: left;')
-          #cboxMiddleLeft(style='float: left;')
-          #cboxContent(style='float: left;')
-            #cboxLoadedContent(style='width: 0px; height: 0px; overflow: hidden; float: left;')
-            #cboxLoadingOverlay(style='float: left;')
-            #cboxLoadingGraphic(style='float: left;')
-            #cboxTitle(style='float: left;')
-            #cboxCurrent(style='float: left;')
-            #cboxNext(style='float: left;')
-            #cboxPrevious(style='float: left;')
-            #cboxSlideshow(style='float: left;')
-            #cboxClose(style='float: left;')
-          #cboxMiddleRight(style='float: left;')
-        div(style='clear: left;')
-          #cboxBottomLeft(style='float: left;')
-          #cboxBottomCenter(style='float: left;')
-          #cboxBottomRight(style='float: left;')
-      div(style='position: absolute; width: 9999px; visibility: hidden; display: none;')
-    input#wcm-page-Id(type='hidden', value='1000105')
-    title Chicago | Illinois Red Cross | Chicago Red Cross
-    meta(name='description', content='Welcome to the Chicago Red Cross.')
-    meta#id_og_type(property='og:type', content='website')
-    meta#id_og_title(property='og:title', content='Chicago | Illinois Red Cross | Chicago Red Cross')
-    meta#id_og_description(property='og:description', content='Welcome to the Chicago Red Cross.')
-    meta#id_fb_app_id(property='fb:app_id', content='64368537493')
-    meta#id_og_site_name(property='og:site_name', content='American Red Cross')
-    meta#id_og_image(property='og:image', content='http://www.redcross.org/images/MEDIA_CustomProductCatalog/m48040100_ButtonLogo200.jpg')
-    meta#id_og_url(property='og:url', content='http://www.redcross.org/il/chicago')
-    meta(name='author', content=' ')
-    meta(name='keywords', content='chicago, chicago red cross, illinois red cross ')
-    meta(name='robots', content='')
-    meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    link(rel='shortcut icon', href='http://www.redcross.org/favicon.ico')
-    link(rel='stylesheet', type='text/css', href='./smokeAlarmPortal_files/base.css')
-    //if lte IE 7
-      link(rel='stylesheet', type='text/css', href='/css/ie7.css')
-    //if IE 8
-      link(rel='stylesheet', type='text/css', href='/css/ie8.css')
-    //if IE 9
-      link(rel='stylesheet', type='text/css', href='/css/ie9.css')
-    link(rel='stylesheet', type='text/css', href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css')
-    // neustar pixel
-    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js')
-    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js')
-    // Bug B-05146 : Modification to add 'has-banner' class only if disaster recovery bar exists
-    #hdr
-      header.page-header(role='banner')
-        a.branding(href='http://www.redcross.org/')
-          img.logo(src='./smokeAlarmPortal_files/redcross-logo.png', alt='American Red Cross')
-      nav#primary-nav(role='navigation')
-      // Bug B-05146 : Modification to pass 'disasterRecBar' object to the recovery bar jsp
-    noscript
-      | <div id="javaScriptError" style="text-align:center; padding-top:130px;"> <font color="FF0000"> <img src="/images/icon/warning.png" width="20" height="23" alt="" /> <strong> Javascript is disabled in your browser. In order to use the site correctly, please enable javascript.</strong> </font> </div>
-    #container
-      .content-wrap.chapter-default.chapter-news.inner-right-rail
-        .content
-          aside.sidebar(role='complementary')
-            nav.sidebar-inner
-              .sidebar-module-wrap
-          section.primary-content(role='main')
-            a#main(name='main')
-            header#share-bar-0_gig_containerParent.primary-header
-              h1     American Red Cross of Chicago & Northern Illinois
-              .right-rail-aspot-callout.clearfix
-                .callout-primary
-                  form(action="/", method="POST", class="form-horizontal")
-                    fieldset
-                      .component(data-content='', data-title='Form Name', data-trigger='manual', data-html='true')
-                        // Form Name
-                        legend Smoke Alarm Request Form
-                        p
-                          img#install-alarm(src='images/the_chosen_one.png', alt='Install An Alarm', width='521px')
-                        br
-                        div
-                          p
-                            | Thank you for your submission
+  #container
+    .row
+      .col-sm-12
+        h1 American Red Cross of Chicago & Northern Illinois
+        p
+          | Thank you for your submission
