@@ -1,148 +1,83 @@
 extends layout
 
 block content
-  body(data-context='', data-controller='chapter', data-action='chapterLanding', data-twttr-rendered='true', data-feedly-mini='yes')
-    #colorbox(style='padding-bottom: 16px; padding-right: 56px; display: none;')
-      #cboxWrapper
-        div
-          #cboxTopLeft(style='float: left;')
-          #cboxTopCenter(style='float: left;')
-          #cboxTopRight(style='float: left;')
-        div(style='clear: left;')
-          #cboxMiddleLeft(style='float: left;')
-          #cboxContent(style='float: left;')
-            #cboxLoadedContent(style='width: 0px; height: 0px; overflow: hidden; float: left;')
-            #cboxLoadingOverlay(style='float: left;')
-            #cboxLoadingGraphic(style='float: left;')
-            #cboxTitle(style='float: left;')
-            #cboxCurrent(style='float: left;')
-            #cboxNext(style='float: left;')
-            #cboxPrevious(style='float: left;')
-            #cboxSlideshow(style='float: left;')
-            #cboxClose(style='float: left;')
-          #cboxMiddleRight(style='float: left;')
-        div(style='clear: left;')
-          #cboxBottomLeft(style='float: left;')
-          #cboxBottomCenter(style='float: left;')
-          #cboxBottomRight(style='float: left;')
-      div(style='position: absolute; width: 9999px; visibility: hidden; display: none;')
-    input#wcm-page-Id(type='hidden', value='1000105')
-    title Chicago | Illinois Red Cross | Chicago Red Cross
-    meta(name='description', content='Welcome to the Chicago Red Cross.')
-    meta#id_og_type(property='og:type', content='website')
-    meta#id_og_title(property='og:title', content='Chicago | Illinois Red Cross | Chicago Red Cross')
-    meta#id_og_description(property='og:description', content='Welcome to the Chicago Red Cross.')
-    meta#id_fb_app_id(property='fb:app_id', content='64368537493')
-    meta#id_og_site_name(property='og:site_name', content='American Red Cross')
-    meta#id_og_image(property='og:image', content='http://www.redcross.org/images/MEDIA_CustomProductCatalog/m48040100_ButtonLogo200.jpg')
-    meta#id_og_url(property='og:url', content='http://www.redcross.org/il/chicago')
-    meta(name='author', content=' ')
-    meta(name='keywords', content='chicago, chicago red cross, illinois red cross ')
-    meta(name='robots', content='')
-    meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    link(rel='shortcut icon', href='http://www.redcross.org/favicon.ico')
-    // Link to bootstrap css first to allow overrides farther down.
-    link(rel='stylesheet', type='text/css', href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css')
-    link(rel='stylesheet', type='text/css', href='./smokeAlarmPortal_files/base.css')
-    //if lte IE 7
-      link(rel='stylesheet', type='text/css', href='/css/ie7.css')
-    //if IE 8
-      link(rel='stylesheet', type='text/css', href='/css/ie8.css')
-    //if IE 9
-      link(rel='stylesheet', type='text/css', href='/css/ie9.css')
-    // neustar pixel
-    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js')
-    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js')
-    script(type='text/javascript', src='http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.js')
-    script(type='text/javascript', src='http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/additional-methods.js')
-
-    #hdr
-      header.page-header(role='banner')
-        a.branding(href='http://www.redcross.org/')
-          img.logo(src='./smokeAlarmPortal_files/redcross-logo.png', alt='American Red Cross')
-      nav#primary-nav(role='navigation')
-      // Bug B-05146 : Modification to pass 'disasterRecBar' object to the recovery bar jsp
-    noscript
-      | <div id="javaScriptError" style="text-align:center; padding-top:130px;"> <font color="FF0000"> <img src="/images/icon/warning.png" width="20" height="23" alt="" /> <strong> Javascript is disabled in your browser. In order to use the site correctly, please enable javascript.</strong> </font> </div>
-    #container
-      .content-wrap.chapter-default.chapter-news.inner-right-rail
-        .content
-          h1 American Red Cross of Chicago & Northern Illinois
-          aside.sidebar(role='complementary')
-            nav.sidebar-inner
-              .sidebar-module-wrap
-                 p
-                   | Thank you for your interest in having one or more 10 year lithium-ion battery powered smoke alarms installed in your home.
-                 p
-                   | Please complete the information below and press “submit”. An American Red Cross representative will contact you shortly to confirm your registration into our wait list. Additional information on installation will be given at that time
-          section.primary-content(role='main')
-            header#share-bar-0_gig_containerParent.primary-header
-              .right-rail-aspot-callout.clearfix
-                .callout-primary
-                  form(action="/", method="POST", class="form-horizontal")
-                    fieldset
-                      .component(data-content='', data-title='Form Name', data-trigger='manual', data-html='true')
-                        // Form Name
-                        .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true', data-original-title='', title='')
-                          // Text input
-                          .form-group
-                            label.col-md-4.control-label(for='name') Name
-                            .col-md-6
-                              input#name.form-control.input-md(name='name', type='text', placeholder='', required)
-                        .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
-                          // Text input
-                          .form-group
-                            label.col-md-4.control-label(for='address') Address
-                            .col-md-6
-                              input#address.form-control.input-md(name='address', type='text', placeholder='', required)
-                        .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
-                          // Text input
-                          .form-group
-                            label.col-md-4.control-label(for='address_2') Address 2
-                            .col-md-6
-                              input#address_2.form-control.input-md(name='address_2', type='text', placeholder='')
-                        .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
-                          // Text input
-                          .form-group
-                            label.col-md-4.control-label(for='city') City
-                            .col-md-6
-                              input#city.form-control.input-md(name='city', type='text', placeholder='', required)
-                        .component(data-content='', data-title='Select Basic', data-trigger='manual', data-html='true')
-                          // Select Basic
-                          .form-group
-                            label.col-md-4.control-label(for='state') State
-                            .col-md-6
-                              select#state.form-control(name='state', required)
-                                option(value='')
-                                option(value='Idaho') Idaho
-                                option(value='Illinois') Illinois
-                                option(value='Indiana') Indiana
-                                option(value='Kansas') Kansas
-                                option(value='Missouri') Missouri
-                                option(value='Minnesota') Minnesota
-                                option(value='Nebraska') Nebraska
-                                option(value='North Dakota') North Dakota
-                                option(value='South Dakota') South Dakota
-                                option(value='Wisconsin') Wisconsin
-                        .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
-                          // Text input
-                          .form-group
-                            label.col-md-4.control-label(for='zip') Zip Code
-                            .col-md-6
-                              input#zip.form-control.input-md(name='zip', type='text', placeholder='', class='required zipcode valid')
-                          .form-group
-                            label.col-md-4.control-label(for='zip') Phone #
-                            .col-md-6
-                              input#phone.form-control.input-md(name='phone', type='text', placeholder='', class='required phoneUS valid')
-                          .form-group
-                            label.col-md-4.control-label(for='checkboxes') Permission to send text messages
-                            .col-md-4
-                              label.checkbox-inline(for='checkboxes-0')
-                                input#checkboxes-0(type='checkbox', name='permission_to_text', value='yes')
-                          .form-group
-                            label.col-md-4.control-label(for='singlebutton')
-                            .col-md-4
-                              button#singlebutton.btn.btn-primary(name='singlebutton') Submit
+  #container.container-fluid
+    .row
+      .col-sm-12
+        h1 American Red Cross of Chicago & Northern Illinois
+    .row
+      .col-sm-3
+         p
+           | Thank you for your interest in having one or more 10 year lithium-ion battery powered smoke alarms installed in your home.
+         p
+           | Please complete the information below and press “submit”. An American Red Cross representative will contact you shortly to confirm your registration into our wait list. Additional information on installation will be given at that time
+      .col-sm-9
+        .container-fluid
+          form(action="/", method="POST", class="form-horizontal")
+            fieldset
+              .row
+                .component(data-content='', data-title='Form Name', data-trigger='manual', data-html='true')
+                  // Form Name
+                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true', data-original-title='', title='')
+                    // Text input
+                    .form-group
+                      label.col-sm-3.control-label(for='name') Name
+                      .col-sm-6
+                        input#name.form-control.input-md(name='name', type='text', placeholder='', required)
+                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
+                    // Text input
+                    .form-group
+                      label.col-sm-3.control-label(for='address') Address
+                      .col-sm-6
+                        input#address.form-control.input-md(name='address', type='text', placeholder='', required)
+                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
+                    // Text input
+                    .form-group
+                      label.col-sm-3.control-label(for='address_2') Address 2
+                      .col-sm-6
+                        input#address_2.form-control.input-md(name='address_2', type='text', placeholder='')
+                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
+                    // Text input
+                    .form-group
+                      label.col-sm-3.control-label(for='city') City
+                      .col-sm-6
+                        input#city.form-control.input-md(name='city', type='text', placeholder='', required)
+                  .component(data-content='', data-title='Select Basic', data-trigger='manual', data-html='true')
+                    // Select Basic
+                    .form-group
+                      label.col-sm-3.control-label(for='state') State
+                      .col-sm-6
+                        select#state.form-control(name='state', required)
+                          option(value='')
+                          option(value='Idaho') Idaho
+                          option(selected='selected' value='Illinois') Illinois
+                          option(value='Indiana') Indiana
+                          option(value='Kansas') Kansas
+                          option(value='Missouri') Missouri
+                          option(value='Minnesota') Minnesota
+                          option(value='Nebraska') Nebraska
+                          option(value='North Dakota') North Dakota
+                          option(value='South Dakota') South Dakota
+                          option(value='Wisconsin') Wisconsin
+                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
+                    // Text input
+                    .form-group
+                      label.col-sm-3.control-label(for='zip') Zip Code
+                      .col-sm-6
+                        input#zip.form-control.input-md(name='zip', type='text', placeholder='', class='required zipcode valid')
+                    .form-group
+                      label.col-sm-3.control-label(for='zip') Phone #
+                      .col-sm-6
+                        input#phone.form-control.input-md(name='phone', type='text', placeholder='', class='required phoneUS valid')
+                    .form-group
+                      label.col-sm-3.control-label(for='checkboxes') Permission to send text messages
+                      .col-sm-4
+                        label.checkbox-inline(for='checkboxes-0')
+                          input#checkboxes-0(type='checkbox', name='permission_to_text', value='yes')
+                    .form-group
+                      label.col-sm-3.control-label(for='singlebutton')
+                      .col-sm-4
+                        button#singlebutton.btn.btn-primary(name='singlebutton') Submit
 
     script(type="text/javascript").
       $(".form-horizontal").validate();
