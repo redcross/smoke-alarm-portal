@@ -100,7 +100,7 @@ block content
                           .form-group
                             label.col-md-4.control-label(for='address') Address
                             .col-md-6
-                              input#address.form-control.input-md(name='address', type='text', placeholder='', required)
+                              input#address.form-control.input-md(name='address', type='text', placeholder='')
                         .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
                           // Text input
                           .form-group
@@ -112,13 +112,13 @@ block content
                           .form-group
                             label.col-md-4.control-label(for='city') City
                             .col-md-6
-                              input#city.form-control.input-md(name='city', type='text', placeholder='', required)
+                              input#city.form-control.input-md(name='city', type='text', placeholder='')
                         .component(data-content='', data-title='Select Basic', data-trigger='manual', data-html='true')
                           // Select Basic
                           .form-group
                             label.col-md-4.control-label(for='state') State
                             .col-md-6
-                              select#state.form-control(name='state', required)
+                              select#state.form-control(name='state')
                                 option(value='')
                                 option(value='Idaho') Idaho
                                 option(value='Illinois') Illinois
@@ -137,9 +137,13 @@ block content
                             .col-md-6
                               input#zip.form-control.input-md(name='zip', type='text', placeholder='', class='required zipcode valid')
                           .form-group
-                            label.col-md-4.control-label(for='zip') Phone #
+                            label.col-md-4.control-label(for='phone') Phone #
                             .col-md-6
-                              input#phone.form-control.input-md(name='phone', type='text', placeholder='', class='required phoneUS valid')
+                              input#phone.form-control.input-md(name='phone', type='text', placeholder='', class='contact-group phoneUS valid')
+                          .form-group
+                            label.col-md-4.control-label(for='email') Email
+                            .col-md-6
+                              input#phone.form-control.input-md(name='email', type='text', placeholder='', class='contact-group email valid')
                           .form-group
                             label.col-md-4.control-label(for='checkboxes') Permission to send text messages
                             .col-md-4
@@ -151,4 +155,13 @@ block content
                               button#singlebutton.btn.btn-primary(name='singlebutton') Submit
 
     script(type="text/javascript").
-      $(".form-horizontal").validate();
+      $(".form-horizontal").validate({
+        rules: {
+          phone: {
+            require_from_group: [1, ".contact-group"]
+          },
+          email: {
+            require_from_group: [1, ".contact-group"]
+          },
+        }
+      });
