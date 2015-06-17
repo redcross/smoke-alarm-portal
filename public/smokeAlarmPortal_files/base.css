@@ -1,10 +1,10 @@
 body {
-/* Uncomment the line below when actual background image is obtained 
-    background-image: url("../images/install_alarm.jpg");*/
-
+    background: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15)), url("../images/install_combined.jpg");
+    background-size: 100%;
+    background-repeat: repeat-y;
     background-color: #DDD;
-    color: #333;
-    font: 13px/19.5px Arial, Helvetica, sans-serif;
+    color: #EEE;
+    font: 15px/19.5px Arial, Helvetica, sans-serif;
     min-height: 100%;
     position: relative;
 }
@@ -121,8 +121,14 @@ body {
     margin-bottom: 10px;
 }
 
-#instructions {
+#main {
+    padding: 20px 0px 0px 0px;
+}
+
+#left {
     font-size: 15px;
+    padding-top: 10px;
+    background: rgba(0, 0, 0, 0.75);
 }
 
 /* These styles prevent bizarre checkbox appearances when zoom != 1 on OSX Chrome (and possibly other browsers) */
