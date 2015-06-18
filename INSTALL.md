@@ -68,5 +68,4 @@ much difficulty to most other Unix-like operating systems.
 
 8. Start smoke-alarm-portal app
 
-        $ cd smoke-alarm-portal
         $ npm start
