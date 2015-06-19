@@ -13,7 +13,7 @@
 
 function(doc) {
   if (doc.zip) {
-    emit([doc.zip, doc.county, doc.state]);
+      emit(doc.zip, [doc.county, doc.state]);
   }
 }
 
@@ -24,6 +24,6 @@ function(doc) {
 
 function(doc) {
   if (doc.County) {
-     emit([doc.County,doc.region]);
+     emit(doc.County, doc.region);
   }
 }
