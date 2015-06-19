@@ -132,6 +132,10 @@ body {
     background: rgba(0, 0, 0, 0.75);
 }
 
+#right button {
+    float: right;
+}
+
 /* These styles prevent bizarre checkbox appearances when zoom != 1 on OSX Chrome (and possibly other browsers) */
 #checkboxes-0 {
     height: 16px;
