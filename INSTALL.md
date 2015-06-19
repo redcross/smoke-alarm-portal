@@ -21,7 +21,7 @@ much difficulty to most other Unix-like operating systems.
    On Debian, you may need to install these dependencies first (before building couchdb).  There is more detailed information [here](https://cwiki.apache.org/confluence/display/COUCHDB/Debian).
 
         $ sudo apt-get install build-essential libtool autoconf automake autoconf-archive pkg-config
-        # for Debian >-7.0
+        # for Debian >=7.0
         $ sudo apt-get install lsb-release
         $ sudo apt-get install erlang
         $ sudo apt-get install erlang-base-hipe
