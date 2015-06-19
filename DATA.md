@@ -28,4 +28,8 @@ that makes requests and includes files as POST data. Each request should return 
 
 Go to http://localhost:5984/_utils/ in the browser.
 
-Use [this](http://blog.vicmetcalfe.com/2011/04/11/creating-views-in-couchdb-futon/) as a guide for creating views in futon.
+[Here](http://blog.vicmetcalfe.com/2011/04/11/creating-views-in-couchdb-futon/)
+is a guide for creating views in futon.  More about making our specific views is
+included in `/couch_views.js`.
+
+TODO: find out and describe how to create views from the command line.
