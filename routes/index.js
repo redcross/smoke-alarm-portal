@@ -67,29 +67,15 @@ router.post('/', function(req, res, next) {
                 // county-name match it comes across in the database,
                 // but counties are not only not unique across states,
                 // they are not even unique within Red Cross regions
-                // in the North Central Division.
+                // in the North Central Division -- for example, our
+                // division has a "KansasNebraska" region, but both
+                // Kansas and Nebraska have a Greeley County.
                 //
-                // For example, our division has a "KansasNebraska"
-                // region, but both Kansas and Nebraska have a
-                // Greely County.  In ../data/selected_counties.json,
-                // this just means that there are literally two
-                // identical entries, separated by 48 lines, both saying
-                // {"region":"KansasNebraska","County":"Greeley"} :-).
-                //
-                // Fortunately, that's not the direction in which we
-                // have to index things, so it doesn't matter for
-                // us.  We already have the actual state and county
-                // (they were derived from the zip code), so all we
-                // need is to map state+county combinations to the
-                // appropriate Red Cross *regions* within the North
-                // Central *Division*.  That's probably what
-                // ../data/selected_counties.json is supposed to be,
-                // but it doesn't key to states yet, so it isn't quite
-                // providing the data we need.  With a little massaging
-                // it will, of course.
-                // 
-                // However, as it isn't quite there yet, the code
-                // below is currently incorrect.
+                // The entries in ../data/selected_counties.json now
+                // include the state, so we can disambiguate in these
+                // cases.  However, the code below does not do that
+                // yet, it just accepts the first county with a
+                // matching name, no matter from what state.
 		countyDb.view('selected_counties','county-matchup', {key:countyToSelect}, function(error, results) {
 			results.rows.forEach(function(doc) {
 				if (doc.key.match(countyToSelect) && countyMatched == false) {
