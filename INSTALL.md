@@ -48,9 +48,15 @@ much difficulty to most other Unix-like operating systems.
         # when we change this.
         $ sudo couchdb
 
-6. Create the database using the instructions in [DATA.md](DATA.md).
+6. Create the databases.
 
-7. Get the required node modules by running npm.
+   See the instructions in [DATA.md](DATA.md).
+
+7. Create our application-specific CouchDB view functions.
+
+   See the instructions in [couch_views.js](couch_views.js).
+
+8. Get the required node modules by running npm.
 
         $ cd smoke-alarm-portal
         $ npm install
@@ -65,6 +71,6 @@ much difficulty to most other Unix-like operating systems.
 
         $ sudo apt-get install nodejs-legacy
 
-8. Start smoke-alarm-portal app
+9. Start smoke-alarm-portal app
 
         $ npm start
