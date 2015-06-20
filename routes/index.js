@@ -61,31 +61,36 @@ router.post('/', function(req, res, next) {
     });
 
 		console.log("county " + countyToSelect + " in state " + stateToSelect + " found");
-		var countyMatched = false;
+		var state_and_county_matched = false;
 
-		// This is buggy because it just accepts the first
-                // county-name match it comes across in the database,
-                // but counties are not only not unique across states,
-                // they are not even unique within Red Cross regions
-                // in the North Central Division -- for example, our
-                // division has a "KansasNebraska" region, but both
-                // Kansas and Nebraska have a Greeley County.
-                //
-                // The entries in ../data/selected_counties.json now
-                // include the state, so we can disambiguate in these
-                // cases.  However, the code below does not do that
-                // yet, it just accepts the first county with a
-                // matching name, no matter from what state.
-		countyDb.view('selected_counties','county-matchup', {key:countyToSelect}, function(error, results) {
+		// We have to match both county and state.  Counties
+                // are not only not unique across states, they are not
+                // even unique within Red Cross regions in the North
+                // Central Division.  For example, there is a
+                // "KansasNebraska" region, but both Kansas and
+                // Nebraska have a Greeley County.  Try submitting one
+                // request with zip 67879 (Greeley County, Kansas) and
+                // another with zip 68665 (Greeley County, Nebraska).
+		countyDb.view('selected_counties','county-matchup',
+                              {key: [stateToSelect,countyToSelect]}, function(error, results) {
 			results.rows.forEach(function(doc) {
-				if (doc.key.match(countyToSelect) && countyMatched == false) {
-					countyMatched = true;
-				        console.log("County Doc = " + JSON.stringify(doc) +
-                                                    "; CountyMatched = " + countyMatched);
+			    console.log("DEBUG: Retrieved this state+county from the view:\n       "
+                                        + JSON.stringify(doc) + "\n");
+			    console.log("DEBUG: You could use this command to verify it:\n       "
+                                        + "'curl -X GET http://127.0.0.1:5984/selected_counties/"
+                                        + doc._id + "'\n");
+			    if (doc.key[0] == stateToSelect && doc.key[1] == countyToSelect) {
+                                        if (state_and_county_matched == true) {
+  				            console.log("DEBUG: another match found:\n       "
+                                                        + JSON.stringify(doc) + "\n");
+                                        }
+					state_and_county_matched = true;
+				        console.log("DEBUG: The matching document is:\n       " 
+                                                    + JSON.stringify(doc) + "\n");
 				}
 			});
-			if (countyMatched === true) {
-		    res.redirect('/thankyou');
+			if (state_and_county_matched === true) {
+ 		                res.redirect('/thankyou');
 			} else {
 				res.redirect('/sorry');
 			}

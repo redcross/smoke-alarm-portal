@@ -130,14 +130,15 @@ function(doc) {
  |          |    function below goes here> "}}   |
 
 
- * Takes: a county name as the key
+ * Takes: a state name and county name as keys
  * Returns: a JSON array with county name as key and Red Cross region
  * as value.
  * Example call:
  * curl -H 'Content-Type: application/json' -X GET http://localhost:5984/selected_counties/_design/selected_counties/_view/county-matchup?key=%22Ada%22
 */
 function(doc) {
-  if (doc.county) {
-     emit(doc.county, doc.region);
+  if (doc.state && doc.county && doc.region) {
+      emit([doc.state, doc.county], doc.region);
   }
 }
+
