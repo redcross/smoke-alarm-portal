@@ -1,0 +1,930 @@
+Region Boundaries in the Red Cross North Central Division.
+----------------------------------------------------------
+
+We have PDF maps that show the exact boundaries of all Red Cross
+Regions in the North Central Division.  However, our application code
+needs county names as text, associated with state names also as text.
+(Even then we'll have a few issues with regions that slip over state
+lines in a few places, and even with a few region boundaries that run
+through certain counties.  But we'll deal with the edge cases later.)
+
+So, for the moment, Wikipedia to the rescue:
+
+  * RCIA_REG_CO.pdf:
+    - https://en.wikipedia.org/wiki/List_of_counties_in_Iowa
+      Adair
+      Adams
+      Allamakee
+      Appanoose
+      Audubon
+      Benton
+      Black Hawk
+      Boone
+      Bremer
+      Buchanan
+      Buena Vista
+      Butler
+      Calhoun
+      Carroll
+      Cass
+      Cedar
+      Cerro Gordo
+      Cherokee
+      Chickasaw
+      Clarke
+      Clay
+      Clayton
+      Clinton
+      Crawford
+      Dallas
+      Davis
+      Decatur
+      Delaware
+      Des Moines
+      Dickinson
+      Dubuque
+      Emmet
+      Fayette
+      Floyd
+      Franklin
+      Fremont
+      Greene
+      Grundy
+      Guthrie
+      Hamilton
+      Hancock
+      Hardin
+      Harrison
+      Henry
+      Howard
+      Humboldt
+      Ida
+      Iowa
+      Jackson
+      Jasper
+      Jefferson
+      Johnson
+      Jones
+      Keokuk
+      Kossuth
+      Lee
+      Linn
+      Louisa
+      Lucas
+      Lyon
+      Madison
+      Mahaska
+      Marion
+      Marshall
+      Mills
+      Mitchell
+      Monona
+      Monroe
+      Montgomery
+      Muscatine
+      O'Brien
+      Osceola
+      Page
+      Palo Alto
+      Plymouth
+      Pocahontas
+      Polk
+      Pottawattamie
+      Poweshiek
+      Ringgold
+      Sac
+      Scott
+      Shelby
+      Sioux
+      Story
+      Tama
+      Taylor
+      Union
+      Van Buren
+      Wapello
+      Warren
+      Washington
+      Wayne
+      Webster
+      Winnebago
+      Winneshiek
+      Woodbury
+      Worth
+      Wright
+  
+  * RCIDMT_REG_CO.pdf:
+    - https://en.wikipedia.org/wiki/List_of_counties_in_Idaho
+      Ada
+      Adams
+      Bannock
+      Bear Lake
+      Benewah
+      Bingham
+      Blaine
+      Boise
+      Bonner
+      Bonneville
+      Boundary
+      Butte
+      Camas
+      Canyon
+      Caribou
+      Cassia
+      Clark
+      Clearwater
+      Custer
+      Elmore
+      Franklin
+      Fremont
+      Gem
+      Gooding
+      Idaho
+      Jefferson
+      Jerome
+      Kootenai
+      Latah
+      Lemhi
+      Lewis
+      Lincoln
+      Madison
+      Minidoka
+      Nez Perce
+      Oneida
+      Owyhee
+      Payette
+      Power
+      Shoshone
+      Teton
+      Twin Falls
+      Valley
+      Washington
+    - https://en.wikipedia.org/wiki/List_of_counties_in_Montana
+      Beaverhead
+      Big Horn
+      Blaine
+      Broadwater
+      Carbon
+      Carter
+      Cascade
+      Chouteau
+      Custer
+      Daniels
+      Dawson
+      Deer Lodge
+      Fallon
+      Fergus
+      Flathead
+      Gallatin
+      Garfield
+      Glacier
+      Golden Valley
+      Granite
+      Hill
+      Jefferson
+      Judith Basin
+      Lake
+      Lewis and Clark
+      Liberty
+      Lincoln
+      McCone
+      Madison
+      Meagher
+      Mineral
+      Missoula
+      Musselshell
+      Park
+      Petroleum
+      Phillips
+      Pondera
+      Powder River
+      Powell
+      Prairie
+      Ravalli
+      Richland
+      Roosevelt
+      Rosebud
+      Sanders
+      Sheridan
+      Silver Bow
+      Stillwater
+      Sweet Grass
+      Teton
+      Toole
+      Treasure
+      Valley
+      Wheatland
+      Wibaux
+      Yellowstone
+
+  * RCIL_REG_CO.pdf:
+    - https://en.wikipedia.org/wiki/List_of_counties_in_Illinois
+      Adams
+      Alexander
+      Bond
+      Boone
+      Brown
+      Bureau
+      Calhoun
+      Carroll
+      Cass
+      Champaign
+      Christian
+      Clark
+      Clay
+      Clinton
+      Coles
+      Cook
+      Crawford
+      Cumberland
+      DeKalb
+      DeWitt
+      Douglas
+      DuPage
+      Edgar
+      Edwards
+      Effingham
+      Fayette
+      Ford
+      Franklin
+      Fulton
+      Gallatin
+      Greene
+      Grundy
+      Hamilton
+      Hancock
+      Hardin
+      Henderson
+      Henry
+      Iroquois
+      Jackson
+      Jasper
+      Jefferson
+      Jersey
+      Jo Daviess
+      Johnson
+      Kane
+      Kankakee
+      Kendall
+      Knox
+      Lake
+      LaSalle
+      Lawrence
+      Lee
+      Livingston
+      Logan
+      Macon
+      Macoupin
+      Madison
+      Marion
+      Marshall
+      Mason
+      Massac
+      McDonough
+      McHenry
+      McLean
+      Menard
+      Mercer
+      Monroe
+      Montgomery
+      Morgan
+      Moultrie
+      Ogle
+      Peoria
+      Perry
+      Piatt
+      Pike
+      Pope
+      Pulaski
+      Putnam
+      Randolph
+      Richland
+      Rock Island
+      Saline
+      Sangamon
+      Schuyler
+      Scott
+      Shelby
+      St. Clair
+      Stark
+      Stephenson
+      Tazewell
+      Union
+      Vermilion
+      Wabash
+      Warren
+      Washington
+      Wayne
+      White
+      Whiteside
+      Will
+      Williamson
+      Winnebago
+      Woodford
+
+  * RCKSNE_REG_CO.pdf:
+    - https://en.wikipedia.org/wiki/List_of_counties_in_Kansas
+      Allen
+      Anderson
+      Atchison
+      Barber
+      Barton
+      Bourbon
+      Brown
+      Butler
+      Chase
+      Chautauqua
+      Cherokee
+      Cheyenne
+      Clark
+      Clay
+      Cloud
+      Coffey
+      Comanche
+      Cowley
+      Crawford
+      Decatur
+      Dickinson
+      Doniphan
+      Douglas
+      Edwards
+      Elk
+      Ellis
+      Ellsworth
+      Finney
+      Ford
+      Franklin
+      Geary
+      Gove
+      Graham
+      Grant
+      Gray
+      Greeley
+      Greenwood
+      Hamilton
+      Harper
+      Harvey
+      Haskell
+      Hodgeman
+      Jackson
+      Jefferson
+      Jewell
+      Johnson
+      Kearny
+      Kingman
+      Kiowa
+      Labette
+      Lane
+      Leavenworth
+      Lincoln
+      Linn
+      Logan
+      Lyon
+      Marion
+      Marshall
+      McPherson
+      Meade
+      Miami
+      Mitchell
+      Montgomery
+      Morris
+      Morton
+      Nemaha
+      Neosho
+      Ness
+      Norton
+      Osage
+      Osborne
+      Ottawa
+      Pawnee
+      Phillips
+      Pottawatomie
+      Pratt
+      Rawlins
+      Reno
+      Republic
+      Rice
+      Riley
+      Rooks
+      Rush
+      Russell
+      Saline
+      Scott
+      Sedgwick
+      Seward
+      Shawnee
+      Sheridan
+      Sherman
+      Smith
+      Stafford
+      Stanton
+      Stevens
+      Sumner
+      Thomas
+      Trego
+      Wabaunsee
+      Wallace
+      Washington
+      Wichita
+      Wilson
+      Woodson
+      Wyandotte
+    - https://en.wikipedia.org/wiki/List_of_counties_in_Nebraska
+      Adams
+      Antelope
+      Arthur
+      Banner
+      Blaine
+      Boone
+      Box Butte
+      Boyd
+      Brown
+      Buffalo
+      Burt
+      Butler
+      Cass
+      Cedar
+      Chase
+      Cherry
+      Cheyenne
+      Clay
+      Colfax
+      Cuming
+      Custer
+      Dakota
+      Dawes
+      Dawson
+      Deuel
+      Dixon
+      Dodge
+      Douglas
+      Dundy
+      Fillmore
+      Franklin
+      Frontier
+      Furnas
+      Gage
+      Garden
+      Garfield
+      Gosper
+      Grant
+      Greeley
+      Hall
+      Hamilton
+      Harlan
+      Hayes
+      Hitchcock
+      Holt
+      Hooker
+      Howard
+      Jefferson
+      Johnson
+      Kearney
+      Keith
+      Keya Paha
+      Kimball
+      Knox
+      Lancaster
+      Lincoln
+      Logan
+      Loup
+      Madison
+      McPherson
+      Merrick
+      Morrill
+      Nance
+      Nemaha
+      Nuckolls
+      Otoe
+      Pawnee
+      Perkins
+      Phelps
+      Pierce
+      Platte
+      Polk
+      Red Willow
+      Richardson
+      Rock
+      Saline
+      Sarpy
+      Saunders
+      Scotts Bluff
+      Seward
+      Sheridan
+      Sherman
+      Sioux
+      Stanton
+      Thayer
+      Thomas
+      Thurston
+      Valley
+      Washington
+      Wayne
+      Webster
+      Wheeler
+      York
+
+  * RCMN_REG_CO.pdf:
+    - https://en.wikipedia.org/wiki/List_of_counties_in_Minnesota
+      Aitkin
+      Anoka
+      Becker
+      Beltrami
+      Benton
+      Big Stone
+      Blue Earth
+      Brown
+      Carlton
+      Carver
+      Cass
+      Chippewa
+      Chisago
+      Clay
+      Clearwater
+      Cook
+      Cottonwood
+      Crow Wing
+      Dakota
+      Dodge
+      Douglas
+      Faribault
+      Fillmore
+      Freeborn
+      Goodhue
+      Grant
+      Hennepin
+      Houston
+      Hubbard
+      Isanti
+      Itasca
+      Jackson
+      Kanabec
+      Kandiyohi
+      Kittson
+      Koochiching
+      Lac qui Parle
+      Lake
+      Lake of the Woods
+      Le Sueur
+      Lincoln
+      Lyon
+      McLeod
+      Mahnomen
+      Marshall
+      Martin
+      Meeker
+      Mille Lacs
+      Morrison
+      Mower
+      Murray
+      Nicollet
+      Nobles
+      Norman
+      Olmsted
+      Otter Tail
+      Pennington
+      Pine
+      Pipestone
+      Polk
+      Pope
+      Ramsey
+      Red Lake
+      Redwood
+      Renville
+      Rice
+      Rock
+      Roseau
+      Saint Louis
+      Scott
+      Sherburne
+      Sibley
+      Stearns
+      Steele
+      Stevens
+      Swift
+      Todd
+      Traverse
+      Wabasha
+      Wadena
+      Waseca
+      Washington
+      Watonwan
+      Wilkin
+      Winona
+      Wright
+      Yellow Medicine
+
+  * RCMO_REG_CO.pdf:
+    - https://en.wikipedia.org/wiki/List_of_counties_in_Missouri
+      Adair
+      Andrew
+      Atchison
+      Audrain
+      Barry
+      Barton
+      Bates
+      Benton
+      Bollinger
+      Boone
+      Buchanan
+      Butler
+      Caldwell
+      Callaway
+      Camden
+      Cape Girardeau
+      Carroll
+      Carter
+      Cass
+      Cedar
+      Chariton
+      Christian
+      Clark
+      Clay
+      Clinton
+      Cole
+      Cooper
+      Crawford
+      Dade
+      Dallas
+      Daviess
+      DeKalb
+      Dent
+      Douglas
+      Dunklin
+      Franklin
+      Gasconade
+      Gentry
+      Greene
+      Grundy
+      Harrison
+      Henry
+      Hickory
+      Holt
+      Howard
+      Howell
+      Iron
+      Jackson
+      Jasper
+      Jefferson
+      Johnson
+      Knox
+      Laclede
+      Lafayette
+      Lawrence
+      Lewis
+      Lincoln
+      Linn
+      Livingston
+      Macon
+      Madison
+      Maries
+      Marion
+      McDonald
+      Mercer
+      Miller
+      Mississippi
+      Moniteau
+      Monroe
+      Montgomery
+      Morgan
+      New Madrid
+      Newton
+      Nodaway
+      Oregon
+      Osage
+      Ozark
+      Pemiscot
+      Perry
+      Pettis
+      Phelps
+      Pike
+      Platte
+      Polk
+      Pulaski
+      Putnam
+      Ralls
+      Randolph
+      Ray
+      Reynolds
+      Ripley
+      Saint Charles
+      Saint Clair
+      Saint Francois
+      Saint Louis
+      Saint Louis City
+      Ste. Genevieve
+      Saline
+      Schuyler
+      Scotland
+      Scott
+      Shannon
+      Shelby
+      Stoddard
+      Stone
+      Sullivan
+      Taney
+      Texas
+      Vernon
+      Warren
+      Washington
+      Wayne
+      Webster
+      Worth
+      Wright
+
+  * RCNDSD_REG_CO.pdf:
+    - https://en.wikipedia.org/wiki/List_of_counties_in_South_Dakota
+      Aurora
+      Beadle
+      Bennett
+      Bon Homme
+      Brookings
+      Brown
+      Brule
+      Buffalo
+      Butte
+      Campbell
+      Charles Mix
+      Clark
+      Clay
+      Codington
+      Corson
+      Custer
+      Davison
+      Day
+      Deuel
+      Dewey
+      Douglas
+      Edmunds
+      Fall River
+      Faulk
+      Grant
+      Gregory
+      Haakon
+      Hamlin
+      Hand
+      Hanson
+      Harding
+      Hughes
+      Hutchinson
+      Hyde
+      Jackson
+      Jerauld
+      Jones
+      Kingsbury
+      Lake
+      Lawrence
+      Lincoln
+      Lyman
+      Marshall
+      McCook
+      McPherson
+      Meade
+      Mellette
+      Miner
+      Minnehaha
+      Moody
+      Oglala Lakota
+      Pennington
+      Perkins
+      Potter
+      Roberts
+      Sanborn
+      Spink
+      Stanley
+      Sully
+      Todd
+      Tripp
+      Turner
+      Union
+      Walworth
+      Yankton
+      Ziebach
+    - https://en.wikipedia.org/wiki/List_of_counties_in_North_Dakota
+      Adams
+      Barnes
+      Benson
+      Billings
+      Bottineau
+      Bowman
+      Burke
+      Burleigh
+      Cass
+      Cavalier
+      Dickey
+      Divide
+      Dunn
+      Eddy
+      Emmons
+      Foster
+      Golden Valley
+      Grand Forks
+      Grant
+      Griggs
+      Hettinger
+      Kidder
+      LaMoure
+      Logan
+      McHenry
+      McIntosh
+      McKenzie
+      McLean
+      Mercer
+      Morton
+      Mountrail
+      Nelson
+      Oliver
+      Pembina
+      Pierce
+      Ramsey
+      Ransom
+      Renville
+      Richland
+      Rolette
+      Sargent
+      Sheridan
+      Sioux
+      Slope
+      Stark
+      Steele
+      Stutsman
+      Towner
+      Traill
+      Walsh
+      Ward
+      Wells
+      Williams
+
+  * RCWI_REG_CO.pdf:
+    - https://en.wikipedia.org/wiki/List_of_counties_in_Wisconsin
+      Adams
+      Ashland
+      Barron
+      Bayfield
+      Brown
+      Buffalo
+      Burnett
+      Calumet
+      Chippewa
+      Clark
+      Columbia
+      Crawford
+      Dane
+      Dodge
+      Door
+      Douglas
+      Dunn
+      Eau Claire
+      Florence
+      Fond du Lac
+      Forest
+      Grant
+      Green
+      Green Lake
+      Iowa
+      Iron
+      Jackson
+      Jefferson
+      Juneau
+      Kenosha
+      Kewaunee
+      La Crosse
+      Lafayette
+      Langlade
+      Lincoln
+      Manitowoc
+      Marathon
+      Marinette
+      Marquette
+      Menominee
+      Milwaukee
+      Monroe
+      Oconto
+      Oneida
+      Outagamie
+      Ozaukee
+      Pepin
+      Pierce
+      Polk
+      Portage
+      Price
+      Racine
+      Richland
+      Rock
+      Rusk
+      Sauk
+      Sawyer
+      Shawano
+      Sheboygan
+      St. Croix
+      Taylor
+      Trempealeau
+      Vernon
+      Vilas
+      Walworth
+      Washburn
+      Washington
+      Waukesha
+      Waupaca
+      Waushara
+      Winnebago
+      Wood
