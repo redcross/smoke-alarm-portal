@@ -15,6 +15,7 @@ In order to upload data to the couchdb server, please use cURL or another agent 
 
 curl -X PUT http://127.0.0.1:5984/smoke_alarm_requests
 curl -X PUT http://127.0.0.1:5984/selected_countries
+curl -X PUT http://127.0.0.1:5984/us_addresses
 curl -H 'Content-Type: application/json' -X POST http://localhost:5984/us_addresses/_bulk_docs -d @data/us_addresses.json
 curl -H 'Content-Type: application/json' -X POST http://localhost:5984/selected_counties/_bulk_docs -d @data/selected_counties.json
 

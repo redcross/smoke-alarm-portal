@@ -13,7 +13,7 @@
 
 function(doc) {
   if (doc.zip) {
-    emit([doc.zip, doc.county, doc.state]);
+    emit(doc.zip, [doc.county, doc.state]);
   }
 }
 
