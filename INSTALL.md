@@ -48,8 +48,7 @@ much difficulty to most other Unix-like operating systems.
         # when we change this.
         $ sudo couchdb
 
-6. Create database using wget or CURL to make a PUT request to the Couch server
-        $ curl -X PUT http://127.0.0.1:5984/smoke_alarm_requests
+6. Create the database using the instructions in [DATA.md](DATA.md).
 
 7. Get the required node modules by running npm.
 
