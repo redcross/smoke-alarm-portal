@@ -50,9 +50,7 @@ much difficulty to most other Unix-like operating systems.
 
 6. Create the databases.
 
-   See the instructions in [DATA.md](DATA.md) for details.  Or, from the top level of this repository, run:
-   
-   $ source scripts/load_databases.sh
+   See the instructions in [DATA.md](DATA.md).
 
 7. Create our application-specific CouchDB view functions.
 
@@ -76,3 +74,10 @@ much difficulty to most other Unix-like operating systems.
 9. Start smoke-alarm-portal app
 
         $ npm start
+
+10. Step for staging or production server deployment
+
+    1. Install the forever module on the chosen server
+    2. Run the forever server:
+
+        $  forever -da start -l forever.log -o out.log -e err.log ./bin/www
