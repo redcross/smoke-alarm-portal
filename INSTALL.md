@@ -50,7 +50,9 @@ much difficulty to most other Unix-like operating systems.
 
 6. Create the databases.
 
-   See the instructions in [DATA.md](DATA.md).
+   See the instructions in [DATA.md](DATA.md) for details.  Or, from the top level of this repository, run:
+   
+   $ source scripts/load_databases.sh
 
 7. Create our application-specific CouchDB view functions.
 

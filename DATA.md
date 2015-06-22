@@ -35,4 +35,22 @@ Go to http://localhost:5984/_utils/ in the browser.
 is a guide for creating views in futon.  More about making our specific views is
 included in `/couch_views.js`.
 
-TODO: find out and describe how to create views from the command line.
+Or, create these specific views from the command line:
+
+```
+curl -X PUT http://localhost:5984/us_addresses/_design/us_addresses -d \
+'{
+   "_id": "_design/us_addresses",
+   "language": "javascript",
+   "views": { "by-zip-code": { "map": "function(doc) { if (doc.zip) { emit(doc.zip, [doc.county, doc.state]); } }" } }
+}'
+
+curl -X PUT http://localhost:5984/selected_counties/_design/selected_counties -d \
+'{
+   "_id": "_design/selected_counties",
+   "language": "javascript",
+   "views": { "county-matchup": { "map": "function(doc) { if (doc.state && doc.county && doc.region) { emit([doc.state, doc.county], doc.region); } }" } }
+}'
+
+
+```
