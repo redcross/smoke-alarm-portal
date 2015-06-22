@@ -113,9 +113,9 @@
 */
 
 function(doc) {
-  if (doc.zip) {
-    emit(doc.zip, [doc.county, doc.state]);
-  }
+    if (doc.zip) {
+        emit(doc.zip, [doc.county, doc.state]);
+    }
 }
 
 /* county-matchup
@@ -137,8 +137,8 @@ function(doc) {
  * curl -H 'Content-Type: application/json' -X GET http://localhost:5984/selected_counties/_design/selected_counties/_view/county-matchup?key=%22Ada%22
 */
 function(doc) {
-  if (doc.state && doc.county && doc.region) {
-      emit([doc.state, doc.county], doc.region);
-  }
+    if (doc.state && doc.county && doc.region) {
+        emit([doc.state, doc.county], doc.region);
+    }
 }
 
