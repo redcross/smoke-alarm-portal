@@ -54,7 +54,12 @@ router.post('/', function(req, res, next) {
 
     addressDb.view('us_addresses','by-zip-code', {key:Number(zipToSelect)}, function(error, results) {
         if (error) {
-            console.log("Error =" + error);
+            if (String(error).toLowerCase().indexOf("error happened in your connection") != -1) {
+                console.log("ERROR: " + error)
+                console.log("       (This probably means you forgot to start CouchDB.)\n")
+            } else {
+                console.log("DEBUG: unrecognized error: " + error);
+            }
         }
         console.log("Doc result from zip " + zipToSelect + " search: " + JSON.stringify(results));
         results.rows.forEach(function(doc) {
