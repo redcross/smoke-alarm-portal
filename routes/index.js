@@ -73,31 +73,34 @@ router.post('/', function(req, res, next) {
         // Nebraska have a Greeley County.  Try submitting one
         // request with zip 67879 (Greeley County, Kansas) and
         // another with zip 68665 (Greeley County, Nebraska).
-        countyDb.view(
-            'selected_counties','county-matchup',
-            {key: [stateToSelect,countyToSelect]}, function(error, results) {
-                results.rows.forEach(function(doc) {
-                    console.log("DEBUG: Retrieved this state+county from the view:\n       "
-                                + JSON.stringify(doc) + "\n");
-                    console.log("DEBUG: You could use this command to verify it:\n       "
-                                + "'curl -X GET http://127.0.0.1:5984/selected_counties/"
-                                + doc._id + "'\n");
-                    if (doc.key[0] == stateToSelect && doc.key[1] == countyToSelect) {
-                        if (state_and_county_matched == true) {
-                            console.log("DEBUG: another match found:\n       "
-                                        + JSON.stringify(doc) + "\n");
-                        }
-                        state_and_county_matched = true;
-                        console.log("DEBUG: The matching document is:\n       " 
+        console.log("DEBUG: Before CountyDB view");
+        countyDb.view('selected_counties','county-matchup', {key: [stateToSelect,countyToSelect]}, function(error, results) {
+            if (error) console.log("Error matching region: " + error);
+            console.log("DEBUG: Search with state " + stateToSelect + " and region " + countyToSelect + " returned " + results.rows.count)
+            results.rows.forEach(function(doc) {
+                console.log("DEBUG: Retrieved this state+county from the view:\n       "
+                            + JSON.stringify(doc) + "\n");
+                console.log("DEBUG: You could use this command to verify it:\n       "
+                            + "'curl -X GET http://127.0.0.1:5984/selected_counties/"
+                            + doc._id + "'\n");
+                if (doc.key[0] == stateToSelect && doc.key[1] == countyToSelect) {
+                    if (state_and_county_matched == true) {
+                        console.log("DEBUG: another match found:\n       "
                                     + JSON.stringify(doc) + "\n");
                     }
-                });
-                if (state_and_county_matched === true) {
-                    res.redirect('/thankyou');
-                } else {
-                    res.redirect('/sorry');
+                    state_and_county_matched = true;
+                    console.log("DEBUG: The matching document is:\n       "
+                                + JSON.stringify(doc) + "\n");
                 }
             });
+            if (state_and_county_matched === true) {
+                res.redirect('/thankyou');
+            } else {
+                res.redirect('/sorry');
+            }
+        });
+        console.log("DEBUG: After CountyDB view");
+
     });
 });
 
