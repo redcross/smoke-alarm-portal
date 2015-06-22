@@ -10,7 +10,7 @@ router.get('/', function(req, res, next) {
 
 /* GET Thank You page. */
 router.get('/thankyou', function(req, res, next) {
-  res.render('thankyou', { title: 'Red Cross: Thank You' });
+  res.render('thankyou', { title: 'Red Cross: Thank You', region: res.locals.matchedRegion });
 });
 
 /* GET Sorry page. */
@@ -64,7 +64,7 @@ router.post('/', function(req, res, next) {
 
         console.log("county " + countyToSelect + " in state " + stateToSelect + " found");
         var state_and_county_matched = false;
-
+        var matchedRegion = null;
         // We have to match both county and state.  Counties
         // are not only not unique across states, they are not
         // even unique within Red Cross regions in the North
@@ -91,10 +91,11 @@ router.post('/', function(req, res, next) {
                     state_and_county_matched = true;
                     console.log("DEBUG: The matching document is:\n       "
                                 + JSON.stringify(doc) + "\n");
+                    matchedRegion = doc.value;
                 }
             });
             if (state_and_county_matched === true) {
-                res.redirect('/thankyou');
+                res.render('thankyou.jade', {region: matchedRegion});
             } else {
                 res.redirect('/sorry');
             }
