@@ -4,18 +4,18 @@ var nano = require('nano')('http://localhost:5984');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Red Cross' });
+    res.render('index', { title: 'Red Cross' });
 });
 
 
 /* GET Thank You page. */
 router.get('/thankyou', function(req, res, next) {
-  res.render('thankyou', { title: 'Red Cross: Thank You', region: res.locals.matchedRegion });
+    res.render('thankyou', { title: 'Red Cross: Thank You', region: res.locals.matchedRegion });
 });
 
 /* GET Sorry page. */
 router.get('/sorry', function(req, res, next) {
-  res.render('sorry', { title: 'Red Cross: Sorry' });
+    res.render('sorry', { title: 'Red Cross: Sorry' });
 });
 
 /* POST to the server */
@@ -54,7 +54,12 @@ router.post('/', function(req, res, next) {
 
     addressDb.view('us_addresses','by-zip-code', {key:Number(zipToSelect)}, function(error, results) {
         if (error) {
-            console.log("Error =" + error);
+            if (String(error).toLowerCase().indexOf("error happened in your connection") != -1) {
+                console.log("ERROR: " + error)
+                console.log("       (This probably means you forgot to start CouchDB.)\n")
+            } else {
+                console.log("DEBUG: unrecognized error: " + error);
+            }
         }
         console.log("Doc result from zip " + zipToSelect + " search: " + JSON.stringify(results));
         results.rows.forEach(function(doc) {
