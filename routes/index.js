@@ -4,18 +4,18 @@ var nano = require('nano')('http://localhost:5984');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Red Cross' });
+    res.render('index', { title: 'Red Cross' });
 });
 
 
 /* GET Thank You page. */
 router.get('/thankyou', function(req, res, next) {
-  res.render('thankyou', { title: 'Red Cross: Thank You', region: res.locals.matchedRegion });
+    res.render('thankyou', { title: 'Red Cross: Thank You', region: res.locals.matchedRegion });
 });
 
 /* GET Sorry page. */
 router.get('/sorry', function(req, res, next) {
-  res.render('sorry', { title: 'Red Cross: Sorry' });
+    res.render('sorry', { title: 'Red Cross: Sorry' });
 });
 
 /* POST to the server */
