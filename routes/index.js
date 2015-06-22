@@ -15,7 +15,7 @@ router.get('/thankyou', function(req, res, next) {
 
 /* GET Sorry page. */
 router.get('/sorry', function(req, res, next) {
-    res.render('sorry', { title: 'Red Cross: Sorry' });
+    res.render('sorry', { title: 'Red Cross: Sorry', county: res.locals.matchedCounty, state:res.locals.matchedState });
 });
 
 /* POST to the server */
@@ -70,6 +70,8 @@ router.post('/', function(req, res, next) {
         console.log("county " + countyToSelect + " in state " + stateToSelect + " found");
         var state_and_county_matched = false;
         var matchedRegion = null;
+        var matchedCounty = countyToSelect;
+        var matchedState = stateToSelect;
         // We have to match both county and state.  Counties
         // are not only not unique across states, they are not
         // even unique within Red Cross regions in the North
@@ -81,7 +83,7 @@ router.post('/', function(req, res, next) {
         console.log("DEBUG: Before CountyDB view");
         countyDb.view('selected_counties','county-matchup', {key: [stateToSelect,countyToSelect]}, function(error, results) {
             if (error) console.log("Error matching region: " + error);
-            console.log("DEBUG: Search with state " + stateToSelect + " and region " + countyToSelect + " returned " + results.rows.count)
+            console.log("DEBUG: Search with state " + stateToSelect + " and county " + countyToSelect + " returned " + results.rows.count)
             results.rows.forEach(function(doc) {
                 console.log("DEBUG: Retrieved this state+county from the view:\n       "
                             + JSON.stringify(doc) + "\n");
@@ -102,7 +104,7 @@ router.post('/', function(req, res, next) {
             if (state_and_county_matched === true) {
                 res.render('thankyou.jade', {region: matchedRegion});
             } else {
-                res.redirect('/sorry');
+                res.render('sorry.jade', {county: matchedCounty, state: matchedState});
             }
         });
         console.log("DEBUG: After CountyDB view");
