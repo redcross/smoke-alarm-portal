@@ -81,7 +81,6 @@ router.post('/', function(req, res, next) {
         console.log("DEBUG: Before CountyDB view");
         countyDb.view('selected_counties','county-matchup', {key: [stateToSelect,countyToSelect]}, function(error, results) {
             if (error) console.log("Error matching region: " + error);
-            console.log("DEBUG: Search with state " + stateToSelect + " and region " + countyToSelect + " returned " + results.rows.count)
             results.rows.forEach(function(doc) {
                 console.log("DEBUG: Retrieved this state+county from the view:\n       "
                             + JSON.stringify(doc) + "\n");
