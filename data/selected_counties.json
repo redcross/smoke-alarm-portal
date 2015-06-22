@@ -103,13 +103,10 @@
 {"region":"Idaho and Montana","state":"Idaho","county":"Adams"},
 {"region":"Idaho and Montana","state":"Idaho","county":"Bannock"},
 {"region":"Idaho and Montana","state":"Idaho","county":"Bear Lake"},
-// {"region":"Idaho and Montana","state":"Idaho","county":"Benewah"}, // Northwest Region
 {"region":"Idaho and Montana","state":"Idaho","county":"Bingham"},
 {"region":"Idaho and Montana","state":"Idaho","county":"Blaine"},
 {"region":"Idaho and Montana","state":"Idaho","county":"Boise"},
-// {"region":"Idaho and Montana","state":"Idaho","county":"Bonner"}, // Northwest Region
 {"region":"Idaho and Montana","state":"Idaho","county":"Bonneville"},
-// {"region":"Idaho and Montana","state":"Idaho","county":"Boundary"}, // Northwest Region
 {"region":"Idaho and Montana","state":"Idaho","county":"Butte"},
 {"region":"Idaho and Montana","state":"Idaho","county":"Camas"},
 {"region":"Idaho and Montana","state":"Idaho","county":"Canyon"},
@@ -126,7 +123,6 @@
 {"region":"Idaho and Montana","state":"Idaho","county":"Idaho"},
 {"region":"Idaho and Montana","state":"Idaho","county":"Jefferson"},
 {"region":"Idaho and Montana","state":"Idaho","county":"Jerome"},
-// {"region":"Idaho and Montana","state":"Idaho","county":"Kootenai"}, // Northwest Region
 {"region":"Idaho and Montana","state":"Idaho","county":"Latah"},
 {"region":"Idaho and Montana","state":"Idaho","county":"Lemhi"},
 {"region":"Idaho and Montana","state":"Idaho","county":"Lewis"},
@@ -138,7 +134,6 @@
 {"region":"Idaho and Montana","state":"Idaho","county":"Owyhee"},
 {"region":"Idaho and Montana","state":"Idaho","county":"Payette"},
 {"region":"Idaho and Montana","state":"Idaho","county":"Power"},
-// {"region":"Idaho and Montana","state":"Idaho","county":"Shoshone"}, // Northwest Region
 {"region":"Idaho and Montana","state":"Idaho","county":"Teton"},
 {"region":"Idaho and Montana","state":"Idaho","county":"Twin Falls"},
 {"region":"Idaho and Montana","state":"Idaho","county":"Valley"},
