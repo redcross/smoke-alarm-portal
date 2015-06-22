@@ -80,4 +80,4 @@ much difficulty to most other Unix-like operating systems.
     1. Install the forever module on the chosen server
     2. Run the forever server:
 
-        $  forever -da start -l forever.log -o out.log -e err.log ./bin/www
+        $  forever -da start --watchDirectory . -l forever.log -o out.log -e err.log ./bin/www

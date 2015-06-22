@@ -30,7 +30,7 @@ router.post('/', function(req, res, next) {
     var stateToSelect = null;
     var selectedCounties = null;
     // Get desired county and state
-    console.log("The zip to use is:" + zipToSelect);
+    console.log("The zip to use is to the right of me: " + zipToSelect);
 
     // Save the data
     requestDb.insert(
