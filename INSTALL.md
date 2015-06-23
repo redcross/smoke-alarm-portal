@@ -48,15 +48,11 @@ much difficulty to most other Unix-like operating systems.
         # when we change this.
         $ sudo couchdb
 
-6. Create the databases.
+6. Create the databases and initialize the data.
 
-   See the instructions in [DATA.md](DATA.md).
+   Run `set-up-databases.sh` (you may want to read the script first).
 
-7. Create our application-specific CouchDB view functions.
-
-   See the instructions in [couch_views.js](couch_views.js).
-
-8. Get the required node modules by running npm.
+7. Get the required node modules by running npm.
 
         $ cd smoke-alarm-portal
         $ npm install
@@ -71,11 +67,11 @@ much difficulty to most other Unix-like operating systems.
 
         $ sudo apt-get install nodejs-legacy
 
-9. Start smoke-alarm-portal app
+8. Start smoke-alarm-portal app
 
         $ npm start
 
-10. Step for staging or production server deployment
+9. Step for staging or production server deployment
 
     1. Install the forever module on the chosen server
     2. Run the forever server:
