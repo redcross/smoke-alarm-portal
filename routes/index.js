@@ -26,9 +26,8 @@ router.post('/', function(req, res, next) {
     var countyDb = nano.use('selected_counties');
     // Determine the county of the Zip code
     var zipToSelect = req.body.zip;
-    var countyToSelect = null;
-    var stateToSelect = null;
-    var selectedCounties = null;
+    var matchedCounty = null;  // matched from user-provided zip code; remains null if no match
+    var matchedState = null;   // matched from user-provided zip code; remains null if no match
     // Get desired county and state
     console.log("The zip to use is to the right of me: " + zipToSelect);
 
@@ -63,15 +62,16 @@ router.post('/', function(req, res, next) {
         }
         console.log("Doc result from zip " + zipToSelect + " search: " + JSON.stringify(results));
         results.rows.forEach(function(doc) {
-            countyToSelect = doc.value[0].replace(" County", "");
-            stateToSelect = doc.value[1];
+            if (matchedCounty) {
+                console.log("DEBUG: another state+county match found: '"
+                           + doc.value[1] + "'+'" + doc.value[0] + "'");
+            }
+            matchedCounty = doc.value[0].replace(" County", "");
+            matchedState = doc.value[1];
         });
 
-        console.log("county " + countyToSelect + " in state " + stateToSelect + " found");
-        var state_and_county_matched = false;
+        console.log("DEBUG: county '" + matchedCounty + "' in state '" + matchedState + "' found");
         var matchedRegion = null;
-        var matchedCounty = countyToSelect;
-        var matchedState = stateToSelect;
         // We have to match both county and state.  Counties
         // are not only not unique across states, they are not
         // even unique within Red Cross regions in the North
@@ -80,8 +80,7 @@ router.post('/', function(req, res, next) {
         // Nebraska have a Greeley County.  Try submitting one
         // request with zip 67879 (Greeley County, Kansas) and
         // another with zip 68665 (Greeley County, Nebraska).
-        console.log("DEBUG: Before CountyDB view");
-        countyDb.view('selected_counties','county-matchup', {key: [stateToSelect,countyToSelect]}, function(error, results) {
+        countyDb.view('selected_counties','county-matchup', {key: [matchedState,matchedCounty]}, function(error, results) {
             if (error) console.log("Error matching region: " + error);
             results.rows.forEach(function(doc) {
                 console.log("DEBUG: Retrieved this state+county from the view:\n       "
@@ -89,25 +88,22 @@ router.post('/', function(req, res, next) {
                 console.log("DEBUG: You could use this command to verify it:\n       "
                             + "'curl -X GET http://127.0.0.1:5984/selected_counties/"
                             + doc._id + "'\n");
-                if (doc.key[0] == stateToSelect && doc.key[1] == countyToSelect) {
-                    if (state_and_county_matched == true) {
-                        console.log("DEBUG: another match found:\n       "
+                if (doc.key[0] == matchedState && doc.key[1] == matchedCounty) {
+                    if (matchedRegion) {
+                        console.log("DEBUG: another region match found:\n       "
                                     + JSON.stringify(doc) + "\n");
                     }
-                    state_and_county_matched = true;
+                    matchedRegion = doc.value;
                     console.log("DEBUG: The matching document is:\n       "
                                 + JSON.stringify(doc) + "\n");
-                    matchedRegion = doc.value;
                 }
             });
-            if (state_and_county_matched === true) {
+            if (matchedRegion) {
                 res.render('thankyou.jade', {region: matchedRegion});
             } else {
-                res.render('sorry.jade', {county: matchedCounty, state: matchedState});
+                res.render('sorry.jade', {county: matchedCounty, state: matchedState, zip: zipToSelect});
             }
         });
-        console.log("DEBUG: After CountyDB view");
-
     });
 });
 
