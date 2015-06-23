@@ -123,17 +123,34 @@ body {
 
 #main {
     padding: 20px 0px 0px 0px;
+    margin-left: 0px;
 }
 
 #left {
     padding-top: 10px;
     padding-bottom: 5px;
-    background: rgba(0, 0, 0, 0.75);
+    margin-bottom: 10px;
+    background: rgba(0, 0, 0, 0.5);
     border-radius: 4px;
+    border: 1px solid #999;
+}
+
+#right label {
+    padding-top: 0px;
+}
+
+#right label .label-background {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #999;
+    border-radius: 5px;
+    padding: 2px 5px;
+    display: inline-block;
+    max-width: 200px;
 }
 
 #right button {
     font-size: 20px;
+    border: 3px solid #EEE;
     float: right;
 }
 

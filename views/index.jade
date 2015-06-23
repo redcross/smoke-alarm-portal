@@ -6,123 +6,131 @@ block content
       .col-sm-12
         h1 American Red Cross of Chicago & Northern Illinois
     #main.row
-      #left.col-sm-3
+      #left.col-sm-4
          p
            | Thank you for your interest in having one or more 10 year lithium-ion battery powered smoke alarms installed in your home.
          p
            | Please complete the form on this page and click “submit”. An American Red Cross representative will contact you shortly to confirm your registration into our wait list. Additional information on installation will be given at that time.
-      #right.col-sm-9
+      #right.col-sm-8
         .container-fluid
           form(action="/", method="POST", class="form-horizontal")
             fieldset
               .row
-                .component(data-content='', data-title='Form Name', data-trigger='manual', data-html='true')
-                  // Form Name
-                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true', data-original-title='', title='')
-                    // Text input
-                    .form-group
-                      label.col-sm-3.control-label(for='name') Name
-                      .col-sm-4
-                        input#name.form-control.input-md(name='name', type='text', placeholder='', required)
-                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
-                    // Text input
-                    .form-group
-                      label.col-sm-3.control-label(for='address') Address
-                      .col-sm-5
-                        input#address.form-control.input-md(name='address', type='text', placeholder='')
-                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
-                    // Text input
-                    .form-group
-                      label.col-sm-3.control-label(for='address_2') Address 2
-                      .col-sm-5
-                        input#address_2.form-control.input-md(name='address_2', type='text', placeholder='')
-                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
-                    // Text input
-                    .form-group
-                      label.col-sm-3.control-label(for='city') City
-                      .col-sm-3
-                        input#city.form-control.input-md(name='city', type='text', placeholder='')
-                  .component(data-content='', data-title='Select Basic', data-trigger='manual', data-html='true')
-                    // Select Basic
-                    .form-group
-                      label.col-sm-3.control-label(for='state') State
-                      .col-sm-3
-                        select#state.form-control(name='state')
-                          option(value='')
-                          option(value='Alabama') Alabama
-                          option(value='Alaska') Alaska
-                          option(value='Arizona') Arizona
-                          option(value='Arkansas') Arkansas
-                          option(value='California') California
-                          option(value='Colorado') Colorado
-                          option(value='Connecticut') Connecticut
-                          option(value='Delaware') Delaware
-                          option(value='District of Columbia') District of Columbia
-                          option(value='Florida') Florida
-                          option(value='Georgia') Georgia
-                          option(value='Hawaii') Hawaii
-                          option(value='Idaho') Idaho
-                          option(value='Illinois') Illinois
-                          option(value='Indiana') Indiana
-                          option(value='Iowa') Iowa
-                          option(value='Kansas') Kansas
-                          option(value='Kentucky') Kentucky
-                          option(value='Louisiana') Louisiana
-                          option(value='Maine') Maine
-                          option(value='Maryland') Maryland
-                          option(value='Massachusetts') Massachusetts
-                          option(value='Michigan') Michigan
-                          option(value='Minnesota') Minnesota
-                          option(value='Mississippi') Mississippi
-                          option(value='Missouri') Missouri
-                          option(value='Montana') Montana
-                          option(value='Nebraska') Nebraska
-                          option(value='Nevada') Nevada
-                          option(value='New Hampshire') New Hampshire
-                          option(value='New Jersey') New Jersey
-                          option(value='New Mexico') New Mexico
-                          option(value='New York') New York
-                          option(value='North Carolina') North Carolina
-                          option(value='North Dakota') North Dakota
-                          option(value='Ohio') Ohio
-                          option(value='Oklahoma') Oklahoma
-                          option(value='Oregon') Oregon
-                          option(value='Pennsylvania') Pennsylvania
-                          option(value='Rhode Island') Rhode Island
-                          option(value='South Carolina') South Carolina
-                          option(value='South Dakota') South Dakota
-                          option(value='Tennessee') Tennessee
-                          option(value='Texas') Texas
-                          option(value='Utah') Utah
-                          option(value='Vermont') Vermont
-                          option(value='Virginia') Virginia
-                          option(value='Washington') Washington
-                          option(value='West Virginia') West Virginia
-                          option(value='Wisconsin') Wisconsin
-                          option(value='Wyoming') Wyoming
-                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
-                    // Text input
-                    .form-group
-                      label.col-sm-3.control-label(for='zip') Zip Code
-                      .col-sm-2
-                        input#zip.form-control.input-md(name='zip', type='text', placeholder='', class='required zipcode valid')
-                    .form-group
-                      label.col-sm-3.control-label(for='phone') Phone #
-                      .col-sm-2
-                        input#phone.form-control.input-md(name='phone', type='text', placeholder='', class='contact-group phoneUS valid')
-                    .form-group
-                      label.col-sm-3.control-label(for='email') Email
-                      .col-sm-5
-                        input#email.form-control.input-md(name='email', type='text', placeholder='', class='contact-group email valid')
-                    // Change to -xs- classes here to keep checkbox level with label even on extra-small screens.
-                    .form-group
-                      label.col-xs-3.control-label(for='checkboxes-0') Permission to send text messages
-                      .col-xs-6
-                        input#checkboxes-0.form-control(name='permission_to_text', type='checkbox', value='yes')
-                    .form-group
-                      label.col-sm-3.control-label(for='singlebutton')
-                      .col-sm-6
-                        button#singlebutton.btn.btn-primary(name='singlebutton') Submit
+                // Form Name
+                .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true', data-original-title='', title='')
+                  // Text input
+                  .form-group
+                    label.col-sm-3.control-label(for='name')
+                      .label-background Name
+                    .col-sm-4
+                      input#name.form-control.input-md(name='name', type='text', placeholder='', required)
+                .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
+                  // Text input
+                  .form-group
+                    label.col-sm-3.control-label(for='address')
+                      .label-background Address
+                    .col-sm-5
+                      input#address.form-control.input-md(name='address', type='text', placeholder='')
+                .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
+                  // Text input
+                  .form-group
+                    label.col-sm-3.control-label(for='address_2')
+                      .label-background Address 2
+                    .col-sm-5
+                      input#address_2.form-control.input-md(name='address_2', type='text', placeholder='')
+                .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
+                  // Text input
+                  .form-group
+                    label.col-sm-3.control-label(for='city')
+                      .label-background City
+                    .col-sm-3
+                      input#city.form-control.input-md(name='city', type='text', placeholder='')
+                .component(data-content='', data-title='Select Basic', data-trigger='manual', data-html='true')
+                  // Select Basic
+                  .form-group
+                    label.col-sm-3.control-label(for='state')
+                      .label-background State
+                    .col-sm-3
+                      select#state.form-control(name='state')
+                        option(value='')
+                        option(value='Alabama') Alabama
+                        option(value='Alaska') Alaska
+                        option(value='Arizona') Arizona
+                        option(value='Arkansas') Arkansas
+                        option(value='California') California
+                        option(value='Colorado') Colorado
+                        option(value='Connecticut') Connecticut
+                        option(value='Delaware') Delaware
+                        option(value='District of Columbia') District of Columbia
+                        option(value='Florida') Florida
+                        option(value='Georgia') Georgia
+                        option(value='Hawaii') Hawaii
+                        option(value='Idaho') Idaho
+                        option(value='Illinois') Illinois
+                        option(value='Indiana') Indiana
+                        option(value='Iowa') Iowa
+                        option(value='Kansas') Kansas
+                        option(value='Kentucky') Kentucky
+                        option(value='Louisiana') Louisiana
+                        option(value='Maine') Maine
+                        option(value='Maryland') Maryland
+                        option(value='Massachusetts') Massachusetts
+                        option(value='Michigan') Michigan
+                        option(value='Minnesota') Minnesota
+                        option(value='Mississippi') Mississippi
+                        option(value='Missouri') Missouri
+                        option(value='Montana') Montana
+                        option(value='Nebraska') Nebraska
+                        option(value='Nevada') Nevada
+                        option(value='New Hampshire') New Hampshire
+                        option(value='New Jersey') New Jersey
+                        option(value='New Mexico') New Mexico
+                        option(value='New York') New York
+                        option(value='North Carolina') North Carolina
+                        option(value='North Dakota') North Dakota
+                        option(value='Ohio') Ohio
+                        option(value='Oklahoma') Oklahoma
+                        option(value='Oregon') Oregon
+                        option(value='Pennsylvania') Pennsylvania
+                        option(value='Rhode Island') Rhode Island
+                        option(value='South Carolina') South Carolina
+                        option(value='South Dakota') South Dakota
+                        option(value='Tennessee') Tennessee
+                        option(value='Texas') Texas
+                        option(value='Utah') Utah
+                        option(value='Vermont') Vermont
+                        option(value='Virginia') Virginia
+                        option(value='Washington') Washington
+                        option(value='West Virginia') West Virginia
+                        option(value='Wisconsin') Wisconsin
+                        option(value='Wyoming') Wyoming
+                .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
+                  // Text input
+                  .form-group
+                    label.col-sm-3.control-label(for='zip')
+                      .label-background Zip Code
+                    .col-sm-2
+                      input#zip.form-control.input-md(name='zip', type='text', placeholder='', class='required zipcode valid')
+                  .form-group
+                    label.col-sm-3.control-label(for='phone')
+                      .label-background Phone #
+                    .col-sm-2
+                      input#phone.form-control.input-md(name='phone', type='text', placeholder='', class='contact-group phoneUS valid')
+                  .form-group
+                    label.col-sm-3.control-label(for='email')
+                      .label-background Email
+                    .col-sm-5
+                      input#email.form-control.input-md(name='email', type='text', placeholder='', class='contact-group email valid')
+                  // Change to -xs- classes here to keep checkbox level with label even on extra-small screens.
+                  .form-group
+                    label.col-xs-3.control-label(for='checkboxes-0')
+                      .label-background Permission to send text messages
+                    .col-xs-6
+                      input#checkboxes-0.form-control(name='permission_to_text', type='checkbox', value='yes')
+                  .form-group
+                    label.col-sm-3.control-label(for='singlebutton')
+                    .col-sm-6
+                      button#singlebutton.btn.btn-primary(name='singlebutton') Submit
 
     script(type="text/javascript").
       $(".form-horizontal").validate({
