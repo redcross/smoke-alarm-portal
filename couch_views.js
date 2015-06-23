@@ -109,7 +109,7 @@
  * Returns: a JSON array with zipcodes as keys and [county, state]
  * pairs as values.
  * Example call:
- * curl -H 'Content-Type: application/json' -X GET http://localhost:5984/us_addresses/_design/us_addresses/_view/by-zip-code?key=60101
+ * curl -H 'Content-Type: application/json' -X GET http://localhost:5984/us_addresses/_design/us_addresses/_view/by-zip-code?key=%2260101%22
 */
 
 function(doc) {
@@ -134,8 +134,9 @@ function(doc) {
  * Returns: a JSON array with county name as key and Red Cross region
  * as value.
  * Example call:
- * curl -H 'Content-Type: application/json' -X GET http://localhost:5984/selected_counties/_design/selected_counties/_view/county-matchup?key=["Idaho", "Ada"]
+ * curl -H 'Content-Type: application/json' -X GET http://localhost:5984/selected_counties/_design/selected_counties/_view/county-matchup?key=%5B%22Idaho%22,%22Ada%22%5D
 */
+
 function(doc) {
     if (doc.state && doc.county && doc.region) {
         emit([doc.state, doc.county], doc.region);
