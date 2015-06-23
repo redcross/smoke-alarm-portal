@@ -52,16 +52,6 @@ router.post('/', function(req, res, next) {
             }
         });
 
-    // determine whether the zipcode starts with "0".  If it does, use a string
-    // as the key, else use an integer.
-    var zipcode_array = zipToSelect.split("");
-    if (zipcode_array[0] == "0"){
-        zipToSelect = String(zipToSelect);
-    }
-    else{
-        zipToSelect = Number(zipToSelect);
-    }
-
     addressDb.view('us_addresses','by-zip-code', {key:zipToSelect}, function(error, results) {
         if (error) {
             if (String(error).toLowerCase().indexOf("error happened in your connection") != -1) {

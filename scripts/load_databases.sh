@@ -24,6 +24,21 @@ curl -X PUT http://127.0.0.1:5984/selected_counties
 curl -X PUT http://127.0.0.1:5984/us_addresses
 
 
+# Test if the data was in string-zip-codes form.  If it wasn't, stop and let the user
+# know they need to commit up fixed data first.
+cd data
+if grep -q '{"zip":[0-9][0-9][0-9][0-9][0-9],' us_addresses.json; then
+    echo ""
+    echo "ERROR: Your zip code data is not fully stringified."
+    echo ""
+    echo "       You should stringify it with 'data/stringify-zip-codes' and then commit up"
+    echo "       the newly-stringified copies before proceeding.  Once you have done that"
+    echo "       you can rerun this script, and you should not get this error again."
+    echo ""
+    exit 1
+fi 
+cd ..
+
 # Load data.  These commands may spew a lot of JSON to your screen;
 # pass the -s / --silent flag to curl if you don't want the spew.
 curl -H 'Content-Type: application/json' -X POST http://localhost:5984/us_addresses/_bulk_docs -d @data/us_addresses_0.json
