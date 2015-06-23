@@ -29,7 +29,7 @@ router.post('/', function(req, res, next) {
     var matchedCounty = null;  // matched from user-provided zip code; remains null if no match
     var matchedState = null;   // matched from user-provided zip code; remains null if no match
     // Get desired county and state
-    console.log("The zip to use is to the right of me: " + zipToSelect);
+    console.log("DEBUG: the user-provided zip code is: '" + zipToSelect + "'");
 
     // Save the data
     requestDb.insert(
@@ -60,7 +60,7 @@ router.post('/', function(req, res, next) {
                 console.log("DEBUG: unrecognized error: " + error);
             }
         }
-        console.log("Doc result from zip " + zipToSelect + " search: " + JSON.stringify(results));
+        console.log("DEBUG: doc result from search on zip '" + zipToSelect + "': " + JSON.stringify(results));
         results.rows.forEach(function(doc) {
             if (matchedCounty) {
                 console.log("DEBUG: another state+county match found: '"
@@ -81,7 +81,7 @@ router.post('/', function(req, res, next) {
         // request with zip 67879 (Greeley County, Kansas) and
         // another with zip 68665 (Greeley County, Nebraska).
         countyDb.view('selected_counties','county-matchup', {key: [matchedState,matchedCounty]}, function(error, results) {
-            if (error) console.log("Error matching region: " + error);
+            if (error) console.log("ERROR: Error matching region: " + error);
             results.rows.forEach(function(doc) {
                 console.log("DEBUG: Retrieved this state+county from the view:\n       "
                             + JSON.stringify(doc) + "\n");
