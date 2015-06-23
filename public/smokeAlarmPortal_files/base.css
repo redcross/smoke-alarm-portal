@@ -129,11 +129,54 @@ body {
     font-size: 15px;
     padding-top: 10px;
     padding-bottom: 5px;
-    background: rgba(0, 0, 0, 0.75);
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    border: 1px solid #AAA;
+}
+
+#right label {
+    background: rgba(0, 0, 0, 0.5);
+    width: auto;
+    float: right;
+    padding: 2px 5px;
+    border-radius: 5px;
+    border: 1px solid #AAA;
+}
+
+#right .w1 {
+    width: 25%;
+}
+
+#right .w2 {
+    width: 50%;
+}
+
+#right .w3 {
+    width: 75%;
+}
+
+#right .w4 {
+    width: 90%;
+}
+
+#right .warning {
+    display: table-cell;
+    vertical-align: top;
+    color: red;
+}
+
+#radio-table td {
+    width: 33%;
+    text-align: center;
+}
+
+#right .contact-option {
+    display: none;
 }
 
 #right button {
     float: right;
+    border: 3px solid white;
 }
 
 /* These styles prevent bizarre checkbox appearances when zoom != 1 on OSX Chrome (and possibly other browsers) */

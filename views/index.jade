@@ -21,33 +21,40 @@ block content
                   .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true', data-original-title='', title='')
                     // Text input
                     .form-group
-                      label.col-sm-3.control-label(for='name') Name
-                      .col-sm-4
-                        input#name.form-control.input-md(name='name', type='text', placeholder='', required)
-                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
-                    // Text input
-                    .form-group
-                      label.col-sm-3.control-label(for='address') Address
-                      .col-sm-5
-                        input#address.form-control.input-md(name='address', type='text', placeholder='')
-                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
-                    // Text input
-                    .form-group
-                      label.col-sm-3.control-label(for='address_2') Address 2
-                      .col-sm-5
-                        input#address_2.form-control.input-md(name='address_2', type='text', placeholder='')
-                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
-                    // Text input
-                    .form-group
-                      label.col-sm-3.control-label(for='city') City
                       .col-sm-3
-                        input#city.form-control.input-md(name='city', type='text', placeholder='')
+                        label.control-label(for='name') Name
+                      .col-sm-6
+                        .input-group
+                          input#name.form-control.w3.input-md(name='name', type='text', placeholder='', required)
+                          span.warning *
+                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
+                    // Text input
+                    .form-group
+                      .col-sm-3
+                        label.control-label(for='address') Address
+                      .col-sm-6
+                        input#address.form-control.w4.input-md(name='address', type='text', placeholder='')
+                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
+                    // Text input
+                    .form-group
+                      .col-sm-3
+                        label.control-label(for='address_2') Address 2
+                      .col-sm-6
+                        input#address_2.form-control.w4.input-md(name='address_2', type='text', placeholder='')
+                  .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
+                    // Text input
+                    .form-group
+                      .col-sm-3
+                        label.control-label(for='city') City
+                      .col-sm-6
+                        input#city.form-control.w2.input-md(name='city', type='text', placeholder='')
                   .component(data-content='', data-title='Select Basic', data-trigger='manual', data-html='true')
                     // Select Basic
                     .form-group
-                      label.col-sm-3.control-label(for='state') State
                       .col-sm-3
-                        select#state.form-control(name='state')
+                        label.control-label(for='state') State
+                      .col-sm-6
+                        select#state.form-control.w2(name='state')
                           option(value='')
                           option(value='Alabama') Alabama
                           option(value='Alaska') Alaska
@@ -103,24 +110,46 @@ block content
                   .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
                     // Text input
                     .form-group
-                      label.col-sm-3.control-label(for='zip') Zip Code
-                      .col-sm-2
-                        input#zip.form-control.input-md(name='zip', type='text', placeholder='', class='required zipcode valid')
+                      .col-sm-3
+                        label.control-label(for='zip') Zip Code
+                      .col-sm-6
+                        .input-group
+                          input#zip.form-control.w1.input-md(name='zip', type='text', placeholder='', class='required zipcode valid')
+                          span.warning *
                     .form-group
-                      label.col-sm-3.control-label(for='phone') Phone #
-                      .col-sm-2
-                        input#phone.form-control.input-md(name='phone', type='text', placeholder='', class='contact-group phoneUS valid')
+                      .col-sm-3
+                        label.control-label(for='contact') How would you like us to get in touch with you?
+                      .col-sm-6
+                        table#radio-table
+                          tr
+                            td
+                              input.form-control(name='contact-preference', type='radio', value='phone')
+                            td
+                              input.form-control(name='contact-preference', type='radio', value='text')
+                            td
+                              input.form-control(name='contact-preference', type='radio', value='email')
+                          tr
+                            td
+                              |phone call
+                            td
+                              |text message
+                            td
+                              |email
+                    #contact-phone.form-group.contact-option
+                      .col-sm-3
+                        label.control-label(for='phone') Phone #
+                      .col-sm-6
+                        input#phone.form-control.w2.input-md(name='phone', type='text', placeholder='', class='contact-group phoneUS valid')
+                        span.warning *
+                    #contact-email.form-group.contact-option
+                      .col-sm-3
+                        label.control-label(for='email') Email address
+                      .col-sm-6
+                        input#email.form-control.w2.input-md(name='email', type='text', placeholder='', class='contact-group email valid')
+                        span.warning *
                     .form-group
-                      label.col-sm-3.control-label(for='email') Email
-                      .col-sm-5
-                        input#email.form-control.input-md(name='email', type='text', placeholder='', class='contact-group email valid')
-                    // Change to -xs- classes here to keep checkbox level with label even on extra-small screens.
-                    .form-group
-                      label.col-xs-3.control-label(for='checkboxes-0') Permission to send text messages
-                      .col-xs-6
-                        input#checkboxes-0.form-control(name='permission_to_text', type='checkbox', value='yes')
-                    .form-group
-                      label.col-sm-3.control-label(for='singlebutton')
+                      .col-sm-3
+                        label.control-label(for='singlebutton')
                       .col-sm-6
                         button#singlebutton.btn.btn-primary(name='singlebutton') Submit
 
