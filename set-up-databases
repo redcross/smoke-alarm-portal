@@ -34,10 +34,11 @@ echo "Dropping static databases..."
 
 ### Drop databases.
 #
-# If we wanted to re-initialize the requests database too, we'd delete
-# 'smoke_alarm_requests' here.
 curl -X DELETE http://127.0.0.1:5984/selected_counties
 curl -X DELETE http://127.0.0.1:5984/us_addresses
+# If you want to re-initialize the smoke_alarm_requests database too,
+# uncomment this line.  Please don't commit that change, though.
+# curl -X DELETE http://127.0.0.1:5984/smoke_alarm_requests
 
 echo "Done."
 echo ""
