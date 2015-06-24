@@ -45,6 +45,7 @@ router.post('/', function(req, res, next) {
     var city = req.body.city.trim().replace(/\s+/g, ' ');
     var state = req.body.state.trim().replace(/\s+/g, ' ');
     var phone = req.body.phone.trim().replace(/\s+/g, ' ');
+    var email = req.body.email.trim().replace(/\s+/g, ' ');
 
     // Treat zip code specially.  For zip codes, we remove all
     // internal spaces, since they can't possibly be useful.
@@ -92,6 +93,7 @@ router.post('/', function(req, res, next) {
             state: state,
             zip: zip_final,
             phone: phone,
+            email: email,
         },
         'Request from ' + req.body.name + ' at ' +  new Date().toLocaleString(),
         function(err, body, header) {
