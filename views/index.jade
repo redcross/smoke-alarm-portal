@@ -22,8 +22,12 @@ block content
                   .form-group
                     label.col-sm-3.control-label(for='name')
                       .label-background Your Name
-                    .col-sm-4
-                      input#name.form-control.input-md(name='name', type='text', placeholder='', required)
+                    .col-sm-6
+                      .input-with-warning
+                        .input-wrapper-2
+                          input#name.form-control.input-md(name='name', type='text', placeholder='', required)
+                        .warning-wrapper
+                          |*
                 .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
                   // Text input
                   .form-group
@@ -101,15 +105,15 @@ block content
                 .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
                   // Text input
                   .form-group
-                    .col-sm-3
-                      label.control-label(for='zip') Zip Code
+                    label.col-sm-3.control-label(for='zip')
+                      .label-background Zip Code
                     .col-sm-6
                       .input-group
                         input#zip.form-control.w1.input-md(name='zip', type='text', placeholder='', class='required zipcode valid')
                         span.warning *
                   .form-group
-                    .col-sm-3
-                      label.control-label(for='contact') How would you like us to get in touch with you?
+                    label.col-sml-3.control-label(for='contact')
+                      .label-background How would you like us to get in touch with you?
                     .col-sm-6
                       table#radio-table
                         tr
@@ -127,20 +131,19 @@ block content
                           td
                             |email
                   #contact-phone.form-group.contact-option
-                    .col-sm-3
-                      label.control-label(for='phone') Phone #
+                    label.col-sm-3.control-label(for='phone')
+                      .label-background Phone #
                     .col-sm-6
                       input#phone.form-control.w2.input-md(name='phone', type='text', placeholder='', class='contact-group phoneUS valid')
                       span.warning *
                   #contact-email.form-group.contact-option
-                    .col-sm-3
-                      label.control-label(for='email') Email address
+                    label.col-sm-3.control-label(for='email')
+                      .label-background Email address
                     .col-sm-6
                       input#email.form-control.w2.input-md(name='email', type='text', placeholder='', class='contact-group email valid')
                       span.warning *
                   .form-group
-                    .col-sm-3
-                      label.control-label(for='singlebutton')
+                    label.col-sm-3.control-label(for='singlebutton')
                     .col-sm-6
                       button#singlebutton.btn.btn-primary(name='singlebutton') Submit
 

@@ -135,20 +135,22 @@ body {
     border: 1px solid #999;
 }
 
-#right .w1 {
-    width: 25%;
+#right .input-with-warning {
+    display: table;
+    width: 100%;
 }
 
-#right .w2 {
-    width: 50%;
-}
+#right .input-wrapper-1 { display: table-cell; width: 25%; }
+#right .input-wrapper-2 { display: table-cell; width: 50%; }
+#right .input-wrapper-3 { display: table-cell; width: 75%; }
+#right .input-wrapper-4 { display: table-cell; width: 90%; }
 
-#right .w3 {
-    width: 75%;
-}
-
-#right .w4 {
-    width: 90%;
+#right .warning-wrapper {
+    display: table-cell;
+    vertical-align: top;
+    padding-left: 5px;
+    color: #E00;
+    font-weight: bold;
 }
 
 #right .warning {
@@ -183,7 +185,6 @@ body {
     font-size: 20px;
     border: 3px solid #EEE;
     float: right;
-    border: 3px solid white;
 }
 
 /* These styles prevent bizarre checkbox appearances when zoom != 1 on OSX Chrome (and possibly other browsers) */
