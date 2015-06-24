@@ -71,7 +71,7 @@ router.post('/', function(req, res, next) {
         else {
             zip_5 = zip_match[1];
             console.log("DEBUG: found the 5-digit portion of the zip code: '" + zip_5 + "'");
-            if (zip_match.length == 3) {
+            if (zip_match.length == 3 && zip_match[2] !== undefined) {
                 zip_4 = zip_match[2];
                 console.log("DEBUG: found a 4-digit portion in the zip code: '" + zip_4 + "'");
                 zip_final = zip_5 + "-" + zip_4;
