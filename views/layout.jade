@@ -17,20 +17,18 @@ html(lang='en')
     meta(name='keywords', content='smoke alarm, smoke detector, red cross ')
     meta(name='robots', content='')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    link(rel='shortcut icon', href='http://www.redcross.org/favicon.ico')
+    link(rel='shortcut icon', href='/favicon.ico')
     // Bootstrap
-    link(rel='stylesheet', type='text/css', href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css')
-    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js')
-    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js')
+    link(rel='stylesheet', type='text/css', href='/third-party/bootstrap.min.css')
+    script(type='text/javascript', src='/third-party/jquery.min.js')
+    script(type='text/javascript', src='/third-party/bootstrap.min.js')
 
     // jQuery validate
-    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.js')
-    script(type='text/javascript', src='https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/additional-methods.js')
-
-    // custom scripts
-    script(type='text/javascript', src='./smokeAlarmPortal_files/smokeAlarmPortal.js')
+    script(type='text/javascript', src='/third-party/jquery.validate.min.js')
+    script(type='text/javascript', src='/third-party/additional-methods.min.js')
 
     // Local stylesheets
+    link(rel='stylesheet', type='text/css', href='./smokeAlarmPortal_files/DCSOps.css')
     link(rel='stylesheet', type='text/css', href='./smokeAlarmPortal_files/base.css')
     // The IE-specific stylesheets referenced below don't exist - NTT
     //if lte IE 7
@@ -40,6 +38,10 @@ html(lang='en')
     //if IE 9
       link(rel='stylesheet', type='text/css', href='/css/ie9.css')
     // neustar pixel
+
+    // custom scripts
+    script(type='text/javascript', src='./smokeAlarmPortal_files/smokeAlarmPortal.js')
+
   body(data-context='', data-controller='chapter', data-action='chapterLanding', data-twttr-rendered='true', data-feedly-mini='yes')
     //
       I don't think the commented-out section below (everything before #hdr) does anything on our pages. Remove? - NTT

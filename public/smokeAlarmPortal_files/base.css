@@ -4,7 +4,8 @@ body {
     background-repeat: repeat-y;
     background-color: #DDD;
     color: #EEE;
-    font: 15px/19.5px Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    line-height: 140%;
     min-height: 100%;
     position: relative;
 }
@@ -77,7 +78,6 @@ body {
     display: inline;
     float: left;
     color: #6d6e70;
-    font-family: , Arial, Helvetica, sans-serif;
     font-weight: normal;
     font-style: normal;
     font-size: 13px;
@@ -123,24 +123,16 @@ body {
 
 #main {
     padding: 20px 0px 0px 0px;
+    margin-left: 0px;
 }
 
 #left {
-    font-size: 15px;
     padding-top: 10px;
     padding-bottom: 5px;
+    margin-bottom: 10px;
     background: rgba(0, 0, 0, 0.5);
-    border-radius: 5px;
-    border: 1px solid #AAA;
-}
-
-#right label {
-    background: rgba(0, 0, 0, 0.5);
-    width: auto;
-    float: right;
-    padding: 2px 5px;
-    border-radius: 5px;
-    border: 1px solid #AAA;
+    border-radius: 4px;
+    border: 1px solid #999;
 }
 
 #right .w1 {
@@ -174,7 +166,22 @@ body {
     display: none;
 }
 
+#right label {
+    padding-top: 0px;
+}
+
+#right label .label-background {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #999;
+    border-radius: 5px;
+    padding: 2px 5px;
+    display: inline-block;
+    max-width: 200px;
+}
+
 #right button {
+    font-size: 20px;
+    border: 3px solid #EEE;
     float: right;
     border: 3px solid white;
 }
