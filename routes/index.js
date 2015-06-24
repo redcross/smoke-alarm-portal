@@ -104,7 +104,7 @@ router.post('/', function(req, res, next) {
         });
 
     // Derive state+county from zip code
-    addressDb.view('us_addresses','by-zip-code', {key:zip_5}, function(error, results) {
+    addressDb.view('us_addresses','by-zip-code', {key:Number(zip_5)}, function(error, results) {
         if (error) {
             if (String(error).toLowerCase().indexOf("error happened in your connection") != -1) {
                 console.log("ERROR: " + error)
