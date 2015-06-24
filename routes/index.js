@@ -35,8 +35,7 @@ router.post('/', function(req, res, next) {
     requestDb.insert(
         {
             name: req.body.name,
-            address: req.body.address,
-            address_2: req.body.address_2,
+            street_address: req.body.street_address,
             city: req.body.city,
             state: req.body.state,
             zip: req.body.zip,
