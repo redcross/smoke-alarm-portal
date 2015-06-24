@@ -6,26 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var nano = require('nano')('http://localhost:5984'),
-  db_name = "smoke_alarm_requests",
-  db = nano.use(db_name);
-
-
-/* DB Initialization. Will also exit if the DB cannot be initialized correctly */
-var sanity = require('sanity',
-  source = {
-    DATABASE: db.list()
-  });
-
-sanity.check(["DATABASE"], {
-    source: source,
-    options: {
-        recover: function(err, keys) {
-            console.log("Sanity check for CouchDB Failed: " + err); // Same error format as seen before
-            console.log(keys) // Array of keys which did not pass
-            process.exit(1);
-        }
-    }
-});
+    db_name = "smoke_alarm_requests",
+    db = nano.use(db_name);
 
     var routes = require('./routes/index');
     var users = require('./routes/users');
