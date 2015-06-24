@@ -25,6 +25,7 @@ router.post('/', function(req, res, next) {
     var addressDb = nano.use('us_addresses');
     var countyDb = nano.use('selected_counties');
 
+    var zipToSelect = req.body.zip;
     // Things we derive from the user-provided zip code.
     var stateFromZip = null;   // remains null if no match
     var countyFromZip = null;  // remains null if no match
@@ -102,9 +103,21 @@ router.post('/', function(req, res, next) {
                 return;
             }
         });
+    // determine whether the zipcode starts with "0".  If it does, use a string
+    // as the key, else use an integer.
+
+    if (zip_final[0] == "0"){
+        console.log("String");
+        zipToSelect = String(zip_final);
+    }
+    else{
+        console.log("Digit");
+        zipToSelect = Number(zip_final);
+    }
+
 
     // Derive state+county from zip code
-    addressDb.view('us_addresses','by-zip-code', {key:Number(zip_5)}, function(error, results) {
+    addressDb.view('us_addresses','by-zip-code', {key:zipToSelect}, function(error, results) {
         if (error) {
             if (String(error).toLowerCase().indexOf("error happened in your connection") != -1) {
                 console.log("ERROR: " + error)
