@@ -1,4 +1,5 @@
 body {
+    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
     background: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15)), url("../images/install_combined.jpg");
     background-size: 100%;
     background-repeat: repeat-y;
@@ -8,6 +9,19 @@ body {
     line-height: 140%;
     min-height: 100%;
     position: relative;
+}
+
+/* Rules for .btn-primary class pasted in from DCSOps stylesheet */
+.btn-primary{
+	color:#fff;
+	background-color:#428bca;
+	border-color:#357ebd
+}
+
+.btn-primary:hover,.btn-primary:focus,.btn-primary:active,.btn-primary.active,.open .dropdown-toggle.btn-primary{
+	color:#fff;
+	background-color:#3276b1;
+	border-color:#285e8e
 }
 
 #hdr {
