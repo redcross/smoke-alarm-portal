@@ -136,7 +136,7 @@ body {
 }
 
 #right label {
-    padding-top: 0px;
+    padding: 0px;
 }
 
 #right label .label-background {
@@ -146,6 +146,30 @@ body {
     padding: 2px 5px;
     display: inline-block;
     max-width: 200px;
+}
+
+#right input {
+    padding: 0px;
+}
+
+#right input.redstripe {
+    border: 3px solid red;
+}
+
+#right .warning-star {
+    color: #E00;
+    vertical-align: top;
+    padding-left: 0px;
+    margin-left: -10px;
+    font-size: 100%;
+}
+
+#right .warning-text {
+    color: #E00;
+    vertical-align: top;
+    padding-left: 0px;
+    margin-left: -10px;
+    font-size: 75%;
 }
 
 #right button {

@@ -27,8 +27,11 @@ html(lang='en')
     script(type='text/javascript', src='/third-party/jquery.validate.min.js')
     script(type='text/javascript', src='/third-party/additional-methods.min.js')
     // Local stylesheets
-    link(rel='stylesheet', type='text/css', href='./smokeAlarmPortal_files/DCSOps.css')
+
+    // The DCSOps stylesheet messes up how bootstrap columns behave when collaped
+    // link(rel='stylesheet', type='text/css', href='./smokeAlarmPortal_files/DCSOps.css')
     link(rel='stylesheet', type='text/css', href='./smokeAlarmPortal_files/base.css')
+
     // The IE-specific stylesheets referenced below don't exist - NTT
     //if lte IE 7
       link(rel='stylesheet', type='text/css', href='/css/ie7.css')
