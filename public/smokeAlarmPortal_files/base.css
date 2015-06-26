@@ -1,13 +1,27 @@
 body {
+    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
     background: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15)), url("../images/install_combined.jpg");
     background-size: 100%;
     background-repeat: repeat-y;
-    background-color: #DDD;
+    background-color: #CCC;
     color: #EEE;
-    font-size: 20px;
+    font-size: 18px;
     line-height: 140%;
     min-height: 100%;
     position: relative;
+}
+
+/* Rules for .btn-primary class pasted in from DCSOps stylesheet */
+.btn-primary{
+	color:#fff;
+	background-color:#428bca;
+	border-color:#357ebd
+}
+
+.btn-primary:hover,.btn-primary:focus,.btn-primary:active,.btn-primary.active,.open .dropdown-toggle.btn-primary{
+	color:#fff;
+	background-color:#3276b1;
+	border-color:#285e8e
 }
 
 #hdr {
@@ -132,26 +146,28 @@ body {
     margin-bottom: 10px;
     background: rgba(0, 0, 0, 0.5);
     border-radius: 4px;
-    border: 1px solid #999;
+    border: 2px solid #CCC;
 }
 
-#right .input-with-warning {
-    display: table;
-    width: 100%;
+/* Pull everything left when vertically stacked. */
+@media screen and (max-width: 768px) {
+    #right {
+        padding-left: 0px;
+    }
+    #right label {
+        padding-left: 0px;
+    }
 }
 
-#right .input-wrapper-1 { display: table-cell; width: 25%; }
-#right .input-wrapper-2 { display: table-cell; width: 50%; }
-#right .input-wrapper-3 { display: table-cell; width: 75%; }
-#right .input-wrapper-4 { display: table-cell; width: 90%; }
-
-#right .warning-wrapper {
-    display: table-cell;
-    vertical-align: top;
-    padding-left: 5px;
-    color: #E00;
-    font-weight: bold;
+#right div[class^="col-"] {
+  padding-left: 0px;
+  padding-right: 0px;
 }
+
+#right .row {
+  margin-left: 0px;
+}
+
 
 #right .warning {
     display: table-cell;
@@ -169,22 +185,89 @@ body {
 }
 
 #right label {
+    font-weight: normal; /* added this rule cuz I got sick of looking at fugly bold characters. */
     padding-top: 0px;
 }
 
-#right label .label-background {
+#right .label-background {
     background: rgba(0, 0, 0, 0.6);
-    border: 1px solid #999;
+    border: 2px solid #CCC;
     border-radius: 5px;
-    padding: 2px 5px;
+    padding: 2px 10px 2px 8px;
     display: inline-block;
-    max-width: 200px;
+}
+
+#right .label-text {
+    display: inline-block;
+    padding: 0px 2px;
+    width: 95%;
+}
+
+#right .warning-star {
+    color: #E00;
+    vertical-align: top;
+    display: inline-block;
+    text-align: left;
+    padding: 0px 0px 0px 2px;
+    width: 5%;
+}
+
+#right .dark-back-l {
+    background: rgba(0, 0, 0, 0.6);
+    margin-top: 5px;
+    border-top: 2px solid #CCC;
+    border-left: 2px solid #CCC;
+    border-bottom: 2px solid #CCC;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+#right .dark-back-m {
+    margin-top: 5px;
+    background: rgba(0, 0, 0, 0.6);
+    border-top: 2px solid #CCC;
+    border-bottom: 2px solid #CCC;
+}
+
+#right .dark-back-r {
+    margin-top: 5px;
+    background: rgba(0, 0, 0, 0.6);
+    border-top: 2px solid #CCC;
+    border-right: 2px solid #CCC;
+    border-bottom: 2px solid #CCC;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#right input, #right select {
+    padding: 0px;
+    border: 3px solid #444;
+}
+
+#right input.redstripe {
+    border: 3px solid red;
+}
+
+#right .warning-text {
+    color: #E00;
+    vertical-align: top;
+    padding-left: 5px;
+    font-size: 75%;
+    line-height: 100%
 }
 
 #right button {
     font-size: 20px;
-    border: 3px solid #EEE;
+    border: 2px solid #EEE;
     float: right;
+}
+
+#phone-row {
+    display: none;
+}
+
+#email-row {
+    display: none;
 }
 
 /* These styles prevent bizarre checkbox appearances when zoom != 1 on OSX Chrome (and possibly other browsers) */

@@ -18,18 +18,27 @@ html(lang='en')
     meta(name='robots', content='')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     link(rel='shortcut icon', href='/favicon.ico')
+
     // Bootstrap
     link(rel='stylesheet', type='text/css', href='/third-party/bootstrap.min.css')
     script(type='text/javascript', src='/third-party/jquery.min.js')
     script(type='text/javascript', src='/third-party/bootstrap.min.js')
+
+    // Non-ugly checkboxes
+    link(rel='stylesheet', type='text/css', href='/third-party/jquery.alt-checkbox.css')
+    link(rel='stylesheet', type='text/css', href='/third-party/jquery.alt-checkbox.icon-font.css')
+    script(type='text/javascript', src='/third-party/jquery.alt-checkbox.js')
 
     // jQuery validate
     script(type='text/javascript', src='/third-party/jquery.validate.min.js')
     script(type='text/javascript', src='/third-party/additional-methods.min.js')
 
     // Local stylesheets
-    link(rel='stylesheet', type='text/css', href='./smokeAlarmPortal_files/DCSOps.css')
+
+    // The DCSOps stylesheet messes up how bootstrap columns behave when collaped
+    // link(rel='stylesheet', type='text/css', href='./smokeAlarmPortal_files/DCSOps.css')
     link(rel='stylesheet', type='text/css', href='./smokeAlarmPortal_files/base.css')
+
     // The IE-specific stylesheets referenced below don't exist - NTT
     //if lte IE 7
       link(rel='stylesheet', type='text/css', href='/css/ie7.css')

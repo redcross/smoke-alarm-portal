@@ -10,42 +10,47 @@ block content
          p
            | Thank you for your interest in having one or more 10 year lithium-ion battery powered smoke alarms installed in your home.
          p
-           | Please complete the form on this page and click “submit”. An American Red Cross representative will contact you shortly to confirm your registration into our wait list. Additional information on installation will be given at that time.
+           | Please complete the form on this page and click “submit”. Items marked with a red asterisk (<font color="#E00">*</font>) are required.
+         p
+           | An American Red Cross representative will contact you shortly to confirm your registration into our wait list. Additional information on installation will be given at that time.
       #right.col-sm-8
         .container-fluid
           form(action="/", method="POST", class="form-horizontal")
             fieldset
               .row
-                // Form Name
-                .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true', data-original-title='', title='')
-                  // Text input
-                  .form-group
-                    label.col-sm-3.control-label(for='name')
-                      .label-background Your Name
-                    .col-sm-6
-                      .input-with-warning
-                        .input-wrapper-2
-                          input#name.form-control.input-md(name='name', type='text', placeholder='', required)
-                        .warning-wrapper
-                          |*
+                // Text input
+                .form-group
+                  label.col-sm-4.control-label(for='name')
+                    .label-background
+                      .label-text Your&nbsp;Name
+                      .warning-star *
+                  .col-sm-7
+                    .row
+                      .col-xs-8
+                        input#name.form-control(name='name', type='text', placeholder='', required)
+                      .col-xs-4
+                        .warning-text
+              .row
                 .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
                   // Text input
                   .form-group
-                    label.col-sm-3.control-label(for='street_address')
+                    label.col-sm-4.control-label(for='street_address')
                       .label-background Address & Unit
-                    .col-sm-5
-                      input#street_address.form-control.input-md(name='street_address', type='text', placeholder='')
+                    .col-sm-6
+                      input#street_address.form-control(name='street_address', type='text', placeholder='')
+              .row
                 .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
                   // Text input
                   .form-group
-                    label.col-sm-3.control-label(for='city')
+                    label.col-sm-4.control-label(for='city')
                       .label-background City
                     .col-sm-3
-                      input#city.form-control.input-md(name='city', type='text', placeholder='')
+                      input#city.form-control(name='city', type='text', placeholder='')
+              .row
                 .component(data-content='', data-title='Select Basic', data-trigger='manual', data-html='true')
                   // Select Basic
                   .form-group
-                    label.col-sm-3.control-label(for='state')
+                    label.col-sm-4.control-label(for='state')
                       .label-background State
                     .col-sm-3
                       select#state.form-control(name='state')
@@ -101,60 +106,101 @@ block content
                         option(value='West Virginia') West Virginia
                         option(value='Wisconsin') Wisconsin
                         option(value='Wyoming') Wyoming
-
+              .row
                 .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
                   // Text input
                   .form-group
-                    label.col-sm-3.control-label(for='zip')
-                      .label-background Zip Code
-                    .col-sm-6
-                      .input-group
-                        input#zip.form-control.w1.input-md(name='zip', type='text', placeholder='', class='required zipcode valid')
-                        span.warning *
+                    label.col-sm-4.control-label(for='zip')
+                      .label-background
+                        .label-text Zip&nbsp;Code
+                        .warning-star *
+                    .col-sm-8
+                      .row
+                        .col-xs-4
+                          input#zip.form-control(name='zip', type='text', placeholder='', class='required zipcode valid')
+                        .col-xs-8
+                          .warning-text
+              .row
+                .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
+                  // Text input
                   .form-group
-                    label.col-sml-3.control-label(for='contact')
-                      .label-background How would you like us to get in touch with you?
-                    .col-sm-6
-                      table#radio-table
-                        tr
-                          td
-                            input.form-control(name='contact-preference', type='radio', value='phone')
-                          td
-                            input.form-control(name='contact-preference', type='radio', value='text')
-                          td
-                            input.form-control(name='contact-preference', type='radio', value='email')
-                        tr
-                          td
-                            |phone call
-                          td
-                            |text message
-                          td
-                            |email
-                  #contact-phone.form-group.contact-option
-                    label.col-sm-3.control-label(for='phone')
-                      .label-background Phone #
-                    .col-sm-6
-                      input#phone.form-control.w2.input-md(name='phone', type='text', placeholder='', class='contact-group phoneUS valid')
-                      span.warning *
-                  #contact-email.form-group.contact-option
-                    label.col-sm-3.control-label(for='email')
-                      .label-background Email address
-                    .col-sm-6
-                      input#email.form-control.w2.input-md(name='email', type='text', placeholder='', class='contact-group email valid')
-                      span.warning *
+                    label.col-sm-4.control-label
+                      .label-background
+                        .label-text How would you like us to get in touch with you?
+                        .warning-star *
+                    .col-sm-8
+                      .row
+                        .col-xs-3.text-center
+                          input#phone_preference.form-control(name='phone_preference', type='checkbox', value='phone', class='contact-pref')
+                        .col-xs-3.text-center
+                          input#text_preference.form-control(name='text_preference', type='checkbox', value='text', class='contact-pref')
+                        .col-xs-3.text-center
+                          input#email_preference.form-control(name='email_preference', type='checkbox', value='email', class='contact-pref')
+                      .row
+                        .col-xs-3.text-center.dark-back-l phone&nbsp;call
+                        .col-xs-3.text-center.dark-back-m text
+                        .col-xs-3.text-center.dark-back-r email
+                      .row
+                        .col-xs-9
+                          #preference-warning.warning-text
+              .row#phone-row
+                .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
+                  // Text input
                   .form-group
-                    label.col-sm-3.control-label(for='singlebutton')
+                    label.col-sm-4.control-label(for='phone')
+                      .label-background
+                        .label-text Phone #
+                        .warning-star *
+                    .col-sm-8
+                      .row
+                        .col-xs-4
+                          input#phone.form-control(name='phone', type='text', placeholder='', class='required phoneUS valid')
+                        .col-xs-8
+                          .warning-text
+              .row#email-row
+                .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
+                  // Text input
+                  .form-group
+                    label.col-sm-4.control-label(for='email')
+                      .label-background
+                        .label-text Email
+                        .warning-star *
+                    .col-sm-7
+                      .row
+                        .col-xs-8
+                          input#email.form-control(name='email', type='text', placeholder='', class='required email valid')
+                        .col-xs-4
+                          .warning-text
+              .row
+                  .form-group
+                    label.col-sm-4.control-label(for='singlebutton')
                     .col-sm-6
                       button#singlebutton.btn.btn-primary(name='singlebutton') Submit
 
     script(type="text/javascript").
       $(".form-horizontal").validate({
         rules: {
-          phone: {
-            require_from_group: [1, ".contact-group"]
+          phone_preference: {
+            require_from_group: [1, ".contact-pref"]
           },
-          email: {
-            require_from_group: [1, ".contact-group"]
+          text_preference: {
+            require_from_group: [1, ".contact-pref"]
           },
+          email_preference: {
+            require_from_group: [1, ".contact-pref"]
+          }
+        }, 
+        showErrors: function(errorMap, errorList) {
+          for (var i=0; i<errorList.length; i++) {
+            var element = errorList[i]["element"];
+            var message = errorList[i]["message"];
+            var warningBox = $(element).parent().next().children(".warning-text");
+            if (warningBox.length == 0) {
+              warningBox = $("#preference-warning");
+            }
+            $(element).addClass("redstripe");
+            warningBox.text(message);
+          }
         }
       });
+

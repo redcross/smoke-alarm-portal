@@ -1,0 +1,74 @@
+/*
+ * alt-checkbox CSS file
+ * Version 1.0
+ * http://alt-checkbox.starikovs.com
+ *
+ * alt-checkbox CSS file which helps to style checkbox with custom css
+ *
+ * Copyright (c) 2013-2014 alt-checkbox.starikovs.com
+ * Licensed under the MIT and GPL licenses.
+ */
+
+.alt-checkbox {
+    display: inline-block;
+    background: #fbfbfb;
+    border-radius: .2em;
+    box-shadow: 0 0 0 1px #ddd;
+    font-size: .8em;
+    line-height: 100%;
+    outline: none;
+    position: relative;
+    text-decoration: none !important;
+}
+
+.alt-checkbox:hover, 
+.alt-checkbox:focus {
+    box-shadow: 0 0 1px #66AFE9, 0 0 8px rgba(102, 175, 233, .6)
+}
+
+.alt-checkbox:before {
+    display: block;
+    min-height: 1em;
+    min-width: 1em;
+    padding: .05em;
+    position: relative;
+    text-align: center;
+    text-shadow: 0 1px 0 #e7e7e7, 0 2px 0 #fff, 0 -1px 0 #e7e7e7;
+    visibility: hidden;
+}
+
+.alt-checkbox.outline-unchecked:before {
+    color: #f7f7f7;
+    visibility: visible;
+}
+
+.alt-checkbox.checked:before {
+    color: #999;
+    visibility: visible;
+}
+
+.alt-checkbox:focus {
+    outline: none;
+}
+
+.alt-checkbox.small, .alt-checkbox-label.small {
+    font-size: .8em;
+}
+
+.alt-checkbox.medium, .alt-checkbox-label.medium {
+    font-size: 1.6em;
+}
+
+.alt-checkbox.big, .alt-checkbox-label.big {
+    font-size: 2.4em;
+}
+
+/* Custom additions by NTT */
+.alt-checkbox {
+    background: #FFF;
+    border: 3px solid #444;
+    box-shadow: none;
+}
+.alt-checkbox.checked:before {
+    color: #555;
+}
