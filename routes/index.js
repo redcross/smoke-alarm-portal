@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var nano = require('nano')('http://localhost:5984');
-
+var db = require('./../models');
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'Red Cross' });
@@ -21,9 +20,6 @@ router.get('/sorry', function(req, res, next) {
 /* POST to the server */
 router.post('/', function(req, res, next) {
     // Databases we'll need.
-    var requestDb = nano.use('smoke_alarm_requests');
-    var addressDb = nano.use('us_addresses');
-    var countyDb = nano.use('selected_counties');
 
     var zipToSelect = req.body.zip;
     // Things we derive from the user-provided zip code.
@@ -62,7 +58,7 @@ router.post('/', function(req, res, next) {
     var zip_5 = null;
     var zip_4 = null;
     var zip_re = /^([0-9][0-9][0-9][0-9][0-9]) *[-_+]{0,1} *([0-9][0-9][0-9][0-9]){0,1}$/g;
-    var zip_match = zip_re.exec(zip_received)
+    var zip_match = zip_re.exec(zip_received);
     if (zip_match) {
         if (zip_match.length < 2) {
             console.log("ERROR: zip matched, but match grouping is somehow wrong,");
@@ -86,87 +82,43 @@ router.post('/', function(req, res, next) {
     // service the request -- or even if it contains some invalid
     // data, such as an unknown zip code -- we still want to record
     // that the person made the request.
-    requestDb.insert(
-        {
-            name: name,
-            street_address: street_address,
-            city: city,
-            state: state,
-            zip: zip_final,
-            phone: phone,
-            email: email,
-        },
-        'Request from ' + req.body.name + ' at ' +  new Date().toLocaleString(),
-        function(err, body, header) {
-            if (err) {
-                console.log("ERROR: '" + err.message + "'");
-                return;
-            }
-        });
-    // determine whether the zipcode starts with "0".  If it does, use a string
-    // as the key, else use an integer.
 
-    if (zip_final[0] == "0"){
-        console.log("String");
-        zipToSelect = String(zip_final);
-    }
-    else{
-        console.log("Digit");
-        zipToSelect = Number(zip_final);
-    }
+    var request = db.Request.create({
+        name: name,
+        street_address: street_address,
+        city: city,
+        state: state,
+        zip: zip_final,
+        phone: phone,
+        email: email,
+    }).then(function(successfulRequest) {
+        console.log("DEBUG: Request entered successfully");
+    });
 
-
-    // Derive state+county from zip code
-    addressDb.view('us_addresses','by-zip-code', {key:zipToSelect}, function(error, results) {
-        if (error) {
-            if (String(error).toLowerCase().indexOf("error happened in your connection") != -1) {
-                console.log("ERROR: " + error)
-                console.log("       (This probably means you forgot to start CouchDB.)\n")
-            } else {
-                console.log("DEBUG: unrecognized error: " + error);
-            }
+    var requestedCountyAddress = null;
+    db.UsAddress.findOne({
+        where: {
+            zip: zip_final
         }
-        console.log("DEBUG: doc result from search on zip '" + zip_5 + "': " + JSON.stringify(results));
-        results.rows.forEach(function(doc) {
-            if (countyFromZip) {
-                console.log("DEBUG: another state+county match found: '"
-                           + doc.value[1] + "'+'" + doc.value[0] + "'");
-            }
-            countyFromZip = doc.value[0].replace(" County", "");
-            stateFromZip = doc.value[1];
-        });
+    }).then(function(county) {
+        if (county !== undefined) {
+            console.log("County Found! " + JSON.stringify(county));
+            requestedCountyAddress = county;
+        } else {
+            console.log("Error with county: ");
+        }
+        countyFromZip = requestedCountyAddress['county'].replace(" County", "");
+        stateFromZip = requestedCountyAddress['state'];
 
-        console.log("DEBUG: county '" + countyFromZip + "' in state '" + stateFromZip + "' "
-                    + "derived from zip code '" + zip_5 + "'");
-        var matchedRegion = null;
-        // We have to match both county and state.  Counties
-        // are not only not unique across states, they are not
-        // even unique within Red Cross regions in the North
-        // Central Division.  For example, there is a
-        // "KansasNebraska" region, but both Kansas and
-        // Nebraska have a Greeley County.  Try submitting one
-        // request with zip 67879 (Greeley County, Kansas) and
-        // another with zip 68665 (Greeley County, Nebraska).
-        countyDb.view('selected_counties','county-matchup', {key: [stateFromZip,countyFromZip]}, function(error, results) {
-            if (error) console.log("ERROR: Error matching region: " + error);
-            results.rows.forEach(function(doc) {
-                console.log("DEBUG: Retrieved this state+county from the view:\n       "
-                            + JSON.stringify(doc) + "\n");
-                console.log("DEBUG: You could use this command to verify it:\n       "
-                            + "'curl -X GET http://127.0.0.1:5984/selected_counties/"
-                            + doc._id + "'\n");
-                if (doc.key[0] == stateFromZip && doc.key[1] == countyFromZip) {
-                    if (matchedRegion) {
-                        console.log("DEBUG: another region match found:\n       "
-                                    + JSON.stringify(doc) + "\n");
-                    }
-                    matchedRegion = doc.value;
-                    console.log("DEBUG: The matching document is:\n       "
-                                + JSON.stringify(doc) + "\n");
-                }
-            });
-            if (matchedRegion) {
-                res.render('thankyou.jade', {region: matchedRegion});
+        db.SelectedCounties.findOne({
+            where: {
+                county: countyFromZip,
+                state: stateFromZip
+            }
+        }).then(function(selectedRegion) {
+            console.log("Selected Region: " + JSON.stringify(selectedRegion.region));
+            if (selectedRegion !== null) {
+                res.render('thankyou.jade', {region: selectedRegion.region});
             } else {
                 if (zip_final) {
                     var zip_for_display = zip_final;
@@ -177,7 +129,7 @@ router.post('/', function(req, res, next) {
                     var zip_for_display = "(INVALID ZIP CODE '" + zip_received + "')";
                 }
                 res.render('sorry.jade', {county: countyFromZip, state: stateFromZip, zip: zip_for_display});
-            }
+            };
         });
     });
 });
