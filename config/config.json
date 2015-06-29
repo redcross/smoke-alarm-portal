@@ -8,8 +8,8 @@
   },
   "test": {
     "username": "mnyon",
-    "password": process.env.DATABASE_USERNAME,
-    "database": process.env.DATABASE_PASSWORD,
+    "password": "",
+    "database": "",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
