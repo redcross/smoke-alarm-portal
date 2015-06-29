@@ -85,7 +85,7 @@ router.post('/', function(req, res, next) {
 
     var request = db.Request.create({
         name: name,
-        street_address: street_address,
+        address: street_address,
         city: city,
         state: state,
         zip: zip_final,
