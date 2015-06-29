@@ -71,7 +71,7 @@ The database migration was accomplished using the following steps:
   command line options.
 
   `npm install --save sequelize`
-  `npm install --save sequelize-cli`
+  `npm install -g sequelize-cli`
 
 * Created an application skeleton for the Sequlize ORM and started
   environment specific config settings using
