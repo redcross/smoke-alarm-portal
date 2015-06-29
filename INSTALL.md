@@ -16,42 +16,32 @@ much difficulty to most other Unix-like operating systems.
 
    On Max OSX, use the Macintosh installer which can be downloaded from https://nodejs.org/download/. This will install both node and npm.
 
-3. Install [couchdb](http://couchdb.org/) from source.
+3. Install Postgres
 
-   On Debian, you may need to install these dependencies first (before building couchdb).  There is more detailed information [here](https://cwiki.apache.org/confluence/display/COUCHDB/Debian).
+        $ sudo apt-get install postgresql 
 
-        $ sudo apt-get install build-essential libtool autoconf automake autoconf-archive pkg-config
-        # for Debian >=7.0
-        $ sudo apt-get install lsb-release
-        $ sudo apt-get install erlang
-        $ sudo apt-get install erlang-base-hipe
-        $ sudo apt-get install erlang-dev
-        $ sudo apt-get install erlang-manpages
-        $ sudo apt-get install erlang-eunit
-        $ sudo apt-get install erlang-nox
-        $ sudo apt-get install libicu-dev
-        $ sudo apt-get install libcurl4-openssl-dev
-        $ sudo apt-get install libmozjs185-dev
 
-   On Mac OSX, use the Mac OSX installer which can be downloaded from http://couchdb.apache.org/#download. The installer should create the couchdb user automatically and start couchdb. You should now be able to skip directly to step 6 below and follow the remainder of the instructions to the end.
+4. You'll need to set up a postgres user, if you don't already have one:
 
-4. You'll need to set up a couchdb user:
+        $ adduser postgres
 
-        $ sudo useradd -d /var/lib/couchdb couchdb
-        $ sudo mkdir -p /usr/local/{lib,etc}/couchdb /usr/local/var/{lib,log,run}/couchdb /var/lib/couchdb
-        $ sudo chown -R couchdb:couchdb /usr/local/{lib,etc}/couchdb /usr/local/var/{lib,log,run}/couchdb
-        $ sudo chmod -R g+rw /usr/local/{lib,etc}/couchdb /usr/local/var/{lib,log,run}/couchdb
-
-5. Start couchdb
-
-        # We shouldn't need to run this as root.  We'll update the install file
-        # when we change this.
-        $ sudo couchdb
+5. Add a "staging" environment to `config/config.json`, following the
+"test" example.
 
 6. Create the databases and initialize the data.
+   
+        $ npm install --save sequelize
+        $ sudo npm install -g sequelize-cli #this needs to be available system-wide
 
-   Run `set-up-databases.sh` (you may want to read the script first).
+        $ su - postgres
+        $ psql
+        postgres=# CREATE DATABASE smokealarm_development;
+        postgres=# CREATE USER <username> PASSWORD '<smokealarm_password>';
+        postgres=# GRANT ALL ON SCHEMA smokealarm_development TO <username>;
+        postgres=# GRANT ALL ON ALL TABLES IN SCHEMA smokealarm_development TO <username>;
 
+        $ node data/import_into_postgres.js
+        
 7. Get the required node modules by running npm.
 
         $ cd smoke-alarm-portal

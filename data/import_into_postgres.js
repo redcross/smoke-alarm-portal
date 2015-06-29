@@ -4,7 +4,7 @@
  * for the application models.
  */
 
-var db = require('./models'); // Sequelize initialization
+var db = require('../models'); // Sequelize initialization
 var async = require('async'); // Used primarily for iterator
 
 /* import JSON using node require */
