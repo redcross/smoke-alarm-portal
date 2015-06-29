@@ -29,9 +29,6 @@ much difficulty to most other Unix-like operating systems.
 "test" example.
 
 6. Create the databases and initialize the data.
-   
-        $ npm install --save sequelize
-        $ sudo npm install -g sequelize-cli #this needs to be available system-wide
 
         $ su - postgres
         $ psql
@@ -39,6 +36,12 @@ much difficulty to most other Unix-like operating systems.
         postgres=# CREATE USER <username> PASSWORD '<smokealarm_password>';
         postgres=# GRANT ALL ON SCHEMA smokealarm_development TO <username>;
         postgres=# GRANT ALL ON ALL TABLES IN SCHEMA smokealarm_development TO <username>;
+           
+        $ npm install --save sequelize
+        $ sudo npm install -g sequelize-cli #this needs to be available system-wide
+
+        $ npm install pg-hstore
+        $ npm install --save pg
 
         $ node data/import_into_postgres.js
         
