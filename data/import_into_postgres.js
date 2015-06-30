@@ -37,12 +37,14 @@ db.sequelize.sync().then(function(promise) {
 	 * Model.create() function from Sequelize.
 	 */
 	var addresses = db.UsAddress;
-
-	async.each(usAddressesJson.docs, function(address, callback) {
-		addresses.create(address).then(function(returnedAddress) {
-			console.log("Address " + returnedAddress + " added");
+	while (usAddressesJson.docs.length) {
+		var addressSplice = usAddressesJson.docs.splice(0,100);
+		async.each(addressSplice, function(address, callback) {
+			addresses.create(address).then(function(returnedAddress) {
+				console.log("Address " + returnedAddress + " added");
+			});
 		});
-	});
+	}
 
 }).catch(SyntaxError, function(e){
     console.log("ERROR: Unable to connect to database" + e);
