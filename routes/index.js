@@ -116,8 +116,8 @@ router.post('/', function(req, res, next) {
                 state: stateFromZip
             }
         }).then(function(selectedRegion) {
-            console.log("Selected Region: " + JSON.stringify(selectedRegion.region));
             if (selectedRegion !== null) {
+                console.log("Selected Region: " + JSON.stringify(selectedRegion));
                 res.render('thankyou.jade', {region: selectedRegion.region});
             } else {
                 if (zip_final) {

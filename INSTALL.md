@@ -18,7 +18,7 @@ much difficulty to most other Unix-like operating systems.
 
 3. Install Postgres
 
-        $ sudo apt-get install postgresql 
+        $ sudo apt-get install postgresql
 
 
 4. You'll need to set up a postgres user, if you don't already have one:
@@ -36,21 +36,21 @@ much difficulty to most other Unix-like operating systems.
         postgres=# CREATE USER <username> PASSWORD '<change_this>';
         postgres=# GRANT ALL ON DATABASE smokealarm_development TO <username>;
 
-           
+
         $ npm install --save sequelize
         $ sudo npm install -g sequelize-cli #this needs to be available system-wide
 
         $ npm install pg-hstore
         $ npm install --save pg
-        
+
         # do these if you are installing on a remote server
         $ NODE_ENV="staging" # or whatever you have in config.json
 
         # this will spew a lot of information to the screen
         $ node data/import_into_postgres.js
-        
+
         $ forever -da start --watchDirectory . -l forever.log -o out.log -e err.log ./bin/www
-        
+
 7. Get the required node modules by running npm.
 
         $ cd smoke-alarm-portal
