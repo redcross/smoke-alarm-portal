@@ -19,7 +19,6 @@ var usAddressesJson = require('../data/us_addresses.json');
    sync connects to a database and also reinstates the known database
    structure if for some reason it is not in place */
 db.sequelize.sync().then(function(promise) {
-    console.log("DEBUG: DB in place; promise returned: " + JSON.stringify(promise));
 
 	/* Import the selected counties from JSON. Create Counties using
 	 * Model.create() function from Sequelize.
