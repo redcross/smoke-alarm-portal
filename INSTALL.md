@@ -75,3 +75,8 @@ much difficulty to most other Unix-like operating systems.
 
         $ npm install forever
         $ ./node_modules/.bin/forever -da start --watchDirectory . -l forever.log -o out.log -e err.log ./bin/www
+
+9. See if it's working, by visiting http://localhost:3000/
+
+   TBD: Need instructions for changing to port 80 and eventually 443
+   for demo and production.
