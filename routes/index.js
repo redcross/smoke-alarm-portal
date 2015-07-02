@@ -95,18 +95,47 @@ router.post('/', function(req, res, next) {
         console.log("DEBUG: Request entered successfully");
     });
 
+    var zip_for_lookup = zip_5;
+    if (! zip_for_lookup) {
+        // If the zip we got doesn't look like it was a real zip, then
+        // it won't work later as a key for database lookups.  But we
+        // should still pass it along so at least error messages can
+        // display it accurately.
+        zip_for_lookup = zip_received;
+    }
+
     var requestedCountyAddress = null;
     db.UsAddress.findOne({
         where: {
-            zip: zip_final
+            zip: zip_for_lookup
         }
     }).then(function(county) {
-        if (county !== undefined) {
-            console.log("County Found! " + JSON.stringify(county));
-            requestedCountyAddress = county;
-        } else {
-            console.log("Error with county: ");
-        }
+        if (! county) {
+            console.log("ERROR: no county found for zip '" + JSON.stringify(zip_for_lookup) + "'");
+            // TODO: This isn't quite right, for two reasons.
+            // 
+            // One, it tries to use the call to res.render() as an
+            // error exit (a non-local exit), which is what we want of
+            // in this error case.  But that doesn't really stop
+            // execution of this function -- we continue on after the
+            // closing curly brace, it's just that the user never sees
+            // that because we've rendered the sorry page already.
+            // There's got to be a Right Way to both hand off to the
+            // sorry page and exit out with an error here, without
+            // having the entire rest of this function be wrapped in
+            // an 'else' clause, right?
+            //
+            // The other problem is that we want the same wrapping of
+            // the erroneous zip code here as we have later on, where
+            // we wrap it in language about "INVALID ZIP CODE" etc.
+            // But I don't want to just copy-and-paste that code;
+            // that's obviously not the right way.
+            res.render('sorry.jade', {zip: zip_for_lookup});
+        } 
+
+        console.log("DEBUG: county found: '" + JSON.stringify(county) + "'");
+        requestedCountyAddress = county;
+
         countyFromZip = requestedCountyAddress['county'].replace(" County", "");
         stateFromZip = requestedCountyAddress['state'];
 
@@ -117,16 +146,16 @@ router.post('/', function(req, res, next) {
             }
         }).then(function(selectedRegion) {
             if (selectedRegion !== null) {
-                console.log("Selected Region: " + JSON.stringify(selectedRegion));
+                console.log("DEBUG: selected region: " + JSON.stringify(selectedRegion));
                 res.render('thankyou.jade', {region: selectedRegion.region});
             } else {
-                if (zip_final) {
-                    var zip_for_display = zip_final;
+                if (zip_5) {
+                    var zip_for_display = zip_for_lookup;
                 } else {
                     // A better way to handle this would be to display a sorry
                     // page that discusses the invalidity of the zip code and
                     // doesn't talk about anything else.  But this will do for now.
-                    var zip_for_display = "(INVALID ZIP CODE '" + zip_received + "')";
+                    var zip_for_display = "(INVALID ZIP CODE '" + zip_for_lookup + "')";
                 }
                 res.render('sorry.jade', {county: countyFromZip, state: stateFromZip, zip: zip_for_display});
             };
