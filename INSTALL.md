@@ -38,6 +38,7 @@ much difficulty to most other Unix-like operating systems.
         postgres=# CREATE DATABASE smokealarm_development;
         postgres=# CREATE USER <some_username> PASSWORD '<some_password>';
         postgres=# GRANT ALL ON DATABASE smokealarm_development TO <username>;
+        postgres=# \q
 
         $ npm install --save sequelize
         $ sudo npm install -g sequelize-cli #this needs to be available system-wide
