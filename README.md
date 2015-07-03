@@ -49,4 +49,5 @@ thereto.
 
 # Installation and Deployment
 
-Please see [INSTALL.md](INSTALL.md) for detailed installation instructions and dependency information.
+Please see [INSTALL.md](INSTALL.md) for detailed installation
+instructions and dependency information.
