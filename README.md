@@ -44,8 +44,9 @@ For admins, there are some basic reports that can be generated:
 
 # Technologies Used
 
-_TBD: Node.js, CouchDB, Angular.js, and anything else a potential deployer would want to know._
+Node.js, Jade templates, PostgreSQL, and the usual suspects related
+thereto.
 
 # Installation and Deployment
 
-Please see [INSTALL.md](INSTALL.md) for installation instructions.
+Please see [INSTALL.md](INSTALL.md) for detailed installation instructions and dependency information.
