@@ -133,7 +133,7 @@ describe("POST", function() {
                 street_address: '125 W. 103rd Street',
                 city: 'New York',
                 state: 'New York',
-                zip: '10025',
+                zip: '65957',
                 phone: '7185551212',
                 email: 'here@there.com'
             })
