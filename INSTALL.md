@@ -7,6 +7,7 @@ much difficulty to most other Unix-like operating systems.
 1. Get the code.
 
         $ git clone git@github.com:OpenTechStrategies/smoke-alarm-portal.git
+        $ cd smoke-alarm-portal
 
 2. Install [Node](https://nodejs.org/download/) and npm (a package manager).
    On Debian, run:
@@ -20,22 +21,24 @@ much difficulty to most other Unix-like operating systems.
 
         $ sudo apt-get install postgresql
 
-
 4. You'll need to set up a postgres user, if you don't already have one:
 
         $ adduser postgres
 
-5. Add a "staging" environment to `config/config.json`, following the
-"test" example.
+5. Do `cp config/config.json.tmpl config/config.json`, then edit the latter.
 
-6. Create the databases and initialize the data.
+   You'll need to fill in database usernames and passwords, of course.
+   You might also want to set up a whole new environment, e.g.,
+   "staging" (likely following the "test" example).
+
+6. Create the databases and import the initial data.
 
         $ su - postgres
         $ psql
         postgres=# CREATE DATABASE smokealarm_development;
-        postgres=# CREATE USER <username> PASSWORD '<change_this>';
+        postgres=# CREATE USER <some_username> PASSWORD '<some_password>';
         postgres=# GRANT ALL ON DATABASE smokealarm_development TO <username>;
-
+        postgres=# \q
 
         $ npm install --save sequelize
         $ sudo npm install -g sequelize-cli #this needs to be available system-wide
@@ -44,16 +47,13 @@ much difficulty to most other Unix-like operating systems.
         $ npm install --save pg
 
         # do these if you are installing on a remote server
-        $ NODE_ENV="staging" # or whatever you have in config.json
+        $ NODE_ENV="staging" # or whatever env you want from config.json
 
         # this will spew a lot of information to the screen
         $ node data/import_into_postgres.js
 
-        $ forever -da start --watchDirectory . -l forever.log -o out.log -e err.log ./bin/www
+7. Get other required node modules.
 
-7. Get the required node modules by running npm.
-
-        $ cd smoke-alarm-portal
         $ npm install
 
    7a. If you get errors from `npm install`, starting with something like
@@ -66,11 +66,15 @@ much difficulty to most other Unix-like operating systems.
 
         $ sudo apt-get install nodejs-legacy
 
-8. Start smoke-alarm-portal app
+8. Start the smoke-alarm-portal app
+
+   For development, you can just do this:
 
         $ npm start
 
-9. Step for staging or production server deployment
+   For demo or production, you might want to do this instead:
+
+        $ npm install forever
    
     1. Do the apache proxying so that apache serves the node server:
        - Edit 000-default.conf to serve the :3000 port by default, without
@@ -87,6 +91,10 @@ much difficulty to most other Unix-like operating systems.
     2. Install the forever module on the chosen server
     3. Run the forever server:
 
-    ```
-    $  forever -da start --watchDirectory . -l forever.log -o out.log -e err.log ./bin/www
-    ```
+        $ ./node_modules/.bin/forever -da start --watchDirectory . -l forever.log -o out.log -e err.log ./bin/www
+
+9. See if it's working, by visiting http://localhost:3000/
+
+   TBD: Need instructions for changing to port 80 and eventually 443
+   for demo and production.
+
