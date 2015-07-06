@@ -71,8 +71,22 @@ much difficulty to most other Unix-like operating systems.
         $ npm start
 
 9. Step for staging or production server deployment
+   
+    1. Do the apache proxying so that apache serves the node server:
+       - Edit 000-default.conf to serve the :3000 port by default, without
+         showing :3000 to users.
+       - Enable mod\_rewrite, mod\_proxy, and mod\_proxy\_http
 
-    1. Install the forever module on the chosen server
-    2. Run the forever server:
+    ```
+    $ apt-get install -y libapache2-mod-proxy-html  
+    $ a2enmod rewrite proxy  
+    $ a2enmod proxy_http  
+    $ service apache2 restart  
+    ```
 
-        $  forever -da start --watchDirectory . -l forever.log -o out.log -e err.log ./bin/www
+    2. Install the forever module on the chosen server
+    3. Run the forever server:
+
+    ```
+    $  forever -da start --watchDirectory . -l forever.log -o out.log -e err.log ./bin/www
+    ```
