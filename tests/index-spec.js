@@ -123,9 +123,10 @@ describe("POST", function() {
         });
     });
 
-    it('redirects to the sorry page without county entered when receiving'
-        + ' an address not in the supported region or zip code is not'
-        + 'recognized', function(done) {
+    // TODO: Need separate test for when the zip code is valid but the
+    // region that it indicates is not one of the supported regions.
+
+    it('redirects to sorry page when zip code is not recognized', function(done) {
         request(app)
             .post('/')
             .send({
