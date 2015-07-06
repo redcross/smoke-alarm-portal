@@ -4,20 +4,26 @@
     "password": "__YOUR_DEV_DB_PASSWORD_HERE__",
     "database": "smokealarm_development",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "_COMMENT_": "Comment out the 'logging' line below to get SQL etc",
+    "_COMMENT_": "console logging.  See also the 'Options' section of",
+    "_COMMENT_": "http://docs.sequelizejs.com/en/1.7.0/docs/usage/.",
+    "logging": false
   },
   "test": {
     "username": "__YOUR_TEST_DB_USERNAME_HERE__",
     "password": "__YOUR_TEST_DB_USERNAME_HERE__",
     "database": "",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "logging": false
   },
   "production": {
     "username": "root",
     "password": null,
     "database": "smokealarm_production",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "logging": false
   }
 }
