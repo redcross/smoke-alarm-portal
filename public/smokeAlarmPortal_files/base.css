@@ -198,3 +198,22 @@ body {
     width: 16px;
     margin-top: 16px;
 }
+
+/* Select dropdowns don't support placeholder text directly in HTML,
+ * so we kludge up something with the same appearance, by mimicking
+ * the Bootstrap grayed-out placeholder color.  This color is applied
+ * to a temporary class, and index.jade has CSS to remove that class
+ * from the "State" dropdown as soon as any selection is made.
+ *
+ * It's not entirely clear to me why this works without any special
+ * treatment for 'option:first-child' vs 'option'.  If we run into
+ * browser compatibility issues, that might be the place to start.
+ *
+ * Useful resources:
+ *
+ * stackoverflow.com/questions/7208786/how-to-style-the-option-of-a-html-select
+ * stackoverflow.com/questions/22822427/bootstrap-select-dropdown-list-placeholder
+ */
+.state-not-yet-selected {
+  color: grey;
+}

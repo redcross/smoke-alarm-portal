@@ -33,12 +33,8 @@ block content
                     .col-xs-6
                       input#city.form-control.input-md(name='city', type='text', placeholder='City')
                     .col-xs-5
-                      // TODO: We need placeholder text for State
-                      // dropdown selector too.  See
-                      // http://stackoverflow.com/questions/22822427/bootstrap-select-dropdown-list-placeholder
-                      // for where to start.
-                      select#state.form-control(name='state', placeholder='State')
-                        option(value='')
+                      select#state.form-control(name='state')
+                        option(value='' disabled selected) State
                         option(value='Alabama') Alabama
                         option(value='Alaska') Alaska
                         option(value='Arizona') Arizona
@@ -132,6 +128,11 @@ block content
            | &nbsp;
 
     script(type="text/javascript").
+      $("select").addClass('state-not-yet-selected');
+      $("select").bind("focus", function () {
+        $(this).children('option[value="state-not-yet-selected"]').remove();
+        $(this).removeClass('state-not-yet-selected');
+      });           
       $(".form-horizontal").validate({
         rules: {
           phone: {
