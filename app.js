@@ -56,9 +56,9 @@ app.use(function(err, req, res, next) {
 
 /* Throw an error if the database sync does not occur */
 db.sequelize.sync().then(function(promise) {
-    console.log("DEBUG: DB in place");
+    return;
 }).catch(SyntaxError, function(e){
-    console.log("don't be evil: " + e);
+    console.log("ERROR: DB sync failed: " + e);
 });
 
 module.exports = app;

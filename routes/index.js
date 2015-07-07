@@ -61,16 +61,16 @@ router.post('/', function(req, res, next) {
     var zip_match = zip_re.exec(zip_received);
     if (zip_match) {
         if (zip_match.length < 2) {
-            console.log("ERROR: zip matched, but match grouping is somehow wrong,");
-            console.log("       which implies that the regexp itself is not right");
-            console.log("       (or our use of it isn't right).");
+            db.maybe_console_log("zip matched, but match grouping is somehow wrong,", true);
+            db.maybe_console_log("which implies that the regexp itself is not right", true);
+            db.maybe_console_log("(or our use of it isn't right).", true);
         }
         else {
             zip_5 = zip_match[1];
-            console.log("DEBUG: found the 5-digit portion of the zip code: '" + zip_5 + "'");
+            db.maybe_console_log("found the 5-digit portion of the zip code: '" + zip_5 + "'");
             if (zip_match.length == 3 && zip_match[2] !== undefined) {
                 zip_4 = zip_match[2];
-                console.log("DEBUG: found a 4-digit portion in the zip code: '" + zip_4 + "'");
+                db.maybe_console_log("found a 4-digit portion in the zip code: '" + zip_4 + "'");
                 zip_final = zip_5 + "-" + zip_4;
             } else {
                 zip_final = zip_5;
@@ -92,7 +92,7 @@ router.post('/', function(req, res, next) {
         phone: phone,
         email: email,
     }).then(function(successfulRequest) {
-        console.log("DEBUG: Request entered successfully");
+        db.maybe_console_log("Request entered successfully");
     });
 
     var zip_for_lookup = zip_5;
@@ -111,7 +111,7 @@ router.post('/', function(req, res, next) {
         }
     }).then(function(county) {
         if (! county) {
-            console.log("ERROR: no county found for zip '" + JSON.stringify(zip_for_lookup) + "'");
+            db.maybe_console_log("no county found for zip '" + JSON.stringify(zip_for_lookup) + "'", true);
             // TODO: This isn't quite right, for two reasons.
             // 
             // One, it tries to use the call to res.render() as an
@@ -133,7 +133,7 @@ router.post('/', function(req, res, next) {
             res.render('sorry.jade', {zip: zip_for_lookup});
         } 
 
-        console.log("DEBUG: county found: '" + JSON.stringify(county) + "'");
+        db.maybe_console_log("county found: '" + JSON.stringify(county) + "'");
         requestedCountyAddress = county;
 
         countyFromZip = requestedCountyAddress['county'].replace(" County", "");
@@ -146,7 +146,7 @@ router.post('/', function(req, res, next) {
             }
         }).then(function(selectedRegion) {
             if (selectedRegion !== null) {
-                console.log("DEBUG: selected region: " + JSON.stringify(selectedRegion));
+                db.maybe_console_log("selected region: " + JSON.stringify(selectedRegion));
                 res.render('thankyou.jade', {region: selectedRegion.region});
             } else {
                 if (zip_5) {
