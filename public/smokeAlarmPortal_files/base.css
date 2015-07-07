@@ -192,6 +192,12 @@ input.redstripe {
     float: right;
 }
 
+#singlebutton {
+    font-size: 20px;
+    border: 3px solid #EEE;
+    float: right;
+}
+
 /* These styles prevent bizarre checkbox appearances when zoom != 1 on OSX Chrome (and possibly other browsers) */
 #checkboxes-0 {
     height: 16px;
