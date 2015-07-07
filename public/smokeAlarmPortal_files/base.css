@@ -140,7 +140,7 @@ body {
     margin-left: 0px;
 }
 
-#left {
+#left, #right {
     padding-top: 10px;
     padding-bottom: 5px;
     margin-bottom: 10px;
@@ -170,7 +170,7 @@ body {
     border: 3px solid red;
 }
 
-#right .warning-star {
+.warning-star {
     color: #E00;
     vertical-align: top;
     padding-left: 0px;
