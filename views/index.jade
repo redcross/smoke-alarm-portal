@@ -20,37 +20,29 @@ block content
               .row
                 // Text input
                 .form-group
-                  label.col-sm-4.control-label(for='name')
-                    .label-background Your Name
                   .col-sm-7
                     .row
                       .col-xs-8
-                        input#name.form-control.input-md(name='name', type='text', placeholder='', required)
+                        input#name.form-control.input-md(name='name', type='text', placeholder='Your Name', required)
                       .col-xs-4.warning-star *
               .row
                 .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
                   // Text input
                   .form-group
-                    label.col-sm-4.control-label(for='street_address')
-                      .label-background Address & Unit
-                    .col-sm-6
-                      input#street_address.form-control.input-md(name='street_address', type='text', placeholder='')
+                    .col-sm-5
+                      input#street_address.form-control.input-md(name='street_address', type='text', placeholder='Address & Unit')
               .row
                 .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
                   // Text input
                   .form-group
-                    label.col-sm-4.control-label(for='city')
-                      .label-background City
                     .col-sm-3
-                      input#city.form-control.input-md(name='city', type='text', placeholder='')
+                      input#city.form-control.input-md(name='city', type='text', placeholder='City')
               .row
                 .component(data-content='', data-title='Select Basic', data-trigger='manual', data-html='true')
                   // Select Basic
                   .form-group
-                    label.col-sm-4.control-label(for='state')
-                      .label-background State
                     .col-sm-3
-                      select#state.form-control(name='state')
+                      select#state.form-control(name='state', placeholder='State')
                         option(value='')
                         option(value='Alabama') Alabama
                         option(value='Alaska') Alaska
@@ -107,35 +99,28 @@ block content
                 .component(data-content='', data-title='Text Input', data-trigger='manual', data-html='true')
                   // Text input
                   .form-group
-                    label.col-sm-4.control-label(for='zip')
-                      .label-background Zip Code
                     .col-sm-8
                       .row
                         .col-xs-4
-                          input#zip.form-control.input-md(name='zip', type='text', placeholder='', class='required zipcode valid')
+                          input#zip.form-control.input-md(name='zip', type='text', placeholder='Zip', class='required zipcode valid')
                         .col-xs-8.warning-star *
               .row
                   .form-group
-                    label.col-sm-4.control-label(for='phone')
-                      .label-background Phone #
                     .col-sm-8
                       .row
                         .col-xs-4
-                          input#phone.form-control.input-md(name='phone', type='text', placeholder='', class='contact-group phoneUS valid')
+                          input#phone.form-control.input-md(name='phone', type='text', placeholder='Phone #', class='contact-group phoneUS valid')
                         .col-xs-8.warning-star *
               .row
                   .form-group
-                    label.col-sm-4.control-label(for='email')
-                      .label-background Email
                     .col-sm-7
                       .row
                         .col-xs-8
-                          input#email.form-control.input-md(name='email', type='text', placeholder='', class='contact-group email valid')
+                          input#email.form-control.input-md(name='email', type='text', placeholder='Email', class='contact-group email valid')
                         .col-xs-4.warning-star *
               .row
                   .form-group
-                    label.col-sm-4.control-label(for='singlebutton')
-                    .col-sm-6
+                    .col-sm-3
                       button#singlebutton.btn.btn-primary(name='singlebutton') Submit
 
     script(type="text/javascript").
