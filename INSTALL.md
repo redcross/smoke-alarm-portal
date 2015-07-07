@@ -7,6 +7,7 @@ much difficulty to most other Unix-like operating systems.
 1. Get the code.
 
         $ git clone git@github.com:OpenTechStrategies/smoke-alarm-portal.git
+        $ cd smoke-alarm-portal
 
 2. Install [Node](https://nodejs.org/download/) and npm (a package manager).
    On Debian, run:
@@ -16,45 +17,43 @@ much difficulty to most other Unix-like operating systems.
 
    On Max OSX, use the Macintosh installer which can be downloaded from https://nodejs.org/download/. This will install both node and npm.
 
-3. Install [couchdb](http://couchdb.org/) from source.
+3. Install Postgres
 
-   On Debian, you may need to install these dependencies first (before building couchdb).  There is more detailed information [here](https://cwiki.apache.org/confluence/display/COUCHDB/Debian).
+        $ sudo apt-get install postgresql
 
-        $ sudo apt-get install build-essential libtool autoconf automake autoconf-archive pkg-config
-        # for Debian >=7.0
-        $ sudo apt-get install lsb-release
-        $ sudo apt-get install erlang
-        $ sudo apt-get install erlang-base-hipe
-        $ sudo apt-get install erlang-dev
-        $ sudo apt-get install erlang-manpages
-        $ sudo apt-get install erlang-eunit
-        $ sudo apt-get install erlang-nox
-        $ sudo apt-get install libicu-dev
-        $ sudo apt-get install libcurl4-openssl-dev
-        $ sudo apt-get install libmozjs185-dev
+4. You'll need to set up a postgres user, if you don't already have one:
 
-   On Mac OSX, use the Mac OSX installer which can be downloaded from http://couchdb.apache.org/#download. The installer should create the couchdb user automatically and start couchdb. You should now be able to skip directly to step 6 below and follow the remainder of the instructions to the end.
+        $ adduser postgres
 
-4. You'll need to set up a couchdb user:
+5. Do `cp config/config.json.tmpl config/config.json`, then edit the latter.
 
-        $ sudo useradd -d /var/lib/couchdb couchdb
-        $ sudo mkdir -p /usr/local/{lib,etc}/couchdb /usr/local/var/{lib,log,run}/couchdb /var/lib/couchdb
-        $ sudo chown -R couchdb:couchdb /usr/local/{lib,etc}/couchdb /usr/local/var/{lib,log,run}/couchdb
-        $ sudo chmod -R g+rw /usr/local/{lib,etc}/couchdb /usr/local/var/{lib,log,run}/couchdb
+   You'll need to fill in database usernames and passwords, of course.
+   You might also want to set up a whole new environment, e.g.,
+   "staging" (likely following the "test" example).
 
-5. Start couchdb
+6. Create the databases and import the initial data.
 
-        # We shouldn't need to run this as root.  We'll update the install file
-        # when we change this.
-        $ sudo couchdb
+        $ su - postgres
+        $ psql
+        postgres=# CREATE DATABASE smokealarm_development;
+        postgres=# CREATE USER <some_username> PASSWORD '<some_password>';
+        postgres=# GRANT ALL ON DATABASE smokealarm_development TO <username>;
+        postgres=# \q
 
-6. Create the databases and initialize the data.
+        $ npm install --save sequelize
+        $ sudo npm install -g sequelize-cli #this needs to be available system-wide
 
-   Run `set-up-databases.sh` (you may want to read the script first).
+        $ npm install pg-hstore
+        $ npm install --save pg
 
-7. Get the required node modules by running npm.
+        # do these if you are installing on a remote server
+        $ NODE_ENV="staging" # or whatever env you want from config.json
 
-        $ cd smoke-alarm-portal
+        # this will spew a lot of information to the screen
+        $ node data/import_into_postgres.js
+
+7. Get other required node modules.
+
         $ npm install
 
    7a. If you get errors from `npm install`, starting with something like
@@ -67,13 +66,35 @@ much difficulty to most other Unix-like operating systems.
 
         $ sudo apt-get install nodejs-legacy
 
-8. Start smoke-alarm-portal app
+8. Start the smoke-alarm-portal app
+
+   For development, you can just do this:
 
         $ npm start
 
-9. Step for staging or production server deployment
+   For demo or production, you might want to do this instead:
 
-    1. Install the forever module on the chosen server
-    2. Run the forever server:
+        $ npm install forever
+   
+    1. Do the apache proxying so that apache serves the node server:
+       - Edit 000-default.conf to serve the :3000 port by default, without
+         showing :3000 to users.
+       - Enable mod\_rewrite, mod\_proxy, and mod\_proxy\_http
 
-        $  forever -da start --watchDirectory . -l forever.log -o out.log -e err.log ./bin/www
+    ```
+    $ apt-get install -y libapache2-mod-proxy-html  
+    $ a2enmod rewrite proxy  
+    $ a2enmod proxy_http  
+    $ service apache2 restart  
+    ```
+
+    2. Install the forever module on the chosen server
+    3. Run the forever server:
+
+        $ ./node_modules/.bin/forever -da start --watchDirectory . -l forever.log -o out.log -e err.log ./bin/www
+
+9. See if it's working, by visiting http://localhost:3000/
+
+   TBD: Need instructions for changing to port 80 and eventually 443
+   for demo and production.
+

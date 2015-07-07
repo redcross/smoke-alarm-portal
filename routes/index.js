@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var nano = require('nano')('http://localhost:5984');
-
+var db = require('./../models');
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'Red Cross' });
@@ -21,9 +20,6 @@ router.get('/sorry', function(req, res, next) {
 /* POST to the server */
 router.post('/', function(req, res, next) {
     // Databases we'll need.
-    var requestDb = nano.use('smoke_alarm_requests');
-    var addressDb = nano.use('us_addresses');
-    var countyDb = nano.use('selected_counties');
 
     var zipToSelect = req.body.zip;
     // Things we derive from the user-provided zip code.
@@ -62,7 +58,7 @@ router.post('/', function(req, res, next) {
     var zip_5 = null;
     var zip_4 = null;
     var zip_re = /^([0-9][0-9][0-9][0-9][0-9]) *[-_+]{0,1} *([0-9][0-9][0-9][0-9]){0,1}$/g;
-    var zip_match = zip_re.exec(zip_received)
+    var zip_match = zip_re.exec(zip_received);
     if (zip_match) {
         if (zip_match.length < 2) {
             console.log("ERROR: zip matched, but match grouping is somehow wrong,");
@@ -86,98 +82,83 @@ router.post('/', function(req, res, next) {
     // service the request -- or even if it contains some invalid
     // data, such as an unknown zip code -- we still want to record
     // that the person made the request.
-    requestDb.insert(
-        {
-            name: name,
-            street_address: street_address,
-            city: city,
-            state: state,
-            zip: zip_final,
-            phone: phone,
-            email: email,
-        },
-        'Request from ' + req.body.name + ' at ' +  new Date().toLocaleString(),
-        function(err, body, header) {
-            if (err) {
-                console.log("ERROR: '" + err.message + "'");
-                return;
-            }
-        });
-    // determine whether the zipcode starts with "0".  If it does, use a string
-    // as the key, else use an integer.
 
-    if (zip_final[0] == "0"){
-        console.log("String");
-        zipToSelect = String(zip_final);
-    }
-    else{
-        console.log("Digit");
-        zipToSelect = Number(zip_final);
+    var request = db.Request.create({
+        name: name,
+        address: street_address,
+        city: city,
+        state: state,
+        zip: zip_final,
+        phone: phone,
+        email: email,
+    }).then(function(successfulRequest) {
+        console.log("DEBUG: Request entered successfully");
+    });
+
+    var zip_for_lookup = zip_5;
+    if (! zip_for_lookup) {
+        // If the zip we got doesn't look like it was a real zip, then
+        // it won't work later as a key for database lookups.  But we
+        // should still pass it along so at least error messages can
+        // display it accurately.
+        zip_for_lookup = zip_received;
     }
 
-
-    // Derive state+county from zip code
-    addressDb.view('us_addresses','by-zip-code', {key:zipToSelect}, function(error, results) {
-        if (error) {
-            if (String(error).toLowerCase().indexOf("error happened in your connection") != -1) {
-                console.log("ERROR: " + error)
-                console.log("       (This probably means you forgot to start CouchDB.)\n")
-            } else {
-                console.log("DEBUG: unrecognized error: " + error);
-            }
+    var requestedCountyAddress = null;
+    db.UsAddress.findOne({
+        where: {
+            zip: zip_for_lookup
         }
-        console.log("DEBUG: doc result from search on zip '" + zip_5 + "': " + JSON.stringify(results));
-        results.rows.forEach(function(doc) {
-            if (countyFromZip) {
-                console.log("DEBUG: another state+county match found: '"
-                           + doc.value[1] + "'+'" + doc.value[0] + "'");
-            }
-            countyFromZip = doc.value[0].replace(" County", "");
-            stateFromZip = doc.value[1];
-        });
+    }).then(function(county) {
+        if (! county) {
+            console.log("ERROR: no county found for zip '" + JSON.stringify(zip_for_lookup) + "'");
+            // TODO: This isn't quite right, for two reasons.
+            // 
+            // One, it tries to use the call to res.render() as an
+            // error exit (a non-local exit), which is what we want of
+            // in this error case.  But that doesn't really stop
+            // execution of this function -- we continue on after the
+            // closing curly brace, it's just that the user never sees
+            // that because we've rendered the sorry page already.
+            // There's got to be a Right Way to both hand off to the
+            // sorry page and exit out with an error here, without
+            // having the entire rest of this function be wrapped in
+            // an 'else' clause, right?
+            //
+            // The other problem is that we want the same wrapping of
+            // the erroneous zip code here as we have later on, where
+            // we wrap it in language about "INVALID ZIP CODE" etc.
+            // But I don't want to just copy-and-paste that code;
+            // that's obviously not the right way.
+            res.render('sorry.jade', {zip: zip_for_lookup});
+        } 
 
-        console.log("DEBUG: county '" + countyFromZip + "' in state '" + stateFromZip + "' "
-                    + "derived from zip code '" + zip_5 + "'");
-        var matchedRegion = null;
-        // We have to match both county and state.  Counties
-        // are not only not unique across states, they are not
-        // even unique within Red Cross regions in the North
-        // Central Division.  For example, there is a
-        // "KansasNebraska" region, but both Kansas and
-        // Nebraska have a Greeley County.  Try submitting one
-        // request with zip 67879 (Greeley County, Kansas) and
-        // another with zip 68665 (Greeley County, Nebraska).
-        countyDb.view('selected_counties','county-matchup', {key: [stateFromZip,countyFromZip]}, function(error, results) {
-            if (error) console.log("ERROR: Error matching region: " + error);
-            results.rows.forEach(function(doc) {
-                console.log("DEBUG: Retrieved this state+county from the view:\n       "
-                            + JSON.stringify(doc) + "\n");
-                console.log("DEBUG: You could use this command to verify it:\n       "
-                            + "'curl -X GET http://127.0.0.1:5984/selected_counties/"
-                            + doc._id + "'\n");
-                if (doc.key[0] == stateFromZip && doc.key[1] == countyFromZip) {
-                    if (matchedRegion) {
-                        console.log("DEBUG: another region match found:\n       "
-                                    + JSON.stringify(doc) + "\n");
-                    }
-                    matchedRegion = doc.value;
-                    console.log("DEBUG: The matching document is:\n       "
-                                + JSON.stringify(doc) + "\n");
-                }
-            });
-            if (matchedRegion) {
-                res.render('thankyou.jade', {region: matchedRegion});
+        console.log("DEBUG: county found: '" + JSON.stringify(county) + "'");
+        requestedCountyAddress = county;
+
+        countyFromZip = requestedCountyAddress['county'].replace(" County", "");
+        stateFromZip = requestedCountyAddress['state'];
+
+        db.SelectedCounties.findOne({
+            where: {
+                county: countyFromZip,
+                state: stateFromZip
+            }
+        }).then(function(selectedRegion) {
+            if (selectedRegion !== null) {
+                console.log("DEBUG: selected region: " + JSON.stringify(selectedRegion));
+                res.render('thankyou.jade', {region: selectedRegion.region});
             } else {
-                if (zip_final) {
-                    var zip_for_display = zip_final;
+                if (zip_5) {
+                    var zip_for_display = zip_for_lookup;
                 } else {
                     // A better way to handle this would be to display a sorry
                     // page that discusses the invalidity of the zip code and
                     // doesn't talk about anything else.  But this will do for now.
-                    var zip_for_display = "(INVALID ZIP CODE '" + zip_received + "')";
+                    var zip_for_display = "(INVALID ZIP CODE '" + zip_for_lookup + "')";
                 }
                 res.render('sorry.jade', {county: countyFromZip, state: stateFromZip, zip: zip_for_display});
-            }
+            };
         });
     });
 });
