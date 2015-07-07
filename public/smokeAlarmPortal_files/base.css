@@ -166,7 +166,7 @@ body {
     padding: 0px;
 }
 
-#right input.redstripe {
+input.redstripe {
     border: 3px solid red;
 }
 
@@ -178,7 +178,7 @@ body {
     font-size: 100%;
 }
 
-#right .warning-text {
+.warning-text {
     color: #E00;
     vertical-align: top;
     padding-left: 0px;

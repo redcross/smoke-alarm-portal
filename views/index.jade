@@ -150,6 +150,14 @@ block content
             $(element).addClass("redstripe");
             warningBox.removeClass("warning-star");
             warningBox.addClass("warning-text");
+            // Right now, this message is squeezed into one word per
+            // line, because of how we've moved the input fields into
+            // the middle column.  However, we should probably tackle
+            // that problem after deciding whether we're combining
+            // email and phone number into one field, as per issue
+            // #36#issuecomment-119059556, because if we're combining
+            // them then we'll be writing a custom validation wrapper
+            // anyway and can solve the positioning problem in that.
             warningBox.text(message);
           }
         }
