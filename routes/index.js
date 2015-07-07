@@ -112,25 +112,7 @@ router.post('/', function(req, res, next) {
     }).then(function(county) {
         if (! county) {
             console.log("ERROR: no county found for zip '" + JSON.stringify(zip_for_lookup) + "'");
-            // TODO: This isn't quite right, for two reasons.
-            // 
-            // One, it tries to use the call to res.render() as an
-            // error exit (a non-local exit), which is what we want of
-            // in this error case.  But that doesn't really stop
-            // execution of this function -- we continue on after the
-            // closing curly brace, it's just that the user never sees
-            // that because we've rendered the sorry page already.
-            // There's got to be a Right Way to both hand off to the
-            // sorry page and exit out with an error here, without
-            // having the entire rest of this function be wrapped in
-            // an 'else' clause, right?
-            //
-            // The other problem is that we want the same wrapping of
-            // the erroneous zip code here as we have later on, where
-            // we wrap it in language about "INVALID ZIP CODE" etc.
-            // But I don't want to just copy-and-paste that code;
-            // that's obviously not the right way.
-            res.render('sorry.jade', {zip: zip_for_lookup});
+            return res.render('sorry.jade', {zip: zip_for_lookup});
         } 
 
         console.log("DEBUG: county found: '" + JSON.stringify(county) + "'");
