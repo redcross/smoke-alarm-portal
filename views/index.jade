@@ -3,36 +3,66 @@ extends layout
 block content
   #container.container-fluid
     #main.row
-      #left.col-sm-4
+      #left.col-sm-3
          p
            | Thank you for your interest in having one or more 10 year lithium-ion battery powered smoke alarms installed in your home.
          p
            | Please complete the form on this page and click “submit”. An American Red Cross representative will contact you shortly to confirm your registration into our wait list. Additional information on installation will be given at that time.
          p
            | Currently available in: IA, ID, IL, KS, MN, MO, MT, ND, NE, SD, WI.
-      #center.col-sm-4
+      #center.col-sm-6
         .container-fluid
           form(action="/", method="POST", class="form-horizontal")
             fieldset
+              .row
+                  p
+              .row
+                  p
+              .row
+                  p
+              .row
+                  p
+              .row
+                  p
+              .row
+                  p
               .row
                 // Text input
                 .form-group
                   .col-xs-12
                     .row
-                      .col-xs-11
+                      .col-xs-1
+                        &nbsp;
+                      .col-xs-10
                         input#name.form-control.input-md(name='name', type='text', placeholder='Your Name', required)
                       .col-xs-1.warning-star *
               .row
-                  // Text input
-                  .form-group
-                    .col-xs-11
-                      input#street_address.form-control.input-md(name='street_address', type='text', placeholder='Address & Unit')
+                  p
+              .row
+                  p
+              .row
+                  p
               .row
                   // Text input
                   .form-group
-                    .col-xs-6
+                    .col-xs-1
+                      &nbsp;
+                    .col-xs-10
+                      input#street_address.form-control.input-md(name='street_address', type='text', placeholder='Address & Unit')
+              .row
+                  p
+              .row
+                  p
+              .row
+                  p
+              .row
+                  // Text input
+                  .form-group
+                    .col-xs-1
+                      &nbsp;
+                    .col-xs-3
                       input#city.form-control.input-md(name='city', type='text', placeholder='City')
-                    .col-xs-5
+                    .col-xs-4
                       select#state.form-control(name='state')
                         option(value='' disabled selected) State
                         option(value='Alabama') Alabama
@@ -86,28 +116,37 @@ block content
                         option(value='West Virginia') West Virginia
                         option(value='Wisconsin') Wisconsin
                         option(value='Wyoming') Wyoming
+                    // Text input
+                    .col-xs-3
+                      input#zip.form-control.input-md(name='zip', type='text', placeholder='Zip Code', class='required zipcode valid')
+                    .col-xs-1.warning-star *
               .row
-                  // Text input
-                  .form-group
-                    .col-xs-12
-                      .row
-                        .col-xs-4
-                          input#zip.form-control.input-md(name='zip', type='text', placeholder='Zip Code', class='required zipcode valid')
-                        .col-xs-1.warning-star *
+                  p
               .row
-                  .form-group
-                    .col-xs-12
-                      .row
-                        .col-xs-5
-                          input#phone.form-control.input-md(name='phone', type='text', placeholder='Phone #', class='contact-group phoneUS valid')
-                        .col-xs-1.warning-star *
+                  p
+              .row
+                  p
               .row
                   .form-group
                     .col-xs-12
                       .row
-                        .col-xs-8
-                          input#email.form-control.input-md(name='email', type='text', placeholder='Email', class='contact-group email valid')
+                        .col-xs-1
+                          &nbsp;
+                        .col-xs-10
+                          input#phone.form-control.input-md(name='phone', type='text', placeholder='Contact information (phone number and/or email address)', class='contact-group phoneUS valid')
                         .col-xs-1.warning-star *
+              .row
+                  p
+              .row
+                  p
+              .row
+                  p
+              .row
+                  p
+              .row
+                  p
+              .row
+                  p
               .row
                   p
               .row
@@ -115,16 +154,22 @@ block content
               .row
                   // http://www.sitepoint.com/understanding-bootstrap-grid-system/ helped
                   .form-group
-                    .col-xs-8
+                    .col-xs-7
                       button#singlebutton.btn.btn-primary(name='singlebutton') Submit
               .row
                   p
               .row
                   p
               .row
-                  .col-xs-2
+                  p
+              .row
+                  p
+              .row
+                  p
+              .row
+                  .col-xs-3
                   img.logo(src='./smokeAlarmPortal_files/redcross-logo-white-letters.png', alt='American Red Cross')
-      #right.col-sm-4
+      #right.col-sm-3
          p
            | The American Red Cross and its partners have launched an initiative that aims to reduce deaths and injuries caused by home fires by 25% in five years with the Home Fire Preparedness Campaign.  The Red Cross is asking every household in America to join us in taking two simple steps that can save lives: checking or installing smoke alarms and practicing fire drills at home. 
          // Kludge alert: This is surely not the right way to ensure
@@ -132,6 +177,8 @@ block content
          // as the left-side one.  However, once the new background
          // photo is in place, we won't be using the shaded background
          // areas behind text anyway, and this kludge can go away.
+         p
+           | &nbsp;
          p
            | &nbsp;
          p
