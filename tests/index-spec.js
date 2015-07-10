@@ -69,7 +69,7 @@ describe("POST", function() {
         });
     };
     var insertCounty = function() {
-        return db.SelectedCounties.create({
+        return db.rcRegionsByCounty.create({
             region: "ARC of Chicago and Northern Illinois",
             state: "Illinois",
             county: "Cook"

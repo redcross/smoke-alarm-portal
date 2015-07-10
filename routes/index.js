@@ -130,7 +130,7 @@ router.post('/', function(req, res, next) {
         countyFromZip = requestedCountyAddress['county'].replace(" County", "");
         stateFromZip = requestedCountyAddress['state'];
 
-        db.SelectedCounties.findOne({
+        db.rcRegionsByCounty.findOne({
             where: {
                 county: countyFromZip,
                 state: stateFromZip

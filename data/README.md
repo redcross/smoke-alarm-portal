@@ -16,7 +16,7 @@ needs county names as text, associated with state names also as text.
 Even then we'll have a few issues with regions that slip over state
 lines in a few places, and even with a few region boundaries that run
 through certain counties.  But we'll deal with the edge cases later.
-For the moment, 'selected_counties.json' just treats regions as
+For the moment, 'rc_regions_by_county.json' just treats regions as
 falling perfectly along state boundaries: if a county is in a given
 state, and that state is in a region, then that county is assumed to
 be in that region.  We can look at the maps and tweak the data later.

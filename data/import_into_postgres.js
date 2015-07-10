@@ -11,7 +11,7 @@ var db = require('../models'); // Sequelize initialization
 var async = require('async'); // Used primarily for iterator
 
 /* import JSON using node require */
-var selectedCountiesJson = require('../data/selected_counties.json');
+var rcRegionsByCounty = require('../data/rc_regions_by_county.json');
 var usAddressesJson = require('../data/us_addresses.json');
 
 
@@ -20,13 +20,13 @@ var usAddressesJson = require('../data/us_addresses.json');
    structure if for some reason it is not in place */
 db.sequelize.sync().then(function(promise) {
 
-	/* Import the selected counties from JSON. Create Counties using
-	 * Model.create() function from Sequelize.
+	/* Import the selected Red Cross regions from JSON.  Create
+	   each county using Model.create() function from Sequelize.
 	 */
-	var selectedCounties = db.SelectedCounties;
+	var rcRegionsByCounty = db.rcRegionsByCounty;
 
-	async.each(selectedCountiesJson.docs, function(county, callback) {
-		selectedCounties.create(county).then(function(returnedCounty) {
+	async.each(rcRegionsByCounty.docs, function(county, callback) {
+		rcRegionsByCounty.create(county).then(function(returnedCounty) {
 			console.log("County " + returnedCounty + " added");
 		});
 	});
