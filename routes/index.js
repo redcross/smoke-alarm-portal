@@ -26,6 +26,15 @@ router.post('/', function(req, res, next) {
     var stateFromZip = null;   // remains null if no match
     var countyFromZip = null;  // remains null if no match
 
+    // Treat state gingerly.  Because of the way ../views/index.js
+    // simulates placeholder text for State, there is a possibility
+    // that, unlike other fields, req.body.state may be undefined.
+    // For other fields we can assume they are strings, either empty
+    // or non-empty, so here we make state meet that assumption too.
+    if (req.body.state === undefined) {
+        req.body.state = '';
+    }
+
     // Trim and sanitize the request values.
     //
     // Note: we could augment String like so
