@@ -5,7 +5,7 @@ body {
     background-repeat: repeat-y;
     background-color: #DDD;
     color: #EEE;
-    font-size: 20px;
+    font-size: 14px;
     line-height: 140%;
     min-height: 100%;
     position: relative;
@@ -187,13 +187,13 @@ input.redstripe {
 }
 
 #right button {
-    font-size: 20px;
+    font-size: 14px;
     border: 3px solid #EEE;
     float: right;
 }
 
 #singlebutton {
-    font-size: 20px;
+    font-size: 14px;
     border: 3px solid #EEE;
     float: right;
 }
@@ -222,4 +222,8 @@ input.redstripe {
  */
 .state-not-yet-selected {
   color: grey;
+}
+
+p.bigger {
+    font-size: 24px;
 }
