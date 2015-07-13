@@ -1,5 +1,10 @@
+@font-face {
+  font-family: smokeAlarmDefault;
+  src: url('/third-party/HelveticaNeue.ttf');
+}
+
 body {
-    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Helvetica Neue", smokeAlarmDefault, Helvetica, Arial, sans-serif;
     background: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15)), url("../images/install_combined.jpg");
     background-size: 100%;
     background-repeat: repeat-y;
