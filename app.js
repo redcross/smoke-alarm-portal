@@ -38,17 +38,31 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(require('morgan')('dev'));
+app.use(require('compression')());
+app.use(require('serve-static')(path.join(__dirname, 'public')));
+app.use(require('method-override')());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    extended: false
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser(config.cryptoKey));
+app.use(session({
+  resave: true,
+  saveUninitialized: true,
+  secret: config.cryptoKey,
+  store: new RedisStore({})
 }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(csrf({ cookie: { signed: true } }));
+helmet(app);
 
-app.use('/', require('./routes'));
-
-
-// Drywall routes
+//response locals
+app.use(function(req, res, next) {
+  res.cookie('_csrfToken', req.csrfToken());
+  res.locals.user = {};
+  res.locals.user.defaultReturnUrl = req.user && req.user.defaultReturnUrl();
+  res.locals.user.username = req.user && req.user.username;
+  next();
+});
 
 //global locals
 app.locals.projectName = app.config.projectName;

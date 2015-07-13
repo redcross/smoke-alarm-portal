@@ -1,4 +1,5 @@
 'use strict';
+
 exports.init = function(req, res) {
     if (req.isAuthenticated()) {
         res.redirect(req.user.defaultReturnUrl());
@@ -15,7 +16,6 @@ exports.init = function(req, res) {
 };
 
 exports.signup = function(req, res) {
-    console.log(req.body);
     var workflow = req.app.utility.workflow(req, res);
 
     workflow.on('validate', function() {

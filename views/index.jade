@@ -2,6 +2,9 @@ extends layout
 
 block content
   #container.container-fluid
+    .row
+      .col-sm-12
+        h1 American Red Cross of Chicago & Northern Illinois
     #main.row
       #left.col-sm-4
          p
@@ -116,6 +119,7 @@ block content
                   // http://www.sitepoint.com/understanding-bootstrap-grid-system/ helped
                   .form-group
                     .col-xs-3
+                      input(type='hidden', name='_csrf', value='#{csrf}')
                       button#singlebutton.btn.btn-primary(name='singlebutton') Submit
 
       #right.col-sm-4

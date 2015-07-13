@@ -32,26 +32,14 @@ var options = {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+db.Admin.belongsTo(db.User);
+db.Message.belongsTo(db.User);
+db.Account.belongsTo(db.User);
+db.Admin.belongsTo(db.AdminGroup);
 
-db.User.sync(options).then(function() {
-
-    db.Message.belongsTo(db.User);
-    db.Account.belongsTo(db.User);
-    db.Admin.belongsTo(db.AdminGroup);
-    db.User.belongsTo(db.Admin);
-    db.Account.sync(options);
-    db.Message.sync(options);
-
-    db.Admin.sync(options);
-    db.AdminGroup.sync(options);
-    db.Category.sync(options);
-    db.LoginAttempt.sync(options);
-    db.Note.sync(options);
-    db.Status.sync(options);
-    db.StatusLog.sync(options);
-
+db.sequelize.sync(options).then(function() {
+    console.log("DEBUG: Database created");
 });
-
 
 module.exports = db;
 
