@@ -20,7 +20,7 @@ block content
                   .col-xs-12
                     .row
                       .col-xs-11
-                        input#name.form-control.input-md(name='name', type='text', placeholder='Your Name', required)
+                        input#name.form-control.input-md(name='name', type='text', placeholder='Your Name', class='validate[required]')
                       .col-xs-1.warning-star
               .row
                   // Text input
@@ -31,7 +31,7 @@ block content
                   // Text input
                   .form-group
                     .col-xs-6
-                      input#city.form-control.input-md(name='city', type='text', placeholder='City')
+                      input#city.form-control.input-md(name='city', type='text', placeholder='City' class='validate[required]')
                     .col-xs-5
                       select#state.form-control(name='state')
                         option(value='' disabled selected) State
@@ -129,33 +129,5 @@ block content
       $("select").bind("focus", function () {
         $(this).children('option[value="state-not-yet-selected"]').remove();
         $(this).removeClass('state-not-yet-selected');
-      });           
-      $(".form-horizontal").validate({
-        rules: {
-          phone: {
-            require_from_group: [1, ".contact-group"]
-          },
-          email: {
-            require_from_group: [1, ".contact-group"]
-          },
-        }, 
-        showErrors: function(errorMap, errorList) {
-          for (var i=0; i<errorList.length; i++) {
-            var element = errorList[i]["element"];
-            var message = errorList[i]["message"];
-            var warningBox = $(element).parent().next(".warning-star");
-            $(element).addClass("redstripe");
-            warningBox.removeClass("warning-star");
-            warningBox.addClass("warning-text");
-            // Right now, this message is squeezed into one word per
-            // line, because of how we've moved the input fields into
-            // the middle column.  However, we should probably tackle
-            // that problem after deciding whether we're combining
-            // email and phone number into one field, as per issue
-            // #36#issuecomment-119059556, because if we're combining
-            // them then we'll be writing a custom validation wrapper
-            // anyway and can solve the positioning problem in that.
-            warningBox.text(message);
-          }
-        }
       });
+      $(".form-horizontal").validationEngine();
