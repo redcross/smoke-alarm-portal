@@ -20,20 +20,20 @@ block content
                   .col-xs-12
                     .row
                       .col-xs-11
-                        input#name.form-control.input-md(name='name', type='text', placeholder='Your Name', class='validate[required]')
+                        input#name.form-control.input-md(name='name', type='text', placeholder='Your Name', class='validate[required]', data-prompt-position='topLeft:0,5')
                       .col-xs-1.warning-star
               .row
                   // Text input
                   .form-group
                     .col-xs-11
-                      input#street_address.form-control.input-md(name='street_address', type='text', placeholder='Address & Unit')
+                      input#street_address.form-control.input-md(name='street_address', type='text', placeholder='Address & Unit', class='validate[required]', data-prompt-position='topLeft:50,5')
               .row
                   // Text input
                   .form-group
                     .col-xs-6
                       input#city.form-control.input-md(name='city', type='text', placeholder='City' class='validate[required]')
                     .col-xs-5
-                      select#state.form-control(name='state')
+                      select#state.form-control(name='state', class='validate[required]')
                         option(value='' disabled selected) State
                         option(value='Alabama') Alabama
                         option(value='Alaska') Alaska
@@ -92,21 +92,21 @@ block content
                     .col-xs-12
                       .row
                         .col-xs-4
-                          input#zip.form-control.input-md(name='zip', type='text', placeholder='Zip Code', class='required zipcodeUS valid')
+                          input#zip.form-control.input-md(name='zip', type='text', placeholder='Zip Code', class='validate[required, custom[zip]]')
                         .col-xs-1.warning-star
               .row
                   .form-group
                     .col-xs-12
                       .row
                         .col-xs-5
-                          input#phone.form-control.input-md(name='phone', type='text', placeholder='Phone #', class='contact-group phoneUS valid')
+                          input#phone.form-control.input-md(name='phone', type='text', placeholder='Phone #', class='validate[required, custom[phone-10-digit-US]]')
                         .col-xs-1.warning-star
               .row
                   .form-group
                     .col-xs-12
                       .row
                         .col-xs-8
-                          input#email.form-control.input-md(name='email', type='text', placeholder='Email', class='contact-group email valid')
+                          input#email.form-control.input-md(name='email', type='text', placeholder='Email', class='validate[required, custom[email]]')
                         .col-xs-1.warning-star
               .row
                   // http://www.sitepoint.com/understanding-bootstrap-grid-system/ helped
@@ -130,4 +130,4 @@ block content
         $(this).children('option[value="state-not-yet-selected"]').remove();
         $(this).removeClass('state-not-yet-selected');
       });
-      $(".form-horizontal").validationEngine();
+      $(".form-horizontal").validationEngine({scroll: false, autoPositionUpdate: true});
