@@ -17,11 +17,8 @@ block content
               .row
                 // Text input
                 .form-group
-                  .col-xs-12
-                    .row
-                      .col-xs-11
-                        input#name.form-control.input-md(name='name', type='text', placeholder='Your Name', class='validate[required]', data-prompt-position='topLeft:0,5')
-                      .col-xs-1.warning-star
+                  .col-xs-11
+                    input#name.form-control.input-md(name='name', type='text', placeholder='Your Name', class='validate[required]', data-prompt-position='topLeft:0,5')
               .row
                   // Text input
                   .form-group
@@ -31,9 +28,9 @@ block content
                   // Text input
                   .form-group
                     .col-xs-6
-                      input#city.form-control.input-md(name='city', type='text', placeholder='City' class='validate[required]')
+                      input#city.form-control.input-md(name='city', type='text', placeholder='City' class='validate[required]', data-prompt-position='topRight:0,5')
                     .col-xs-5
-                      select#state.form-control(name='state', class='validate[required]')
+                      select#state.form-control(name='state', class='validate[required]', data-prompt-position='topRight:-80,5')
                         option(value='' disabled selected) State
                         option(value='Alabama') Alabama
                         option(value='Alaska') Alaska
@@ -89,25 +86,16 @@ block content
               .row
                   // Text input
                   .form-group
-                    .col-xs-12
-                      .row
-                        .col-xs-4
-                          input#zip.form-control.input-md(name='zip', type='text', placeholder='Zip Code', class='validate[required, custom[zip]]')
-                        .col-xs-1.warning-star
+                    .col-xs-4
+                      input#zip.form-control.input-md(name='zip', type='text', placeholder='Zip Code', class='validate[required, custom[zip]]', data-prompt-position='topLeft:0,5')
               .row
                   .form-group
-                    .col-xs-12
-                      .row
-                        .col-xs-5
-                          input#phone.form-control.input-md(name='phone', type='text', placeholder='Phone #', class='validate[required, custom[phone-10-digit-US]]')
-                        .col-xs-1.warning-star
+                    .col-xs-5
+                      input#phone.form-control.input-md(name='phone', type='text', placeholder='Phone #', class='validate[required, custom[phone-10-digit-US]]', data-prompt-position='topRight:0,5')
               .row
                   .form-group
-                    .col-xs-12
-                      .row
-                        .col-xs-8
-                          input#email.form-control.input-md(name='email', type='text', placeholder='Email', class='validate[required, custom[email]]')
-                        .col-xs-1.warning-star
+                    .col-xs-8
+                      input#email.form-control.input-md(name='email', type='text', placeholder='Email', class='validate[required, custom[email]]', data-prompt-position='topRight:0,5')
               .row
                   // http://www.sitepoint.com/understanding-bootstrap-grid-system/ helped
                   .form-group
@@ -130,4 +118,34 @@ block content
         $(this).children('option[value="state-not-yet-selected"]').remove();
         $(this).removeClass('state-not-yet-selected');
       });
-      $(".form-horizontal").validationEngine({scroll: false, autoPositionUpdate: true});
+      $(".form-horizontal").validationEngine({
+        'scroll': false,
+        'autoPositionUpdate': true,
+        'maxErrorsPerField': 1,
+        'custom_error_messages': {
+          '#phone': {
+            'required': {
+              'message': '* A valid, 10-digit phone number is required'
+            },
+            'custom[phone-10-digit-US]': {
+              'message': '* A valid, 10-digit phone number is required'
+            }
+          },
+          '#zip': {
+            'required': {
+              'message': '* A valid US zip code is required'
+            },
+            'custom[zip]': {
+              'message': '* A valid US zip code is required'
+            }
+          },
+          '#email': {
+            'required': {
+              'message': '* A valid email address is required'
+            },
+            'custom[email]': {
+              'message': '* A valid email address is required'
+            }
+          }
+        }
+      });
