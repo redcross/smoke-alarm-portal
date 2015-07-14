@@ -23,6 +23,9 @@ html(lang='en')
     script(type='text/javascript', src='/third-party/jquery.min.js')
     script(type='text/javascript', src='/third-party/bootstrap.min.js')
 
+    // Drywall config
+    script(src='/layouts/core.min.js?#{cacheBreaker}')
+
     // jQuery validate
     script(type='text/javascript', src='/third-party/jquery.validationEngine-en.js')
     script(type="text/javascript").
@@ -38,9 +41,6 @@ html(lang='en')
     // The DCSOps stylesheet messes up how bootstrap columns behave when collaped
     // link(rel='stylesheet', type='text/css', href='./smokeAlarmPortal_files/DCSOps.css')
     link(rel='stylesheet', type='text/css', href='./smokeAlarmPortal_files/base.css')
-
-    // Drywall config
-    script(src='/layouts/core.min.js?#{cacheBreaker}')
 
     noscript
       | <div id="javaScriptError" style="text-align:center; padding-top:130px;"> <font color="FF0000"> <img src="/images/icon/warning.png" width="20" height="23" alt="" /> <strong> Javascript is disabled in your browser. In order to use the site correctly, please enable javascript.</strong> </font> </div>
