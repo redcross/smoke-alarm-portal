@@ -10,8 +10,7 @@ body {
     background-repeat: repeat-y;
     background-color: #DDD;
     color: #EEE;
-    font-size: 14px;
-    line-height: 140%;
+    font-size: 1.8em;
     min-height: 100%;
     position: relative;
 }
@@ -66,7 +65,7 @@ body {
 }
 
 #container {
-    margin: 0px 40px;
+    margin: 0em 1em;
 }
 
 #primary-nav {
@@ -141,73 +140,26 @@ body {
 }
 
 #main {
-    padding: 20px 0px 0px 0px;
-    margin-left: 0px;
+    padding: 1em 0em 0em 0em;
+    margin-left: 0em;
 }
 
 #left, #right {
-    padding-top: 10px;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    margin-bottom: 0.5em;
     background: rgba(0, 0, 0, 0.5);
     border-radius: 4px;
     border: 1px solid #999;
 }
 
-#right label {
-    padding: 0px;
-}
-
-#right label .label-background {
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid #999;
-    border-radius: 5px;
-    padding: 2px 5px;
-    display: inline-block;
-    max-width: 200px;
-}
-
 #right input {
-    padding: 0px;
-}
-
-input.redstripe {
-    border: 3px solid red;
-}
-
-.warning-star {
-    color: #E00;
-    vertical-align: top;
-    padding-left: 0px;
-    margin-left: -10px;
-    font-size: 100%;
-}
-
-.warning-text {
-    color: #E00;
-    vertical-align: top;
-    padding-left: 0px;
-    margin-left: -10px;
-    font-size: 75%;
-}
-
-#right button {
-    font-size: 14px;
-    border: 3px solid #EEE;
-    float: right;
+    padding: 0em;
 }
 
 #singlebutton {
-    font-size: 14px;
+    font-size: 1em;
     border: 3px solid #EEE;
-    float: right;
-}
-
-/* These styles prevent bizarre checkbox appearances when zoom != 1 on OSX Chrome (and possibly other browsers) */
-#checkboxes-0 {
-    height: 16px;
-    width: 16px;
-    margin-top: 16px;
 }
 
 /* Select dropdowns don't support placeholder text directly in HTML,
@@ -230,5 +182,5 @@ input.redstripe {
 }
 
 p.bigger {
-    font-size: 24px;
+    font-size: 1.8em;
 }
