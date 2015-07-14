@@ -6,14 +6,14 @@ block content
       .col-sm-12
         h1 American Red Cross of Chicago & Northern Illinois
     #main.row
-      #left.col-sm-4
+      #left.col-sm-12
+         p.bigger
+           | Thank you for your interest in having one or more 10-year lithium-ion battery powered smoke alarms installed in your home.
          p
-           | Thank you for your interest in having one or more 10 year lithium-ion battery powered smoke alarms installed in your home.
-         p
-           | Please complete the form on this page and click “submit”. An American Red Cross representative will contact you shortly to confirm your registration into our wait list. Additional information on installation will be given at that time.
-         p
-           | Currently available in: IA, ID, IL, KS, MN, MO, MT, ND, NE, SD, WI.
-      #center.col-sm-4
+           | Please complete all fields in the form below and click “submit”. An American Red Cross representative will contact you shortly to confirm your registration into our wait list. Additional information on installation will be given at that time.
+      // I added this to center the fields, but I think it's probably incorrect                    
+      .col-sm-3
+      #center.col-sm-6
         .container-fluid
           form(action="/", method="POST", class="form-horizontal")
             fieldset
@@ -24,7 +24,7 @@ block content
                     .row
                       .col-xs-11
                         input#name.form-control.input-md(name='name', type='text', placeholder='Your Name', required)
-                      .col-xs-1.warning-star *
+                      .col-xs-1.warning-star
               .row
                   // Text input
                   .form-group
@@ -36,12 +36,8 @@ block content
                     .col-xs-6
                       input#city.form-control.input-md(name='city', type='text', placeholder='City')
                     .col-xs-5
-                      // TODO: We need placeholder text for State
-                      // dropdown selector too.  See
-                      // http://stackoverflow.com/questions/22822427/bootstrap-select-dropdown-list-placeholder
-                      // for where to start.
-                      select#state.form-control(name='state', placeholder='State')
-                        option(value='')
+                      select#state.form-control(name='state')
+                        option(value='' disabled selected) State
                         option(value='Alabama') Alabama
                         option(value='Alaska') Alaska
                         option(value='Arizona') Arizona
@@ -99,43 +95,45 @@ block content
                     .col-xs-12
                       .row
                         .col-xs-4
-                          input#zip.form-control.input-md(name='zip', type='text', placeholder='Zip', class='required zipcode valid')
-                        .col-xs-1.warning-star *
+                          input#zip.form-control.input-md(name='zip', type='text', placeholder='Zip Code', class='required zipcodeUS valid')
+                        .col-xs-1.warning-star
               .row
                   .form-group
                     .col-xs-12
                       .row
-                        .col-xs-4
+                        .col-xs-5
                           input#phone.form-control.input-md(name='phone', type='text', placeholder='Phone #', class='contact-group phoneUS valid')
-                        .col-xs-1.warning-star *
+                        .col-xs-1.warning-star
               .row
                   .form-group
                     .col-xs-12
                       .row
                         .col-xs-8
                           input#email.form-control.input-md(name='email', type='text', placeholder='Email', class='contact-group email valid')
-                        .col-xs-1.warning-star *
+                        .col-xs-1.warning-star
               .row
                   // http://www.sitepoint.com/understanding-bootstrap-grid-system/ helped
                   .form-group
-                    .col-xs-3
+                    .col-xs-6
                       input(type='hidden', name='_csrf', value='#{csrf}')
                       button#singlebutton.btn.btn-primary(name='singlebutton') Submit
-
-      #right.col-sm-4
+      #right.col-sm-12
          p
            | The American Red Cross and its partners have launched an initiative that aims to reduce deaths and injuries caused by home fires by 25% in five years with the Home Fire Preparedness Campaign.  The Red Cross is asking every household in America to join us in taking two simple steps that can save lives: checking or installing smoke alarms and practicing fire drills at home. 
-         // Kludge alert: This is surely not the right way to ensure
-         // that the right-side paragraph has the same vertical extent
-         // as the left-side one.  However, once the new background
-         // photo is in place, we won't be using the shaded background
-         // areas behind text anyway, and this kludge can go away.
          p
-           | &nbsp;
-         p
-           | &nbsp;
+           | Currently available in: IA, ID, IL, KS, MN, MO, MT, ND, NE, SD, WI.
+          .row
+              .col-xs-2
+      .col-sm-4
+      .col-sm-4
+         img.logo(src='./smokeAlarmPortal_files/redcross-logo-white-letters.png', alt='American Red Cross')
 
     script(type="text/javascript").
+      $("select").addClass('state-not-yet-selected');
+      $("select").bind("focus", function () {
+        $(this).children('option[value="state-not-yet-selected"]').remove();
+        $(this).removeClass('state-not-yet-selected');
+      });           
       $(".form-horizontal").validate({
         rules: {
           phone: {
@@ -153,6 +151,14 @@ block content
             $(element).addClass("redstripe");
             warningBox.removeClass("warning-star");
             warningBox.addClass("warning-text");
+            // Right now, this message is squeezed into one word per
+            // line, because of how we've moved the input fields into
+            // the middle column.  However, we should probably tackle
+            // that problem after deciding whether we're combining
+            // email and phone number into one field, as per issue
+            // #36#issuecomment-119059556, because if we're combining
+            // them then we'll be writing a custom validation wrapper
+            // anyway and can solve the positioning problem in that.
             warningBox.text(message);
           }
         }
