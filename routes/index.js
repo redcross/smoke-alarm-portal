@@ -245,7 +245,7 @@ router.post('/', function(req, res, next) {
                     + "  " + name + "\n"
                     + "  " + street_address + "\n"
                     + "  " + city + ", " + state_abbrevs[state] + "  " + zip_final + "\n"
-                    + "  Phone:" + phone + "\n"
+                    + "  Phone: " + phone + "\n"
                     + "  Email: <" + email + ">\n"
                     + "\n"
                     + "This is installation request #" + thisRequestID + ".\n"
