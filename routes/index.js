@@ -223,6 +223,7 @@ router.post('/', function(req, res, next) {
                 var regionPresentableName = recipients_table[selectedRegion.region]["region_alt_name"];
                 var regionRecipientName   = recipients_table[selectedRegion.region]["contact_name"];
                 var regionRecipientEmail  = recipients_table[selectedRegion.region]["contact_email"];
+                var thisRequestID = request._boundTo.dataValues.id;
 
                 // Temporary shims during development, so we don't send
                 // mail to real Red Cross administrators when testing.
@@ -247,9 +248,10 @@ router.post('/', function(req, res, next) {
                     + "  Phone:" + phone + "\n"
                     + "  Email: <" + email + ">\n"
                     + "\n"
-                    + "We're directing this installation request to the administrator\n"
-                    + "for the American Red Cross North Central Division,\n"
-                    + regionPresentableName + " region:\n"
+                    + "This is installation request #" + thisRequestID + ".\n"
+                    + "\n"
+                    + "We're directing this request to the administrator for the\n"
+                    + "ARC North Central Division, " + regionPresentableName + " region:\n"
                     + "\n"
                     + "  " + regionRecipientName + " <" + regionRecipientEmail + ">\n"
                     + "\n"
@@ -257,12 +259,11 @@ router.post('/', function(req, res, next) {
                     + "-The Smoke Alarm Request Portal\n";
 
                 // Send an email to the appropriate Red Cross administrator.
-                var this_request_id = request._boundTo.dataValues.id;
                 var outbound_email = {
                     from: db.mail_from_addr,
                     to: regionRecipientShimName + " <" + regionRecipientShimEmail + ">",
                     subject: "Smoke alarm install request from " 
-                        + name + " (#" + this_request_id + ")",
+                        + name + " (#" + thisRequestID + ")",
                     text: email_text
                 };
                 
