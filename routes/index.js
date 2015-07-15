@@ -138,6 +138,21 @@ router.post('/', function(req, res, next) {
         }).then(function(selectedRegion) {
             if (selectedRegion !== null) {
                 console.log("DEBUG: selected region: " + JSON.stringify(selectedRegion));
+
+                // Send an email to the appropriate Red Cross administrator.
+                var outbound_email = {
+                    from: db.mail_from_addr,
+                    to: db.mail_to_addr,
+                    subject: "Your smoke alarm installation request",
+                    text: "Thank you for your smoke alarm installation request in:" 
+                        + "  '" + selectedRegion.region + "'"
+                };
+                
+                db.mailgun.messages().send(outbound_email, function (error, body) {
+                    console.log("DEBUG: sent mail ID:  '" + body.id + "'");
+                    console.log("DEBUG: sent mail msg: '" + body.message + "'");
+                });
+
                 res.render('thankyou.jade', {region: selectedRegion.region});
             } else {
                 if (zip_5) {
