@@ -9,28 +9,27 @@ block content
          p
            | Please complete all fields in the form below and click “submit”. An American Red Cross representative will contact you shortly to confirm your registration into our wait list. Additional information on installation will be given at that time.
       // I added this to center the fields, but I think it's probably incorrect                    
-      .col-sm-3
-      #center.col-sm-6
+      #center.col-sm-6.col-sm-offset-3
         .container-fluid
           form(action="/", method="POST", class="form-horizontal")
             fieldset
               .row
                 // Text input
                 .form-group
-                  .col-xs-11
+                  .col-xs-12
                     input#name.form-control.input-md(name='name', type='text', placeholder='Your Name', class='validate[required]', data-prompt-position='topLeft:0,5')
               .row
                   // Text input
                   .form-group
-                    .col-xs-11
+                    .col-xs-12
                       input#street_address.form-control.input-md(name='street_address', type='text', placeholder='Address & Unit', class='validate[required]', data-prompt-position='topLeft:50,5')
               .row
                   // Text input
                   .form-group
-                    .col-xs-6
-                      input#city.form-control.input-md(name='city', type='text', placeholder='City' class='validate[required]', data-prompt-position='topRight:0,5')
                     .col-xs-5
-                      select#state.form-control(name='state', class='validate[required]', data-prompt-position='topRight:-80,5')
+                      input#city.form-control.input-md(name='city', type='text', placeholder='City' class='validate[required]', data-prompt-position='topLeft:0,5')
+                    .col-xs-3
+                      select#state.form-control(name='state', class='validate[required]', data-prompt-position='topRight:-40,5')
                         option(value='' disabled selected) State
                         option(value='Alabama') Alabama
                         option(value='Alaska') Alaska
@@ -83,18 +82,13 @@ block content
                         option(value='West Virginia') West Virginia
                         option(value='Wisconsin') Wisconsin
                         option(value='Wyoming') Wyoming
-              .row
-                  // Text input
-                  .form-group
                     .col-xs-4
-                      input#zip.form-control.input-md(name='zip', type='text', placeholder='Zip Code', class='validate[required, custom[zip]]', data-prompt-position='topLeft:0,5')
+                      input#zip.form-control.input-md(name='zip', type='text', placeholder='Zip Code', class='validate[required, custom[zip]]', data-prompt-position='topRight:-40,5')
               .row
                   .form-group
                     .col-xs-5
                       input#phone.form-control.input-md(name='phone', type='text', placeholder='Phone #', class='validate[required, custom[phone-10-digit-US]]', data-prompt-position='topRight:0,5')
-              .row
-                  .form-group
-                    .col-xs-8
+                    .col-xs-7
                       input#email.form-control.input-md(name='email', type='text', placeholder='Email', class='validate[required, custom[email]]', data-prompt-position='topRight:0,5')
               .row
                   // http://www.sitepoint.com/understanding-bootstrap-grid-system/ helped
