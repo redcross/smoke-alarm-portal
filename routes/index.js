@@ -213,8 +213,22 @@ router.post('/', function(req, res, next) {
 
         db.SelectedCounties.findOne({
             where: {
-                county: countyFromZip,
-                state: stateFromZip
+                // Use the PostgreSQL "ILIKE" (case-insensitive LIKE)
+                // operator so that internal inconsistencies in the
+                // case-ness of our data don't cause problems.  For
+                // example, Lac qui Parle County, MN is "Lac qui
+                // Parle" (correct) in ../data/selected_counties.json
+                // but "Lac Qui Parle" (wrong) in us_addresses.json.
+                //
+                // Since us_addresses.json comes from an upstream data
+                // source, correcting all the cases there could be a
+                // maintenance problem.  It's easier just to do our
+                // matching case-insensitively.
+                //
+                // http://docs.sequelizejs.com/en/latest/docs/querying/
+                // has more about the use of operators like $ilike.
+                county: { $ilike: countyFromZip },
+                state: { $ilike: stateFromZip }
             }
         }).then(function(selectedRegion) {
             if (selectedRegion !== null) {
