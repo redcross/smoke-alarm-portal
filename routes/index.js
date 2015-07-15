@@ -18,6 +18,76 @@ router.get('/sorry', function(req, res, next) {
     res.render('sorry', { title: 'Red Cross: Sorry', county: res.locals.matchedCounty, state:res.locals.matchedState });
 });
 
+// Any reason not to just hardcode this here?
+var state_abbrevs =
+    {
+        "Alabama":                        "AL",
+        "Alaska":                         "AK",
+        "Arizona":                        "AZ",
+        "Arkansas":                       "AR",
+        "California":                     "CA",
+        "Colorado":                       "CO",
+        "Connecticut":                    "CT",
+        "Delaware":                       "DE",
+        "Florida":                        "FL",
+        "Georgia":                        "GA",
+        "Hawaii":                         "HI",
+        "Idaho":                          "ID",
+        "Illinois":                       "IL",
+        "Indiana":                        "IN",
+        "Iowa":                           "IA",
+        "Kansas":                         "KS",
+        "Kentucky":                       "KY",
+        "Louisiana":                      "LA",
+        "Maine":                          "ME",
+        "Maryland":                       "MD",
+        "Massachusetts":                  "MA",
+        "Michigan":                       "MI",
+        "Minnesota":                      "MN",
+        "Mississippi":                    "MS",
+        "Missouri":                       "MO",
+        "Montana":                        "MT",
+        "Nebraska":                       "NE",
+        "Nevada":                         "NV",
+        "New Hampshire":                  "NH",
+        "New Jersey":                     "NJ",
+        "New Mexico":                     "NM",
+        "New York":                       "NY",
+        "North Carolina":                 "NC",
+        "North Dakota":                   "ND",
+        "Ohio":                           "OH",
+        "Oklahoma":                       "OK",
+        "Oregon":                         "OR",
+        "Pennsylvania":                   "PA",
+        "Rhode Island":                   "RI",
+        "South Carolina":                 "SC",
+        "South Dakota":                   "SD",
+        "Tennessee":                      "TN",
+        "Texas":                          "TX",
+        "Utah":                           "UT",
+        "Vermont":                        "VT",
+        "Virginia":                       "VA",
+        "Washington":                     "WA",
+        "West Virginia":                  "WV",
+        "Wisconsin":                      "WI",
+        "Wyoming":                        "WY",
+        "American Samoa":                 "AS",
+        "District of Columbia":           "DC",
+        "Federated States of Micronesia": "FM",
+        "Guam":                           "GU",
+        "Marshall Islands":               "MH",
+        "Northern Mariana Islands":       "MP",
+        "Palau":                          "PW",
+        "Puerto Rico":                    "PR",
+        "Virgin Islands":                 "VI",
+        "Armed Forces Africa":            "AE",
+        "Armed Forces Americas":          "AA",
+        "Armed Forces Canada":            "AE",
+        "Armed Forces Europe":            "AE",
+        "Armed Forces Middle East":       "AE",
+        "Armed Forces Pacific":           "AP"
+    };
+
 /* POST to the server */
 router.post('/', function(req, res, next) {
     // Databases we'll need.
@@ -173,7 +243,7 @@ router.post('/', function(req, res, next) {
                     + "\n"
                     + "  " + name + "\n"
                     + "  " + street_address + "\n"
-                    + "  " + city + ", " + state + "  " + zip_final + "\n"
+                    + "  " + city + ", " + state_abbrevs[state] + "  " + zip_final + "\n"
                     + "  Phone:" + phone + "\n"
                     + "  Email: <" + email + ">\n"
                     + "\n"
@@ -196,6 +266,14 @@ router.post('/', function(req, res, next) {
                     text: email_text
                 };
                 
+                console.log("");
+                console.log("DEBUG: This is the email we're about to send:");
+                console.log("");
+                console.log(outbound_email);
+                console.log("");
+                console.log("DEBUG: (end of email)");
+                console.log("");
+
                 db.mailgun.messages().send(outbound_email, function (error, body) {
                     // TODO: We need to record the sent message's Message-ID 
                     // (which is body.id) in the database, with the request.
