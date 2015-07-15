@@ -47,17 +47,21 @@ much difficulty to most other Unix-like operating systems.
         postgres=# CREATE USER <some_username> PASSWORD '<some_password>';
         postgres=# GRANT ALL ON DATABASE smokealarm_development TO <username>;
         postgres=# \q
+        $ exit       ### log out of postgres user; you should be yourself now
 
-        $ npm install --save sequelize
-        $ sudo npm install -g sequelize-cli #this needs to be available system-wide
+        $ npm install sequelize
+
+        ### This one needs to be available system-wide
+        $ sudo npm install -g sequelize-cli 
 
         $ npm install pg-hstore
-        $ npm install --save pg
+        $ npm install pg
+        $ npm install async
 
-        # do these if you are installing on a remote server
-        $ NODE_ENV="staging" # or whatever env you want from config.json
+        ### Choose whatever env you want from config/config.json
+        $ NODE_ENV="development" 
 
-        # this will spew a lot of information to the screen
+        ### This will spew a lot of information to the screen
         $ node data/import_into_postgres.js
 
 7. Get other required node modules.
