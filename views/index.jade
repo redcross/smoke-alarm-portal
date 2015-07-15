@@ -87,9 +87,9 @@ block content
               .row
                   .form-group
                     .col-xs-4
-                      input#phone.form-control.input-md(name='phone', type='text', placeholder='Phone #', class='validate[required, custom[phone-10-digit-US]]', data-prompt-position='topRight:0,5')
+                      input#phone.form-control.input-md(name='phone', type='text', placeholder='Phone #', class='validate[groupRequired[contactPreference], custom[phone-10-digit-US]]', data-prompt-position='topRight:0,5')
                     .col-xs-8
-                      input#email.form-control.input-md(name='email', type='text', placeholder='Email', class='validate[required, custom[email]]', data-prompt-position='topRight:0,5')
+                      input#email.form-control.input-md(name='email', type='text', placeholder='Email', class='validate[groupRequired[contactPreference], custom[email]]', data-prompt-position='topRight:0,5')
               .row
                   // http://www.sitepoint.com/understanding-bootstrap-grid-system/ helped
                   .form-group
@@ -118,11 +118,11 @@ block content
         'maxErrorsPerField': 1,
         'custom_error_messages': {
           '#phone': {
-            'required': {
-              'message': '* A valid, 10-digit phone number is required'
+            'groupRequired': {
+              'message': '* Please provide either a 10-digit phone number or an email address'
             },
             'custom[phone-10-digit-US]': {
-              'message': '* A valid, 10-digit phone number is required'
+              'message': '* The phone number is invalid'
             }
           },
           '#zip': {
@@ -134,11 +134,11 @@ block content
             }
           },
           '#email': {
-            'required': {
-              'message': '* A valid email address is required'
+            'groupRequired': {
+              'message': '* A Please provide either a phone number or an email address'
             },
             'custom[email]': {
-              'message': '* A valid email address is required'
+              'message': '* The email address is invalid'
             }
           }
         }
