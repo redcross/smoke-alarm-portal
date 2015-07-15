@@ -263,12 +263,12 @@ router.post('/', function(req, res, next) {
                 if (phone) {
                     email_text += "  Phone: " + phone + "\n";
                 } else {
-                    email_text += "  Phone: ---";
+                    email_text += "  Phone: ---\n";
                 };
                 if (email) {
                     email_text += "  Email: <" + email + ">\n";
                 } else {
-                    email_text += "  Email: ---";
+                    email_text += "  Email: ---\n";
                 };
                 
                 email_text += "\n"
