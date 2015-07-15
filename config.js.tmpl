@@ -2,9 +2,26 @@
 
 exports.port = process.env.PORT || 3000;
 exports.companyName = 'Acme, Inc.';
-exports.projectName = 'Red Cross Smoke Alarm Portal';
-exports.systemEmail = 'mark@grandkru.com';
+exports.projectName = 'New Horizons Ansible Retrofit Project';
+exports.systemEmail = 'jrandom@example.com';
+
+// Make up your own key here.  More background:
+//
+// I believe the cryptoKey is used to server-side sign session data
+// that is then sent in a cookie to the client -- the client never
+// knows the key, so the client therefore cannot tamper with any of
+// the data in the cookie, because if it did, the digital signature on
+// the cookie would be invalid.
+//
+// These two pages have more information.  In the first page, I think
+// where they say "encrypt" they really mean "sign"; the second page
+// explains the situation pretty straightforwardly, but it helps to
+// have read the first page for context:
+// 
+//   http://stackoverflow.com/questions/18565512/importance-of-session-secret-key-in-express-web-framework
+//   http://stackoverflow.com/questions/6719036/why-cherrypy-session-does-not-require-a-secret-key
 exports.cryptoKey = 'k3yb0ardc4t';
+
 exports.loginAttempts = {
   forIp: 50,
   forIpAndUser: 7,
@@ -14,10 +31,10 @@ exports.requireAccountVerification = false;
 exports.smtp = {
   from: {
     name: process.env.SMTP_FROM_NAME || exports.projectName +' Website',
-    address: process.env.SMTP_FROM_ADDRESS || 'mark@grandkru.com'
+    address: process.env.SMTP_FROM_ADDRESS || 'jrandom@example.com'
   },
   credentials: {
-    user: process.env.SMTP_USERNAME || 'mark@grandkru.com',
+    user: process.env.SMTP_USERNAME || 'jrandom@example.com',
     password: process.env.SMTP_PASSWORD || '',
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
     ssl: true
