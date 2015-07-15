@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var db = require('./../models');
+var recipients_table = require(__dirname + '/../config/recipients.json')
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'Red Cross' });
@@ -92,6 +93,16 @@ router.post('/', function(req, res, next) {
     // data, such as an unknown zip code -- we still want to record
     // that the person made the request.
 
+    // TODO: We need to have sanitized all inputs by now.  We need to
+    // know that all input is not problematic from an SQL point of
+    // view (even though we're using an ORM here, we don't want to
+    // store data that will later be a security risk for someone else
+    // generating a report or whatever), and we need to make sure that
+    // the email address does not have surrounding "<" and ">", and
+    // that the phone number is in a standard 10-digit format
+    // (actually, I think we've already validated that, but let's
+    // check again here).
+
     var request = db.Request.create({
         name: name,
         address: street_address,
@@ -139,18 +150,65 @@ router.post('/', function(req, res, next) {
             if (selectedRegion !== null) {
                 console.log("DEBUG: selected region: " + JSON.stringify(selectedRegion));
 
+                var regionPresentableName = recipients_table[selectedRegion.region]["region_alt_name"];
+                var regionRecipientName   = recipients_table[selectedRegion.region]["contact_name"];
+                var regionRecipientEmail  = recipients_table[selectedRegion.region]["contact_email"];
+
+                // Temporary shims during development, so we don't send
+                // mail to real Red Cross administrators when testing.
+                var regionRecipientShimName   = recipients_table["Test Region"]["contact_name"];
+                var regionRecipientShimEmail  = recipients_table["Test Region"]["contact_email"];
+
+                console.log("")
+                console.log("DEBUG: db request:");
+                console.log(request);
+                console.log("DEBUG: (end db request)");
+                console.log("")
+                console.log("DEBUG: Information for '" + selectedRegion.region + "':");
+                console.log("DEBUG:    Presentable region name: '" + regionPresentableName + "'");
+                console.log("DEBUG:    Contact name: '" + regionRecipientName + "'");
+                console.log("DEBUG:    Contact email: '<" + regionRecipientEmail + ">'");
+
+                var email_text = "We have received a smoke alarm installation request from:\n"
+                    + "\n"
+                    + "  " + name + "\n"
+                    + "  " + street_address + "\n"
+                    + "  " + city + ", " + state + "  " + zip_final + "\n"
+                    + "  Phone:" + phone + "\n"
+                    + "  Email: <" + email + ">\n"
+                    + "\n"
+                    + "We're directing this installation request to the administrator\n"
+                    + "for the American Red Cross North Central Division,\n"
+                    + regionPresentableName + " region:\n"
+                    + "\n"
+                    + "  " + regionRecipientName + " <" + regionRecipientEmail + ">\n"
+                    + "\n"
+                    + "Thank you,\n"
+                    + "-The Smoke Alarm Request Portal\n";
+
                 // Send an email to the appropriate Red Cross administrator.
+                var this_request_id = request._boundTo.dataValues.id;
                 var outbound_email = {
                     from: db.mail_from_addr,
-                    to: db.mail_to_addr,
-                    subject: "Your smoke alarm installation request",
-                    text: "Thank you for your smoke alarm installation request in:" 
-                        + "  '" + selectedRegion.region + "'"
+                    to: regionRecipientShimName + " <" + regionRecipientShimEmail + ">",
+                    subject: "Smoke alarm install request from " 
+                        + name + " (#" + this_request_id + ")",
+                    text: email_text
                 };
                 
                 db.mailgun.messages().send(outbound_email, function (error, body) {
-                    console.log("DEBUG: sent mail ID:  '" + body.id + "'");
-                    console.log("DEBUG: sent mail msg: '" + body.message + "'");
+                    // TODO: We need to record the sent message's Message-ID 
+                    // (which is body.id) in the database, with the request.
+                    if (body.id === undefined) {
+                        console.log("DEBUG: sent mail ID was undefined");
+                    } else {
+                        console.log("DEBUG: sent mail ID:  '" + body.id + "'");
+                    }
+                    if (body.message === undefined) {
+                        console.log("DEBUG: sent mail msg was undefined");
+                    } else {
+                        console.log("DEBUG: sent mail msg: '" + body.message + "'");
+                    }
                 });
 
                 res.render('thankyou.jade', {region: selectedRegion.region});

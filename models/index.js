@@ -32,14 +32,15 @@ Object.keys(db).forEach(function(modelName) {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-// TODO: This doesn't seem right -- these shouldn't be part of the db,
-//       they should be their own objects (i.e., their own models).
+// TODO: This is a temporary kludge.  These shouldn't really be part
+// of the db, and in the long run they won't be.  Once the admin
+// changes are fully integrated, there will be a ../views/index.js
+// file, and we can create the mailgun etc objects there, after line 2
+// where the DB is created.
+//
+// However, that file doesn't exist yet on this branch, so we just
+// stuff this stuff into the db, however inappropriately.
 db.mailgun = mailgun;
 db.mail_from_addr = mail_from_addr;
-
-// TODO: This one also doesn't belong here, but it is a temporary
-// kludge anyway and will go away once we have dynamic selection
-// of the correct RC recipient address.
-db.mail_to_addr = mail_to_addr;
 
 module.exports = db;
