@@ -258,10 +258,20 @@ router.post('/', function(req, res, next) {
                     + "\n"
                     + "  " + name + "\n"
                     + "  " + street_address + "\n"
-                    + "  " + city + ", " + state_abbrevs[state] + "  " + zip_final + "\n"
-                    + "  Phone: " + phone + "\n"
-                    + "  Email: <" + email + ">\n"
-                    + "\n"
+                    + "  " + city + ", " + state_abbrevs[state] + "  " + zip_final + "\n";
+
+                if (phone) {
+                    email_text += "  Phone: " + phone + "\n";
+                } else {
+                    email_text += "  Phone: ---";
+                };
+                if (email) {
+                    email_text += "  Email: <" + email + ">\n";
+                } else {
+                    email_text += "  Email: ---";
+                };
+                
+                email_text += "\n"
                     + "This is installation request #" + thisRequestID + ".\n"
                     + "\n"
                     + "We're directing this request to the administrator for the\n"
