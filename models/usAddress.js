@@ -16,5 +16,7 @@ module.exports = function(sequelize, DataTypes) {
 	    "decommissioned": DataTypes.BOOLEAN,
 	    "estimated_population": DataTypes.INTEGER,
 	    "notes": DataTypes.TEXT
+    },{
+        freezeTableName: true
     })
 }

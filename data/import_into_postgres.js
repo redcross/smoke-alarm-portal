@@ -18,33 +18,29 @@ var usAddressesJson = require('../data/us_addresses.json');
 /* Throw an error if the database sync does not occur. The database
    sync connects to a database and also reinstates the known database
    structure if for some reason it is not in place */
-db.sequelize.sync().then(function(promise) {
+console.log("DEBUG: Before DB Sync");
 
-	/* Import the selected counties from JSON. Create Counties using
-	 * Model.create() function from Sequelize.
-	 */
-	var selectedCounties = db.SelectedCounties;
+/* Import the selected counties from JSON. Create Counties using
+ * Model.create() function from Sequelize.
+ */
+var selectedCounties = db.SelectedCounties;
 
-	async.each(selectedCountiesJson.docs, function(county, callback) {
-		selectedCounties.create(county).then(function(returnedCounty) {
-			console.log("County " + returnedCounty + " added");
+async.each(selectedCountiesJson.docs, function(county, callback) {
+	selectedCounties.create(county).then(function(returnedCounty) {
+		console.log("County " + returnedCounty + " added");
+	});
+});
+
+
+/* Import the US addresses from JSON. Create UsAddress models using
+ * Model.create() function from Sequelize.
+ */
+var addresses = db.UsAddress;
+while (usAddressesJson.docs.length) {
+	var addressSplice = usAddressesJson.docs.splice(0,100);
+	async.each(addressSplice, function(address, callback) {
+		addresses.create(address).then(function(returnedAddress) {
+			console.log("Address " + returnedAddress + " added");
 		});
 	});
-
-
-	/* Import the US addresses from JSON. Create UsAddress models using
-	 * Model.create() function from Sequelize.
-	 */
-	var addresses = db.UsAddress;
-	while (usAddressesJson.docs.length) {
-		var addressSplice = usAddressesJson.docs.splice(0,100);
-		async.each(addressSplice, function(address, callback) {
-			addresses.create(address).then(function(returnedAddress) {
-				console.log("Address " + returnedAddress + " added");
-			});
-		});
-	}
-
-}).catch(SyntaxError, function(e){
-    console.log("ERROR: Unable to connect to database" + e);
-});
+}
