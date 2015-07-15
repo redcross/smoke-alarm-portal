@@ -88,18 +88,7 @@ much difficulty to most other Unix-like operating systems.
 
         $ npm install forever
    
-    1. Do the apache proxying so that apache serves the node server:
-       - Edit 000-default.conf to serve the :3000 port by default, without
-         showing :3000 to users.
-       - Enable mod\_rewrite, mod\_proxy, and mod\_proxy\_http
-
-    ```
-    $ apt-get install -y libapache2-mod-proxy-html  
-    $ a2enmod rewrite proxy  
-    $ a2enmod proxy_http  
-    $ service apache2 restart  
-    ```
-
+    1. See "Appendix A" below about setting up Apache/ProxyPass->nodejs
     2. Install the forever module on the chosen server
     3. Run the forever server:
 
@@ -110,3 +99,87 @@ much difficulty to most other Unix-like operating systems.
    TBD: Need instructions for changing to port 80 and eventually 443
    for demo and production.
 
+
+Appendix A: Setting up Apache->Node ProxyPass with https://
+-----------------------------------------------------------
+
+A standard way to set up this service is with Apache HTTPD as the
+front-end server, with http:// redirecting to https://, and with all
+requests sent via a ProxyPass directive to the node server running on
+some random local port (e.g., 3000) protected from non-localhost
+access by iptables rules.  Below we describe this setup in detail.
+
+1. Edit `/etc/apache2/sites-available/default-ssl.conf` to serve port
+   3000 over https:// by default without showing ":3000" to browsers:
+
+        <IfModule mod_ssl.c>
+            NameVirtualHost *:80
+            <VirtualHost *:80>
+                   ServerName your_host.example.com
+                   Redirect permanent / https://your_host.example.com/
+            </VirtualHost>
+            <VirtualHost _default_:443>
+                    ServerAdmin webmaster@example.com
+                    ProxyPreserveHost On
+                    ProxyPass / http://127.0.0.1:3000/
+                    ProxyPassReverse / http://127.0.0.1:3000/
+                    ServerName localhost
+                    # Available loglevels: trace8...trace1, debug, info, notice,
+                    # warn, error, crit, alert, emerg.  It is also possible to
+                    # configure the loglevel for particular modules, e.g.:
+                    #LogLevel info ssl:warn
+                    ErrorLog ${APACHE_LOG_DIR}/error.log
+                    CustomLog ${APACHE_LOG_DIR}/access.log combined
+                    # Enable SSL
+                    SSLEngine on
+                    SSLCertificateFile    /etc/ssl/certs/YOUR_HOST_OR_DOMAIN.crt
+                    SSLCertificateKeyFile /etc/ssl/private/YOUR_HOST_OR_DOMAIN.key
+                    SSLCertificateChainFile /etc/ssl/certs/YOUR_CERT_PROVIDER.crt
+                    # SSL Engine Options (documented elsewhere)
+                    #SSLOptions +FakeBasicAuth +ExportCertData +StrictRequire
+                    <FilesMatch "\.(cgi|shtml|phtml|php)$">
+                                        SSLOptions +StdEnvVars
+                    </FilesMatch>
+                    <Directory /usr/lib/cgi-bin>
+                                    SSLOptions +StdEnvVars
+                    </Directory>
+                    # Notice: Most problems of broken clients are also related to the HTTP
+                    # keep-alive facility, so you usually additionally want to disable
+                    # keep-alive for those clients, too. Use variable "nokeepalive" for this.
+                    # Similarly, one has to force some clients to use HTTP/1.0 to workaround
+                    # their broken HTTP/1.1 implementation. Use variables "downgrade-1.0" and
+                    # "force-response-1.0" for this.
+                    BrowserMatch "MSIE [2-6]" \
+                                    nokeepalive ssl-unclean-shutdown \
+                                    downgrade-1.0 force-response-1.0
+                    # MSIE 7 and newer should be able to use keepalive
+                    BrowserMatch "MSIE [17-9]" ssl-unclean-shutdown
+            </VirtualHost>
+        </IfModule>
+
+2. Enable mod\_rewrite, mod\_proxy, and mod\_proxy\_http
+
+        $ sudo apt-get update
+        $ sudo apt-get install libapache2-mod-proxy-html
+        $ sudo a2enmod rewrite proxy  
+        $ sudo a2enmod proxy_http
+        $ sudo a2enmod ssl
+
+3. Make sure the right config file is installed.
+
+        $ cd /etc/apache2/sites-enabled
+        $ ls -l
+        total 0
+        lrwxrwxrwx 1 root root 35 Jun  4 22:58 000-default.conf \
+        -> ../sites-available/000-default.conf
+        $ sudo rm 000-default.conf
+        $ ln -s ../sites-available/default-ssl.conf 000-default-ssl.conf
+
+4. Restart Apache:
+
+        $ service apache2 restart  
+
+5. Visit the site and make sure it's working:
+
+   http://yourhost.example.com/ should auto-redirect to
+   https://yourhost.example.com/ and show the front page.
