@@ -144,13 +144,22 @@ body {
     margin-left: 0em;
 }
 
-#left, #right {
+#left {
     padding-top: 0.5em;
     padding-bottom: 0.5em;
     margin-bottom: 0.5em;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.0);
     border-radius: 4px;
-    border: 1px solid #999;
+    font-weight: bold;
+}
+
+#right {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    margin-bottom: 0.5em;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    font-weight: bold;
 }
 
 #right input {
