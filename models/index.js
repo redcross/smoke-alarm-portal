@@ -9,7 +9,6 @@ var config    = require(__dirname + '/../config/config.json')[env];
 var mailgun   = require('mailgun-js')({apiKey: config.mailgun_api_key, 
                                        domain: config.mail_domain});
 var mail_from_addr = config.mail_from_addr;
-var mail_to_addr = config.mail_to_addr; // temporary kludge; will go away soon
 var sequelize = new Sequelize(config.database, config.username, config.password, config);
 var db        = {};
 
