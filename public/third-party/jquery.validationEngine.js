@@ -621,7 +621,7 @@
 						}
 						errorMsg = methods._getErrorMessage(form, field, rules[i], rules, i, options, methods._groupRequired);
 						if(errorMsg)  required = true;
-						options.showArrow = true;  // Changed from false to true for OTS Smoke Alarm Portal
+						options.showArrow = true;  // Changed from false to true for OTS Smoke Alarm Portal.
 						break;
 					case "ajax":
 						// AJAX defaults to returning it's loading message
