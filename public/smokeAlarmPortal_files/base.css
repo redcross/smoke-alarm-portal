@@ -158,8 +158,9 @@ body {
 }
 
 #singlebutton {
-    font-size: 1em;
+    font-size: 1.2em;
     border: 3px solid #EEE;
+    width: 100%;
 }
 
 /* Select dropdowns don't support placeholder text directly in HTML,
@@ -183,4 +184,5 @@ body {
 
 p.bigger {
     font-size: 1.8em;
+    line-height: 120%
 }
