@@ -25,11 +25,18 @@ much difficulty to most other Unix-like operating systems.
 
         $ adduser postgres
 
-5. Do `cp config/config.json.tmpl config/config.json`, then edit the latter.
+5. Set up the live config files.
 
-   You'll need to fill in database usernames and passwords, of course.
-   You might also want to set up a whole new environment, e.g.,
-   "staging" (likely following the "test" example).
+  * Do `cp config/config.json.tmpl config/config.json`, then edit the latter.
+
+        You'll need to fill in database usernames and passwords, of
+        course.  You might also want to set up a whole new
+        environment, e.g., "demo" (e.g., based on the "test" example).
+
+  * Do `cp config/recipients.json.tmpl config/recipients.json`, then edit the latter.
+
+        You'll need to fill in appropriate contact names and email
+        addresses.database usernames and passwords, of course.
 
 6. Create the databases and import the initial data.
 
