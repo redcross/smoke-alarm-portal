@@ -239,11 +239,6 @@ router.post('/', function(req, res, next) {
                 var regionRecipientEmail  = recipients_table[selectedRegion.region]["contact_email"];
                 var thisRequestID = request._boundTo.dataValues.id;
 
-                // Temporary shims during development, so we don't send
-                // mail to real Red Cross administrators when testing.
-                var regionRecipientShimName   = recipients_table["Test Region"]["contact_name"];
-                var regionRecipientShimEmail  = recipients_table["Test Region"]["contact_email"];
-
                 console.log("")
                 console.log("DEBUG: db request:");
                 console.log(request);
@@ -285,7 +280,7 @@ router.post('/', function(req, res, next) {
                 // Send an email to the appropriate Red Cross administrator.
                 var outbound_email = {
                     from: db.mail_from_addr,
-                    to: regionRecipientShimName + " <" + regionRecipientShimEmail + ">",
+                    to: regionRecipientName + " <" + regionRecipientEmail + ">",
                     subject: "Smoke alarm install request from " 
                         + name + " (#" + thisRequestID + ")",
                     text: email_text
