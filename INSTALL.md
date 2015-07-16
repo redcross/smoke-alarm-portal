@@ -175,11 +175,13 @@ access by iptables rules.  Below we describe this setup in detail.
         $ sudo rm 000-default.conf
         $ ln -s ../sites-available/default-ssl.conf 000-default-ssl.conf
 
-4. Restart Apache:
+4. _TBD: Do something magical with iptables to block port 3000_
+
+5. Restart Apache:
 
         $ service apache2 restart  
 
-5. Visit the site and make sure it's working:
+6. Visit the site and make sure it's working:
 
    http://yourhost.example.com/ should auto-redirect to
    https://yourhost.example.com/ and show the front page.
