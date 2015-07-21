@@ -78,6 +78,18 @@ exports = module.exports = function(app, passport) {
   app.all('/admin*', ensureAdmin);
   app.get('/admin/', require('./views/admin/index').init);
 
+  //admin > requests
+  app.get('/admin/requests/', require('./views/admin/requests/index').find);
+  app.post('/admin/requests/', require('./views/admin/requests/index').create);
+  app.get('/admin/requests/:id/', require('./views/admin/requests/index').read);
+  app.put('/admin/requests/:id/', require('./views/admin/requests/index').update);
+  app.put('/admin/requests/:id/user/', require('./views/admin/requests/index').linkUser);
+  app.delete('/admin/requests/:id/user/', require('./views/admin/requests/index').unlinkUser);
+  app.post('/admin/requests/:id/notes/', require('./views/admin/requests/index').newNote);
+  app.post('/admin/requests/:id/status/', require('./views/admin/requests/index').newStatus);
+  app.delete('/admin/requests/:id/', require('./views/admin/requests/index').delete);
+
+
   //admin > users
   app.get('/admin/users/', require('./views/admin/users/index').find);
   app.post('/admin/users/', require('./views/admin/users/index').create);
