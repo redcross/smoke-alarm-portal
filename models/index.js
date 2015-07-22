@@ -27,8 +27,9 @@ Object.keys(db).forEach(function(modelName) {
 });
 
 var options = {
-    force: false
-}
+    force: false,
+    logging: false
+};
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
@@ -37,7 +38,7 @@ db.Message.belongsTo(db.User);
 db.Account.belongsTo(db.User);
 db.Admin.belongsTo(db.AdminGroup);
 
-db.sequelize.sync(options).then(function() {
+db.sequelize.sync(options).then(function(database) {
     console.log("DEBUG: Database created");
 });
 
