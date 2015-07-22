@@ -57,12 +57,24 @@ much difficulty to most other Unix-like operating systems.
         $ npm install pg-hstore
         $ npm install pg
         $ npm install async
+        $ npm install pg-escape
+        $ npm install underscore
+        $ npm install fs
 
-        ### Choose whatever env you want from config/config.json
+        # Choose whatever env you want from config/config.json.  Note that
+        # the USER and DATABASE names in the next steps come from there.
         $ NODE_ENV="development" 
 
-        ### This will spew a lot of information to the screen
-        $ node data/import_into_postgres.js
+        ### Note you may need to `cd` back to the right dir after `su` here.
+        $ su - postgres
+
+        # Create the tables.
+        # Ignore errors about tables existing or not existing.
+        $ psql -U USER -d DATABASE -h localhost -f data/create_static_tables.sql
+
+        # Load the data.
+        $ psql -U USER -d DATABASE -h localhost -f data/us_addresses.sql
+        $ psql -U USER -d DATABASE -h localhost -f data/selected_counties.sql
 
 7. Get other required node modules.
 
