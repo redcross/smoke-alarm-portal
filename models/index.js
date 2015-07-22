@@ -38,9 +38,7 @@ db.Message.belongsTo(db.User);
 db.Account.belongsTo(db.User);
 db.Admin.belongsTo(db.AdminGroup);
 
-db.sequelize.sync(options).then(function(database) {
-    console.log("DEBUG: Database created");
-});
+db.sequelize.sync(options);
 
 module.exports = db;
 

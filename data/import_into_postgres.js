@@ -9,7 +9,6 @@
 console.log("BEGINNING: " + new Date());
 var _ = require('underscore'); // Used primarily for iterator
 var fs = require('fs'); // File system access
-var db = require('./../models');
 /* import JSON using node require */
 var selectedCountiesJson = require('../data/selected_counties.json');
 var usAddressesJson = require('../data/us_addresses.json');
@@ -19,22 +18,17 @@ var usAddressesJson = require('../data/us_addresses.json');
  * Model.create() function from Sequelize.
  */
 
-var insertCounties = function() {
-	return db.SelectedCounties.bulkCreate(selectedCountiesJson.docs);
-}
-
-var insertUsAddresses = function() {
-	return db.UsAddress.bulkCreate(usAddressesJson.docs);
-}
-
-
-	insertCounties()
-	.then(insertUsAddresses())
-	.then(function(docs) {
-		console.log("DEBUG: Update complete, methinks? " + JSON.stringify(docs));
-	})
-	.catch(function(error) {
-		console.log("ERROR: Houston, we have a problem: " + error);
+var theseCounties = null;
+var docs = null;
+var db = require('./../models');
+db.SelectedCounties.sync().then(function () {
+	db.SelectedCounties.bulkCreate(selectedCountiesJson.docs).then(function() {
+		db.UsAddress.sync().then(function() {
+			db.UsAddress.bulkCreate(usAddressesJson.docs);
+		});
 	});
+})
+.catch(function(error) {
+	console.log("Error installing: " + error);
+});
 
-console.log("ENDING: " + new Date());
