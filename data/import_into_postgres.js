@@ -7,40 +7,57 @@
  * > node data/import_into_postgres.js
  */
 
-var db = require('../models'); // Sequelize initialization
-var async = require('async'); // Used primarily for iterator
-
+var _ = require('underscore'); // Used primarily for iterator
+var fs = require('fs'); // File system access
+var escape = require('pg-escape');
 /* import JSON using node require */
 var selectedCountiesJson = require('../data/selected_counties.json');
 var usAddressesJson = require('../data/us_addresses.json');
 
-
-/* Throw an error if the database sync does not occur. The database
-   sync connects to a database and also reinstates the known database
-   structure if for some reason it is not in place */
-console.log("DEBUG: Before DB Sync");
-
+/* Create the SQL files to import
 /* Import the selected counties from JSON. Create Counties using
  * Model.create() function from Sequelize.
  */
-var selectedCounties = db.SelectedCounties;
 
-async.each(selectedCountiesJson.docs, function(county, callback) {
-	selectedCounties.create(county).then(function(returnedCounty) {
-		console.log("County " + returnedCounty + " added");
-	});
+ var quote = function(term) {
+ 	var secondTerm = String(term).replace(/'/g, "''");
+ 	var finalTerm = "'" + secondTerm.replace(/\,/g, "\,") + "'";
+ 	// console.log("FINAL TERM: " + finalTerm);
+ 	return finalTerm;
+ };
+
+_.each(selectedCountiesJson.docs, function(element) {
+	var insertSelectedCountySql = 'INSERT INTO "SelectedCounties"' +
+		'("id","region","state","county","createdAt","updatedAt") VALUES' +
+		'(DEFAULT,' 
+			+ quote(element.region) + "," 
+			+ quote(element.state) + "," 
+			+ quote(element.county) + ",now(),now());\n";
+	fs.appendFileSync('selected_counties.sql', insertSelectedCountySql);
 });
 
+_.each(usAddressesJson.docs, function(element) {
+	var insertUsAddressSql = 'INSERT INTO "UsAddress"' +
+		'("id","zip","type","primary_city","acceptable_cities","unacceptable_cities",' +
+		'"state","county","timezone","area_codes","latitude","longitude","world_region",' +
+	 	'"country","decommissioned","estimated_population","notes","updatedAt","createdAt")' +
+		' VALUES ' +
+		'(DEFAULT,' +
+		quote(element.zip) + ',' +
+		quote(element.type) + ',' +
+		quote(element.primary_city) + ',' +
+		"'',''," +
+		quote(element.state) + ',' +
+		quote(element.country) + ',' +
+		quote(element.timezone) + ',' +
+		'quote_literal(\'' + element.area_codes + '\'),' +
+		element.latitude + ',' +
+		element.longitude + ',' +
+		quote(element.world_region) + ',' +
+		quote(element.country) + ',' +
+		((element.decommissioned === 0) ? true: false) + ',' +
+		element.estimated_population + ',' +
+		quote(element.notes) + ",now(),now());\n";
+	fs.appendFileSync('us_addresses.sql', insertUsAddressSql);
 
-/* Import the US addresses from JSON. Create UsAddress models using
- * Model.create() function from Sequelize.
- */
-var addresses = db.UsAddress;
-while (usAddressesJson.docs.length) {
-	var addressSplice = usAddressesJson.docs.splice(0,100);
-	async.each(addressSplice, function(address, callback) {
-		addresses.create(address).then(function(returnedAddress) {
-			console.log("Address " + returnedAddress + " added");
-		});
-	});
-}
+});
