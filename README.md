@@ -44,8 +44,7 @@ For admins, there are some basic reports that can be generated:
 
 # Technologies Used
 
-Node.js, Jade templates, PostgreSQL, and the usual suspects related
-thereto.
+Node.js, Jade templates, PostgreSQL, and the usual suspects.
 
 # Installation and Deployment
 

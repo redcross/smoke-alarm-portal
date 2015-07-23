@@ -83,9 +83,9 @@ The database migration was accomplished using the following steps:
 
 * Created a 'smokealarm_development' database in local Postgres instance
 
-* Created an import script (data/import_into_postgres.js) that seeds
-  the database with required information in order to select the
-  counties properly.
+* Created an import script (data/import_into_postgres.js) that seeds the
+  database with required information via Javascript Promises in order to
+  select the counties properly.
 
 * Modified the queries in routes/index.js so that the Postgres data store
   is used

@@ -56,12 +56,12 @@ much difficulty to most other Unix-like operating systems.
 
         $ npm install pg-hstore
         $ npm install pg
-        $ npm install async
 
         ### Choose whatever env you want from config/config.json
         $ NODE_ENV="development" 
 
-        ### This will spew a lot of information to the screen
+        ### This will spew a lot of information to the screen and may
+        ### take several minutes
         $ node data/import_into_postgres.js
 
 7. Get other required node modules.

@@ -17,6 +17,11 @@ var usAddressesJson = require('../data/us_addresses.json');
 /* Import the selected counties from JSON. Create Counties using
  * Model.create() function from Sequelize.
  */
+/*
+* TBD: These are now being added using Javascript Promises, but I
+* (cdonnelly) don't know enough about them to add a note here.  Can you
+* elaborate, msnyon?
+*/
 
 var theseCounties = null;
 var docs = null;
