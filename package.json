@@ -21,7 +21,8 @@
     "sanity": "^0.2.1",
     "sequelize": "^3.3.2",
     "sequelize-cli": "^1.7.0",
-    "serve-favicon": "~2.2.1"
+    "serve-favicon": "~2.2.1",
+    "basic-auth": "~1.0.3"
   },
   "devDependencies": {
     "chai": "^3.0.0",

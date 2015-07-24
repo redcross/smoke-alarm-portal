@@ -18,6 +18,38 @@ router.get('/sorry', function(req, res, next) {
     res.render('sorry', { title: 'Red Cross: Sorry', county: res.locals.matchedCounty, state:res.locals.matchedState });
 });
 
+
+// Begin authn stuff.
+var basicAuth = require('basic-auth');
+
+var authn = function (req, res, next) {
+    var user = basicAuth(req);
+    
+    function authn_failed(res) {
+        res.set('WWW-Authenticate', 
+                'Basic realm=Red Cross Smoke Alarm Portal Admin Area');
+        return res.send(401);
+    };
+  
+    if ((! user) || (! user.name) || (! user.pass)) {
+        return authn_failed(res);
+    };
+    
+    // Simplest possible check for now.  In real life, we would get
+    // the information from the DB or from config, and we might do
+    // crypt-matching instead of plain-matching.
+    if (user.name === 'admin' && user.pass === 'ice cream') {
+        return next();
+    } else {
+        return authn_failed(res);
+    };
+};
+
+/* GET Admin page. */
+router.get('/admin', authn, function(req, res, next) {
+    res.render('admin', { title: 'Red Cross: Admin' });
+});
+
 // Any reason not to just hardcode this here?
 var state_abbrevs =
     {
