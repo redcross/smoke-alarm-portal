@@ -187,3 +187,9 @@ p.bigger {
     font-size: 1.8em;
     line-height: 120%
 }
+
+p.bigger-centered {
+    font-size: 1.8em;
+    text-align: center;
+    line-height: 120%
+}
