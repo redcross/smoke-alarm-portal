@@ -99,6 +99,21 @@ much difficulty to most other Unix-like operating systems.
    TBD: Need instructions for changing to port 80 and eventually 443
    for demo and production.
 
+10. Initialize admin user, test admin area (TBD: this process will change)
+
+   Visit http://localhost:3000/login
+
+   Click "Sign Up" and create a user named "admin", with any password you want.
+   
+   At http://localhost:3000/admin/requests you can see smoke alarm
+   installation requests.  You will have to enter some test requests
+   on the front page (http://localhost:3000/) before any requests will
+   be listed on the /admin/requests page.
+
+   [This
+   ticket](https://github.com/OpenTechStrategies/smoke-alarm-portal/issues/44)
+   (and any sub-tickets it links to) describes improvements planned
+   for the admin area.
 
 Appendix A: Setting up Apache->Node ProxyPass with https://
 -----------------------------------------------------------
