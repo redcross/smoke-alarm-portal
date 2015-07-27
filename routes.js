@@ -28,6 +28,13 @@ function ensureAccount(req, res, next) {
   res.redirect('/');
 }
 
+function ensureSignupEnabled(req, res, next) {
+  if (req.app.config.signupEnabled) {
+    return next();
+  } else {
+    return res.redirect('/404');
+  }
+}
 exports = module.exports = function(app, passport) {
   //front end
   app.get('/', require('./views/index').init);
@@ -35,6 +42,7 @@ exports = module.exports = function(app, passport) {
   app.get('/about/', require('./views/about/index').init);
 
   //sign up
+  app.all('/signup*', ensureSignupEnabled);
   app.get('/signup/', require('./views/signup/index').init);
   app.post('/signup/', require('./views/signup/index').signup);
 
