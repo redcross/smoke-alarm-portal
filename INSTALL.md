@@ -30,7 +30,7 @@ much difficulty to most other Unix-like operating systems.
   * Do `cp config.json.tmpl config.json`, then edit the latter.
 
         You'll probably want to update `exports.companyName`,
-        `exports.projectName`, `exports.systemEmail`, and
+        `exports.projectName`, `exports.signupEnabled`,`exports.systemEmail`, and
         `exports.cryptoKey`.
 
   * Do `cp config/config.json.tmpl config/config.json`, then edit the latter.
@@ -114,6 +114,11 @@ much difficulty to most other Unix-like operating systems.
    ticket](https://github.com/OpenTechStrategies/smoke-alarm-portal/issues/44)
    (and any sub-tickets it links to) describes improvements planned
    for the admin area.
+
+11. Change `config.signupEnabled` to 'false' and restart the server 
+    to disable any future admin and/or user signups. This is an important
+    step, without which anyone who can figure out the URL can create an
+    admin on the server, which we do not want.
 
 Appendix A: Setting up Apache->Node ProxyPass with https://
 -----------------------------------------------------------
