@@ -24,6 +24,7 @@ html
             if signupEnabled
               li: a(href='/signup/') Sign Up
 
+            li: a(href='/contact/') Contact
           ul.nav.navbar-nav.navbar-right
             if user && user.username
               li: a(href='#{user.defaultReturnUrl}')
