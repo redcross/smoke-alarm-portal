@@ -12,8 +12,6 @@ var config = require('./config'),
     helmet = require('helmet'),
     csrf = require('csurf');
 
-console.log("Config = " + JSON.stringify(config));
-
 var favicon = require('serve-favicon');
 
 var pg = require('pg');
@@ -74,7 +72,7 @@ app.locals.projectName = app.config.projectName;
 app.locals.copyrightYear = new Date().getFullYear();
 app.locals.copyrightName = app.config.companyName;
 app.locals.cacheBreaker = 'br34k-01';
-
+app.locals.signupEnabled = app.config.signupEnabled;
 //setup passport
 require('./passport')(app, passport);
 
