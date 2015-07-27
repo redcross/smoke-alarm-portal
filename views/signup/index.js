@@ -117,36 +117,10 @@ exports.signup = function(req, res) {
         req.app.db.Account.create(fieldsToSet)
             .then(function(account) {
                 return account.setUser(workflow.user);
-            }).then(function(account) {
-                workflow.emit('sendWelcomeEmail');
             })
             .catch(function(err) {
                 return workflow.emit('exception', err);
             });
-    });
-
-    workflow.on('sendWelcomeEmail', function() {
-        console.log('Send welcome email');
-        req.app.utility.sendmail(req, res, {
-            from: req.app.config.smtp.from.name + ' <' + req.app.config.smtp.from.address + '>',
-            to: req.body.email,
-            subject: 'Your ' + req.app.config.projectName + ' Account',
-            textPath: 'signup/email-text',
-            htmlPath: 'signup/email-html',
-            locals: {
-                username: req.body.username,
-                email: req.body.email,
-                loginURL: req.protocol + '://' + req.headers.host + '/login/',
-                projectName: req.app.config.projectName
-            },
-            success: function(message) {
-                workflow.emit('logUserIn');
-            },
-            error: function(err) {
-                console.log('Error Sending Welcome Email: ' + err);
-                workflow.emit('logUserIn');
-            }
-        });
     });
 
     workflow.on('logUserIn', function() {
