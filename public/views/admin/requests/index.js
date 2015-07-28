@@ -33,7 +33,7 @@
         items: results.items
       });
       app.filterView.model.set(results);
-      return results
+      return results.data
     }
   });
 
