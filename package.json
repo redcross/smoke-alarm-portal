@@ -43,17 +43,11 @@
     "underscore": "^1.x.x"
   },
   "devDependencies": {
+    "bootstrap": "^3.x.x",
     "chai": "^3.0.0",
     "chai-as-promised": "^5.1.0",
+    "faker": "^3.0.0",
     "flightplan": "^0.6.3",
-    "karma": "^0.12.36",
-    "karma-phantomjs-launcher": "^0.2.0",
-    "mocha": "^2.2.5",
-    "phantomjs": "^1.9.17",
-    "proxyquire": "^1.5.0",
-    "sinon": "^1.15.4",
-    "supertest": "^1.0.1",
-    "bootstrap": "^3.x.x",
     "font-awesome": "^4.1.0",
     "grunt": "^0.4.x",
     "grunt-cli": "^0.1.13",
@@ -69,7 +63,14 @@
     "html5shiv": "^3.x.x",
     "jquery": "^2.x.x",
     "jquery.cookie": "^1.x.x",
+    "karma": "^0.12.36",
+    "karma-phantomjs-launcher": "^0.2.0",
+    "mocha": "^2.2.5",
     "moment": "^2.x.x",
-    "respond.js": "^1.x.x"
+    "phantomjs": "^1.9.17",
+    "proxyquire": "^1.5.0",
+    "respond.js": "^1.x.x",
+    "sinon": "^1.15.4",
+    "supertest": "^1.0.1"
   }
 }
