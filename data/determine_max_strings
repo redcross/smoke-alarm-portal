@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+# -*- python -*-
+
+# Print the maximum lengths of different fields in
+# us_addresses.
+#
+# Copyright 2015 Open Tech Strategies, LLC
+# Licensed under the AGPL-3.0; see LICENSE.md for details.
+#
+# This is written to work with Python 2.x.  For Python 3.x, see
+# stackoverflow.com/questions/4843173/how-to-check-if-type-of-a-variable-is-string-in-python
+
+import json
+
+# Just inhale it.  It's only 14MB.
+us_addresses = json.loads(open("us_addresses.json", "r").read())
+
+# Step down one level of unnecessary indirection.
+us_addresses = us_addresses["docs"]
+
+# Okay, now us_addresses is a list of dictionaries.
+#
+# For each entry in that list, we want to keep track of the maximum
+# string length associated with each key from entry to entry.
+
+# Keys are same as the per-entry keys in us_addresses.
+# Values are numbers -- the maximum string length seen for the
+# value of that key's field so far in a us_addresses entry.
+max_lengths = { }
+
+for entry in us_addresses:
+  for key in entry.keys():
+    if isinstance(entry[key], basestring):
+      this_len = len(entry[key])
+      if not max_lengths.has_key(key):
+        max_lengths[key] = this_len
+      else:
+        if max_lengths[key] < this_len:
+          max_lengths[key] = this_len
+
+# Display the results.
+for key in max_lengths.keys():
+  print "%23s: %d" % (key, max_lengths[key])
