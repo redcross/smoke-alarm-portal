@@ -1,40 +1,51 @@
 'use strict';
-
+var _ = require('underscore');
 exports.find = function(req, res, next) {
+    if (_.isUndefined(req.query.page)) {
+        req.query.page = 1;
+    }
+    if (_.isUndefined(req.query.limit)) {
+        req.query.limit  = 20;
+    }
     var outcome = {
-              data: null,
-              pages: {
-                current: req.query.page,
-                prev: 0,
-                hasPrev: false,
-                next: 0,
-                hasNext: false,
-                total: 0
-              },
-              items: {
-                begin: ((req.query.page * req.query.limit) - req.query.limit) + 1,
-                end: req.query.page * req.query.limit,
-                total: 0
-              }
-            };
+        data: null,
+        pages: {
+            current: parseInt(req.query.page, null),
+            prev: 0,
+            hasPrev: false,
+            next: 0,
+            hasNext: false,
+            total: 0
+        },
+        items: {
+            begin: ((req.query.page * req.query.limit) - req.query.limit) + 1,
+            end: req.query.page * req.query.limit,
+            total: 0
+        }
+    };
+    var countResults = function(callback) {
+        req.app.db.Request.count().then(function(results) {
+            outcome.items.total = results;
+            callback(null, 'done counting');
+        });
+    };
     var getResults = function(callback) {
         req.query.search = req.query.search ? req.query.search : '';
         req.query.limit = req.query.limit ? parseInt(req.query.limit, null) : 20;
         req.query.page = req.query.page ? parseInt(req.query.page, null) : 1;
         req.query.sort = req.query.sort ? req.query.sort : 'id';
         req.query.offset = (req.query.page - 1) * req.query.limit;
-
         var filters = {};
         if (req.query.search) {
             filters.search = new RegExp('^.*?' + req.query.search + '.*$', 'i');
         }
 
-        
         req.app.db.Request.findAll({
             limit:req.query.limit,
             offset:req.query.offset
         }).then(function(results) {
             //final paging math
+
             outcome.data = results;
             outcome.pages.total = Math.ceil(outcome.items.total / req.query.limit);
             outcome.pages.next = ((outcome.pages.current + 1) > outcome.pages.total ? 0 : outcome.pages.current + 1);
@@ -60,19 +71,18 @@ exports.find = function(req, res, next) {
 
         if (req.xhr) {
             res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-            outcome.results.filters = req.query;
+            outcome.filters = req.query;
             res.send(outcome);
         } else {
             outcome.results.filters = req.query;
             res.render('admin/requests/index', {
                 data: {
-                    results: escape(JSON.stringify(outcome.results))
+                    results: escape(JSON.stringify(outcome))
                 }
             });
         }
     };
-    console.log("DEBUG: Parallel");
-    require('async').parallel([getResults], asyncFinally);
+    require('async').parallel([countResults, getResults], asyncFinally);
 };
 
 exports.read = function(req, res, next) {

@@ -27,13 +27,12 @@
     model: app.Record,
     url: '/admin/requests/',
     parse: function(results) {
-      console.log("DEBUG: RESULTS" + JSON.stringify(results));
       app.pagingView.model.set({
         pages: results.pages,
         items: results.items
       });
-      app.filterView.model.set(results);
-      return results.data
+      app.filterView.model.set(results.filters);
+      return results.data;
     }
   });
 
@@ -103,7 +102,7 @@
     el: '#results-table',
     template: _.template( $('#tmpl-results-table').html() ),
     initialize: function() {
-      this.collection = new app.RecordCollection( app.mainView.results );
+      this.collection = new app.RecordCollection( app.mainView.results.data );
       this.listenTo(this.collection, 'reset', this.render);
       this.render();
     },
@@ -237,7 +236,6 @@
       app.firstLoad = false;
     },
     query: function(params) {
-      console.log("DEBUG: PARAMS: " + params);
       app.resultsView.collection.fetch({ data: params, reset: true });
       app.firstLoad = false;
     }

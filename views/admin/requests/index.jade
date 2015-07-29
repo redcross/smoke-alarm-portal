@@ -34,10 +34,12 @@ block body
         div.col-sm-3
           label Sort By
           select.form-control(name='sort')
-            option(value='_id') id &#9650;
-            option(value='-_id') id &#9660;
+            option(value='id') id &#9650;
+            option(value='-id') id &#9660;
             option(value='name') name &#9650;
             option(value='-name') name &#9660;
+            option(value='createdAt') date created &#9650;
+            option(value='-createdAt') date created &#9660;
         div.col-sm-3
           label Limit
           select.form-control(name='limit')
@@ -53,6 +55,7 @@ block body
       thead
         tr
           th
+          th id
           th name
           th address
           th address_2
@@ -61,13 +64,13 @@ block body
           th zip
           th phone
           th email
+          th date created 
       tbody#results-rows
 
   script(type='text/template', id='tmpl-results-row')
     td
-      
-    td.stretch
-      |<%- name %>
+    td.nowrap <%- id %>
+    td.nowrap <%- name %>
     td.nowrap <%- address %>
     td.nowrap <%- address_2 %>
     td.nowrap <%- city %>
@@ -75,6 +78,7 @@ block body
     td.nowrap <%- zip %>
     td.nowrap <%- phone %>
     td.nowrap <%- email %>
+    td.nowrap <%- moment(createdAt).format("YYYY-MM-DD HH:MM") %>
       div
       div
 
