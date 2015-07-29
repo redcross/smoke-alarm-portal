@@ -44,10 +44,14 @@ exports.find = function(req, res, next) {
             };
         }
 
+        // Determine direction for order
+
+        var sortOrder = (req.query.sort[0] === '-')? 'DESC' : 'ASC';
         req.app.db.Request.findAll({
             limit:req.query.limit,
             offset:req.query.offset,
-            where: filters
+            where: filters,
+            order: [[req.query.sort.replace('-',''), sortOrder ]]
         }).then(function(results) {
             //final paging math
 
