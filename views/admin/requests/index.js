@@ -37,12 +37,17 @@ exports.find = function(req, res, next) {
         req.query.offset = (req.query.page - 1) * req.query.limit;
         var filters = {};
         if (req.query.search) {
-            filters.search = new RegExp('^.*?' + req.query.search + '.*$', 'i');
+            filters = {
+                name: {
+                    $ilike: '%' + req.query.search + '%'
+                }
+            };
         }
 
         req.app.db.Request.findAll({
             limit:req.query.limit,
-            offset:req.query.offset
+            offset:req.query.offset,
+            where: filters
         }).then(function(results) {
             //final paging math
 
