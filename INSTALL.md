@@ -39,6 +39,11 @@ much difficulty to most other Unix-like operating systems.
         course.  You might also want to set up a whole new
         environment, e.g., "demo" (e.g., based on the "test" example).
 
+  * Do `cp config/recipients.json.tmpl config/recipients.json`, then edit the latter.
+
+        You'll need to fill in appropriate contact names and email
+        addresses.
+
 6. Create the databases and import the initial data.
 
         $ su - postgres

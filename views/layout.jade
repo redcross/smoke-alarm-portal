@@ -30,7 +30,7 @@ html(lang='en')
     script(type='text/javascript', src='/third-party/jquery.validationEngine-en.js')
     script(type="text/javascript").
       $.validationEngineLanguage.allRules["phone-10-digit-US"] = {
-        "regex": /^(\+?1-?)?(\([2-9]([02-9]\d|1[02-9])\)|[2-9]([02-9]\d|1[02-9]))-?[2-9]([02-9]\d|1[02-9])-?\d{4}$/,
+        "regex": /^ *(\+?1-?)?(\([2-9]([02-9]\d|1[02-9])\)|[2-9]([02-9]\d|1[02-9]))(-| +)?[2-9]([02-9]\d|1[02-9])(-| +)?\d{4} *$/,
         "alertText": "* Invalid phone number" // AFAICT this err msg will never be seen; yet this key must have a value for stuff to work.
       }
     script(type='text/javascript', src='/third-party/jquery.validationEngine.js')

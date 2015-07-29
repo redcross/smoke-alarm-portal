@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var db = require('./../models');
+var recipients_table = require(__dirname + '/../config/recipients.json');
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'Red Cross' });
@@ -16,6 +17,76 @@ router.get('/thankyou', function(req, res, next) {
 router.get('/sorry', function(req, res, next) {
     res.render('sorry', { title: 'Red Cross: Sorry', county: res.locals.matchedCounty, state:res.locals.matchedState });
 });
+
+// Any reason not to just hardcode this here?
+var state_abbrevs =
+    {
+        "Alabama":                        "AL",
+        "Alaska":                         "AK",
+        "Arizona":                        "AZ",
+        "Arkansas":                       "AR",
+        "California":                     "CA",
+        "Colorado":                       "CO",
+        "Connecticut":                    "CT",
+        "Delaware":                       "DE",
+        "Florida":                        "FL",
+        "Georgia":                        "GA",
+        "Hawaii":                         "HI",
+        "Idaho":                          "ID",
+        "Illinois":                       "IL",
+        "Indiana":                        "IN",
+        "Iowa":                           "IA",
+        "Kansas":                         "KS",
+        "Kentucky":                       "KY",
+        "Louisiana":                      "LA",
+        "Maine":                          "ME",
+        "Maryland":                       "MD",
+        "Massachusetts":                  "MA",
+        "Michigan":                       "MI",
+        "Minnesota":                      "MN",
+        "Mississippi":                    "MS",
+        "Missouri":                       "MO",
+        "Montana":                        "MT",
+        "Nebraska":                       "NE",
+        "Nevada":                         "NV",
+        "New Hampshire":                  "NH",
+        "New Jersey":                     "NJ",
+        "New Mexico":                     "NM",
+        "New York":                       "NY",
+        "North Carolina":                 "NC",
+        "North Dakota":                   "ND",
+        "Ohio":                           "OH",
+        "Oklahoma":                       "OK",
+        "Oregon":                         "OR",
+        "Pennsylvania":                   "PA",
+        "Rhode Island":                   "RI",
+        "South Carolina":                 "SC",
+        "South Dakota":                   "SD",
+        "Tennessee":                      "TN",
+        "Texas":                          "TX",
+        "Utah":                           "UT",
+        "Vermont":                        "VT",
+        "Virginia":                       "VA",
+        "Washington":                     "WA",
+        "West Virginia":                  "WV",
+        "Wisconsin":                      "WI",
+        "Wyoming":                        "WY",
+        "American Samoa":                 "AS",
+        "District of Columbia":           "DC",
+        "Federated States of Micronesia": "FM",
+        "Guam":                           "GU",
+        "Marshall Islands":               "MH",
+        "Northern Mariana Islands":       "MP",
+        "Palau":                          "PW",
+        "Puerto Rico":                    "PR",
+        "Virgin Islands":                 "VI",
+        "Armed Forces Africa":            "AE",
+        "Armed Forces Americas":          "AA",
+        "Armed Forces Canada":            "AE",
+        "Armed Forces Europe":            "AE",
+        "Armed Forces Middle East":       "AE",
+        "Armed Forces Pacific":           "AP"
+    };
 
 /* POST to the server */
 router.post('/', function(req, res, next) {
@@ -92,6 +163,16 @@ router.post('/', function(req, res, next) {
     // data, such as an unknown zip code -- we still want to record
     // that the person made the request.
 
+    // TODO: We need to have sanitized all inputs by now.  We need to
+    // know that all input is not problematic from an SQL point of
+    // view (even though we're using an ORM here, we don't want to
+    // store data that will later be a security risk for someone else
+    // generating a report or whatever), and we need to make sure that
+    // the email address does not have surrounding "<" and ">", and
+    // that the phone number is in a standard 10-digit format
+    // (actually, I think we've already validated that, but let's
+    // check again here).
+
     var request = db.Request.create({
         name: name,
         address: street_address,
@@ -132,12 +213,102 @@ router.post('/', function(req, res, next) {
 
         db.SelectedCounties.findOne({
             where: {
-                county: countyFromZip,
-                state: stateFromZip
+                // Use the PostgreSQL "ILIKE" (case-insensitive LIKE)
+                // operator so that internal inconsistencies in the
+                // case-ness of our data don't cause problems.  For
+                // example, Lac qui Parle County, MN is "Lac qui
+                // Parle" (correct) in ../data/selected_counties.json
+                // but "Lac Qui Parle" (wrong) in us_addresses.json.
+                //
+                // Since us_addresses.json comes from an upstream data
+                // source, correcting all the cases there could be a
+                // maintenance problem.  It's easier just to do our
+                // matching case-insensitively.
+                //
+                // http://docs.sequelizejs.com/en/latest/docs/querying/
+                // has more about the use of operators like $ilike.
+                county: { $ilike: countyFromZip },
+                state: { $ilike: stateFromZip }
             }
         }).then(function(selectedRegion) {
             if (selectedRegion !== null) {
                 console.log("DEBUG: selected region: " + JSON.stringify(selectedRegion));
+
+                var regionPresentableName = recipients_table[selectedRegion.region]["region_alt_name"];
+                var regionRecipientName   = recipients_table[selectedRegion.region]["contact_name"];
+                var regionRecipientEmail  = recipients_table[selectedRegion.region]["contact_email"];
+                var thisRequestID = request._boundTo.dataValues.id;
+
+                console.log("")
+                console.log("DEBUG: db request:");
+                console.log(request);
+                console.log("DEBUG: (end db request)");
+                console.log("")
+                console.log("DEBUG: Information for '" + selectedRegion.region + "':");
+                console.log("DEBUG:    Presentable region name: '" + regionPresentableName + "'");
+                console.log("DEBUG:    Contact name: '" + regionRecipientName + "'");
+                console.log("DEBUG:    Contact email: '<" + regionRecipientEmail + ">'");
+
+                var email_text = "We have received a smoke alarm installation request from:\n"
+                    + "\n"
+                    + "  " + name + "\n"
+                    + "  " + street_address + "\n"
+                    + "  " + city + ", " + state_abbrevs[state] + "  " + zip_final + "\n";
+
+                if (phone) {
+                    email_text += "  Phone: " + phone + "\n";
+                } else {
+                    email_text += "  Phone: ---\n";
+                };
+                if (email) {
+                    email_text += "  Email: <" + email + ">\n";
+                } else {
+                    email_text += "  Email: ---\n";
+                };
+                
+                email_text += "\n"
+                    + "This is installation request #" + thisRequestID + ".\n"
+                    + "\n"
+                    + "We're directing this request to the administrator for the\n"
+                    + "ARC North Central Division, " + regionPresentableName + " region:\n"
+                    + "\n"
+                    + "  " + regionRecipientName + " <" + regionRecipientEmail + ">\n"
+                    + "\n"
+                    + "Thank you,\n"
+                    + "-The Smoke Alarm Request Portal\n";
+
+                // Send an email to the appropriate Red Cross administrator.
+                var outbound_email = {
+                    from: db.mail_from_addr,
+                    to: regionRecipientName + " <" + regionRecipientEmail + ">",
+                    subject: "Smoke alarm install request from " 
+                        + name + " (#" + thisRequestID + ")",
+                    text: email_text
+                };
+                
+                console.log("");
+                console.log("DEBUG: This is the email we're about to send:");
+                console.log("");
+                console.log(outbound_email);
+                console.log("");
+                console.log("DEBUG: (end of email)");
+                console.log("");
+
+                db.mailgun.messages().send(outbound_email, function (error, body) {
+                    // TODO: We need to record the sent message's Message-ID 
+                    // (which is body.id) in the database, with the request.
+                    if (body.id === undefined) {
+                        console.log("DEBUG: sent mail ID was undefined");
+                    } else {
+                        console.log("DEBUG: sent mail ID:  '" + body.id + "'");
+                    }
+                    if (body.message === undefined) {
+                        console.log("DEBUG: sent mail msg was undefined");
+                    } else {
+                        console.log("DEBUG: sent mail msg: '" + body.message + "'");
+                    }
+                });
+
                 res.render('thankyou.jade', {region: selectedRegion.region});
             } else {
                 if (zip_5) {
