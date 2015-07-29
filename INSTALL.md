@@ -120,10 +120,10 @@ much difficulty to most other Unix-like operating systems.
    (and any sub-tickets it links to) describes improvements planned
    for the admin area.
 
-11. Change `config.signupEnabled` to 'false' and restart the server 
-    to disable any future admin and/or user signups. This is an important
-    step, without which anyone who can figure out the URL can create an
-    admin on the server, which we do not want.
+11. In config.js, change `config.signupEnabled` to 'false' and restart
+    the server to disable any future admin and/or user signups. This is
+    an important step, without which anyone who can figure out the URL
+    can create an admin on the server, which we do not want.
 
 Appendix A: Setting up Apache->Node ProxyPass with https://
 -----------------------------------------------------------

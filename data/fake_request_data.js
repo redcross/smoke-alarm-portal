@@ -1,4 +1,7 @@
-/* fake_request_data.js - Short script to fake requests to make sure
+/* 
+ * To run: $ node fake_request_data.js
+ *
+ * fake_request_data.js - Short script to fake requests to make sure
  * that pagination works as expected. Uses the 'faker' library to create
  * requests in the admin
  */
