@@ -44,7 +44,21 @@ block body
             option(value='50') 50 items
             option(value='100') 100 items
             option(value='500') 500 items
-
+      div.row
+        div.col-sm-3
+          label Start Date
+          input.form-control(name='startDate', type='text')
+        div.col-sm-3
+          label End Date
+          input.form-control(name='endDate', type='text')
+        div.col-sm-3
+          label Region
+          select.form-control(name='region')
+            option(value='10') 10 items
+            option(value='20', selected='selected') 20 items
+            option(value='50') 50 items
+            option(value='100') 100 items
+            option(value='500') 500 items
 
   script(type='text/template', id='tmpl-results-table')
     table.table.table-striped

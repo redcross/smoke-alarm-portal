@@ -1,5 +1,6 @@
 'use strict';
 var _ = require('underscore');
+var moment = require('moment');
 exports.find = function(req, res, next) {
     if (_.isUndefined(req.query.page)) {
         req.query.page = 1;
@@ -30,23 +31,29 @@ exports.find = function(req, res, next) {
         });
     };
     var getResults = function(callback) {
+        var filters = {};
         req.query.search = req.query.search ? req.query.search : '';
         req.query.limit = req.query.limit ? parseInt(req.query.limit, null) : 20;
         req.query.page = req.query.page ? parseInt(req.query.page, null) : 1;
         req.query.sort = req.query.sort ? req.query.sort : 'id';
         req.query.offset = (req.query.page - 1) * req.query.limit;
-        var filters = {};
+        req.query.startDate = (req.query.startDate) ? moment(req.query.startDate): moment('01-01-1980');
+        req.query.endDate = (req.query.endDate) ? moment(req.query.endDate) : moment('01-01-2040');
+
+        filters.createdAt = {
+            $between:[req.query.startDate.format(), req.query.endDate.format()]
+        };
         if (req.query.search) {
-            filters = {
-                name: {
-                    $ilike: '%' + req.query.search + '%'
-                }
+            filters.name = {
+                $ilike: '%' + req.query.search + '%'
             };
         }
 
         // Determine direction for order
-
         var sortOrder = (req.query.sort[0] === '-')? 'DESC' : 'ASC';
+
+        // Determine whether to filter by date
+
         req.app.db.Request.findAll({
             limit:req.query.limit,
             offset:req.query.offset,

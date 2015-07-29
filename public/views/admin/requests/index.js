@@ -157,6 +157,10 @@
 
       for (var key in this.model.attributes) {
         if (this.model.attributes.hasOwnProperty(key)) {
+          if ((key === "startDate" && this.model.attributes[key] === "1980-01-01T05:00:00.000Z") ||
+              (key === "endDate" && this.model.attributes[key] === "2040-01-01T05:00:00.000Z")) {
+                this.model.attributes[key] = '';
+              }
           this.$el.find('[name="'+ key +'"]').val(this.model.attributes[key]);
         }
       }
