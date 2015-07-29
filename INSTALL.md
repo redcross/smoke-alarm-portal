@@ -27,7 +27,7 @@ much difficulty to most other Unix-like operating systems.
 
 5. Set up the live config files.
 
-  * Do `cp config.json.tmpl config.json`, then edit the latter.
+  * Do `cp config.js.tmpl config.js`, then edit the latter.
 
         You'll probably want to update `exports.companyName`,
         `exports.projectName`, `exports.signupEnabled`,`exports.systemEmail`, and
