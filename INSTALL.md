@@ -27,28 +27,22 @@ much difficulty to most other Unix-like operating systems.
 
 5. Set up the live config files.
 
-<<<<<<< HEAD
   * Do `cp config.json.tmpl config.json`, then edit the latter.
 
         You'll probably want to update `exports.companyName`,
         `exports.projectName`, `exports.signupEnabled`,`exports.systemEmail`, and
         `exports.cryptoKey`.
 
-=======
->>>>>>> email_demo
   * Do `cp config/config.json.tmpl config/config.json`, then edit the latter.
 
         You'll need to fill in database usernames and passwords, of
         course.  You might also want to set up a whole new
         environment, e.g., "demo" (e.g., based on the "test" example).
-<<<<<<< HEAD
-=======
 
   * Do `cp config/recipients.json.tmpl config/recipients.json`, then edit the latter.
 
         You'll need to fill in appropriate contact names and email
         addresses.
->>>>>>> email_demo
 
 6. Create the databases and import the initial data.
 
