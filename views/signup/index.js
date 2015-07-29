@@ -117,6 +117,8 @@ exports.signup = function(req, res) {
         req.app.db.Account.create(fieldsToSet)
             .then(function(account) {
                 return account.setUser(workflow.user);
+            }).then(function(account) {
+                workflow.emit('logUserIn');
             })
             .catch(function(err) {
                 return workflow.emit('exception', err);
