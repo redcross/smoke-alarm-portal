@@ -10,7 +10,8 @@ var config = require('./config'),
     passport = require('passport'),
     models = require('./models/index'),
     helmet = require('helmet'),
-    csrf = require('csurf');
+    csrf = require('csurf'),
+    moment = require('moment');
 
 var favicon = require('serve-favicon');
 
@@ -73,6 +74,7 @@ app.locals.copyrightYear = new Date().getFullYear();
 app.locals.copyrightName = app.config.companyName;
 app.locals.cacheBreaker = 'br34k-01';
 app.locals.signupEnabled = app.config.signupEnabled;
+app.locals.moment =moment;
 //setup passport
 require('./passport')(app, passport);
 
