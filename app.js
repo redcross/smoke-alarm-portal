@@ -70,8 +70,15 @@ app.use(function(req, res, next) {
 
 //global locals
 app.locals.projectName = app.config.projectName;
+// This calculation of the copyright year is a kludge, but it'll
+// probably be accurate enough most of the time, since it's likely
+// that some code somewhere in the app changed in a given year.  Maybe
+// in early January of the year it will be inaccurate, though!
 app.locals.copyrightYear = new Date().getFullYear();
-app.locals.copyrightName = app.config.companyName;
+// Since this is open source software, it doesn't matter *too* much
+// who owns the copyright, but for the record this is a work for hire
+// so the customer is the copyright holder.
+app.locals.copyrightName = "American Red Cross"; 
 app.locals.cacheBreaker = 'br34k-01';
 app.locals.signupEnabled = app.config.signupEnabled;
 app.locals.moment =moment;
