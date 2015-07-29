@@ -3,10 +3,10 @@
 module.exports = function(sequelize, DataTypes) {
     return sequelize.define('LoginAttempt', {
         ip: {
-            type: DataTypes.STRING
+            type: DataTypes.TEXT
         },
         user: {
-            type: DataTypes.STRING
+            type: DataTypes.TEXT
         },
         time: {
             type: DataTypes.DATE,

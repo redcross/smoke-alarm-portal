@@ -3,7 +3,7 @@
 module.exports = function(sequelize, DataTypes) {
     return sequelize.define('AdminGroup', {
         name: {
-            type: DataTypes.STRING
+            type: DataTypes.TEXT
         },
         permissions: {
             type: DataTypes.JSON

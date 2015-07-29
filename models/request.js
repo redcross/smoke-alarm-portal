@@ -1,13 +1,13 @@
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('Request', {
-	  name: DataTypes.STRING,
-		address: DataTypes.STRING,
-		address_2: DataTypes.STRING,
-		city: DataTypes.STRING,
-		state: DataTypes.STRING,
-		zip: DataTypes.STRING,
-		phone: DataTypes.STRING,
-		email: DataTypes.STRING,
+	  name: DataTypes.TEXT,
+		address: DataTypes.TEXT,
+		address_2: DataTypes.TEXT,
+		city: DataTypes.TEXT,
+		state: DataTypes.TEXT,
+		zip: DataTypes.TEXT,
+		phone: DataTypes.TEXT,
+		email: DataTypes.TEXT,
 		permission_to_text: DataTypes.BOOLEAN
 	})
 }

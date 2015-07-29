@@ -2,11 +2,11 @@
 module.exports = function(sequelize, DataTypes) {
     return sequelize.define('Message', {
         name: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             allowNull: true,
         },
         body: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             allowNull: true,
         }
     }, {

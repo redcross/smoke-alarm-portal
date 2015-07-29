@@ -3,17 +3,17 @@
 module.exports = function(sequelize, DataTypes) {
     return sequelize.define('User', {
         username: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             unique: true,
             allowNull: false
         },
-        password: DataTypes.STRING,
+        password: DataTypes.TEXT,
         email: {
-            type: DataTypes.STRING,
+            type: DataTypes.TEXT,
             unique: true
         },
-        isActive: DataTypes.STRING,
-        resetPasswordToken: DataTypes.STRING,
+        isActive: DataTypes.TEXT,
+        resetPasswordToken: DataTypes.TEXT,
         resetPasswordExpires: DataTypes.DATE,
         twitter: DataTypes.JSON,
         github: DataTypes.JSON,

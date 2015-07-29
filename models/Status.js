@@ -3,10 +3,10 @@
 module.exports = function(sequelize, DataTypes) {
     return sequelize.define('Status', {
         name: {
-            type: DataTypes.STRING
+            type: DataTypes.TEXT
         },
         pivot: {
-            type: DataTypes.STRING
+            type: DataTypes.TEXT
         }
     }, {
         freezeTableName: true
