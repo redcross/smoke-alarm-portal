@@ -57,13 +57,37 @@ block body
             //- TODO: Ideally, these choices would be derived from a
             //-       config file, instead of hard-coded here.
             option(value="") All Regions
-            option(value="Central & Southern Illinois") Central & Southern Illinois
-            option(value="Chicago & Northern Illinois") Chicago & Northern Illinois
+            //- TODO: The value attributes below sometimes say "and"
+            //-       where the original was "&".  The problem is
+            //-       that "&" is turned into "&amp;" when it
+            //-       appears as the right side of an attribute,
+            //-       thus making the dropdown behave weirdly when
+            //-       that region is chosen (see issue #92).  From
+            //-       looking at these tickets on the interwebs...
+            //-       
+            //-         https://github.com/jadejs/jade/issues/198
+            //-         https://github.com/jadejs/jade/issues/1087
+            //-       
+            //-       ...it seems that if we were interpolating the
+            //-       attribute values then we might be able to use
+            //-       mustache-style escapers ("<% ... %>"), but as
+            //-       we're not interpolating here, I'm not sure what
+            //-       to do.  For the moment, I've just replaced all
+            //-       the "&" with "and" in the attributes.  One way
+            //-       to solve the problem would be to have canonical
+            //-       identifiers for Red Cross Regions -- identifiers
+            //-       that, you know, look like identifiers, with no
+            //-       spaces in them, only letters and hyphens and such,
+            //-       e.g., "central-and-southern-illinois".  We could
+            //-       define those in the same config file where we
+            //-       define regions, ../../../config/recipients.json.
+            option(value="Central and Southern Illinois") Central & Southern Illinois
+            option(value="Chicago and Northern Illinois") Chicago & Northern Illinois
             option(value="Dakotas") Dakotas
             option(value="Eastern Missouri") Eastern Missouri
             option(value="Iowa") Iowa
             option(value="Idaho/Montana") Idaho/Montana
-            option(value="Kansas, Nebraska & SW Iowa") Kansas, Nebraska & SW Iowa
+            option(value="Kansas, Nebraska and SW Iowa") Kansas, Nebraska & SW Iowa
             option(value="Minnesota") Minnesota
             option(value="Western Missouri") Western Missouri
             option(value="Wisconsin") Wisconsin
