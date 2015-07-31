@@ -244,8 +244,9 @@ var findCountyFromAddress = function(address) {
 };
 // Updates the request with the region if it is in a covered region
 var updateRequestWithRegion = function(request, region) {
-    request.selectedCountyId = region.id;
-    return request.save({fields: ['selectedCountyId']});
+    request.SelectedCountyId = region.id;
+    console.log("DEBUG: updateRequestWithRegion: data = " + JSON.stringify(request));
+    return request.save({fields: ['SelectedCountyId']});
 };
 
 // sends an email to the regional representative
@@ -343,11 +344,10 @@ exports.saveRequest = function(req, res) {
         console.log("DEBUG: Getting Region in Promise Chain:");
         if (selectedRegion !== null) {
             console.log("DEBUG: Region = " + JSON.stringify(selectedRegion));
-            // 7.31.2015: MN: Currently commented out due to not understood failure
-            // As is the body of the email is undefined, and I am not sure why
-            //
-            //sendEmail(savedRequest, selectedRegion);
-            res.render('thankyou.jade', {region: selectedRegion.region});
+            updateRequestWithRegion(savedRequest, selectedRegion).then(function() {
+                sendEmail(savedRequest, selectedRegion);
+                res.render('thankyou.jade', {region: selectedRegion.region});
+            });
         } else {
             console.log("DEBUG: Region not found");
             if (requestData.zip_5) {
