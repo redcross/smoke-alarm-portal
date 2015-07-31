@@ -91,9 +91,9 @@ exports.init = function(req, res) {
      or not
  * - findCountyFromAddress(address) - tries to find a county within a region
      based upon the address
- * - updateRequestWithRegion - if the address is in a region, we update the 
+ * - updateRequestWithRegion(request, selectedRegion) - if the address is in a region, we update the 
      request with that info
- * - sendEmail - sends Email to region representative
+ * - sendEmail(request, selectedRegion) - sends Email to region representative
  */
 
 // Request data context to use through the promise chain
@@ -330,7 +330,6 @@ var sendEmail = function(request, selectedRegion) {
 };
 
 exports.saveRequest = function(req, res) {
-    // One function to get and parse the data from the request
     var savedRequest = {};
     requestData = getRequestData(req);
     console.log("DEBUG: Request Data: " + JSON.stringify(requestData));
@@ -359,7 +358,7 @@ exports.saveRequest = function(req, res) {
                 // doesn't talk about anything else.  But this will do for now.
                 var zip_for_display = "(INVALID ZIP CODE '" + requestData.zip_for_lookup + "')";
             }
-            res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_display});
+            res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: zip_for_display});
         }
     }).catch(function(error) {
         console.log("ERROR: " + error);
