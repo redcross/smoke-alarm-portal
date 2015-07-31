@@ -1,139 +1,368 @@
 'use strict';
 var db = require('./../models');
+var recipients_table = require(__dirname + '/../config/recipients.json');
+
+// Any reason not to just hardcode this here?
+var state_abbrevs =
+    {
+        "Alabama":                        "AL",
+        "Alaska":                         "AK",
+        "Arizona":                        "AZ",
+        "Arkansas":                       "AR",
+        "California":                     "CA",
+        "Colorado":                       "CO",
+        "Connecticut":                    "CT",
+        "Delaware":                       "DE",
+        "Florida":                        "FL",
+        "Georgia":                        "GA",
+        "Hawaii":                         "HI",
+        "Idaho":                          "ID",
+        "Illinois":                       "IL",
+        "Indiana":                        "IN",
+        "Iowa":                           "IA",
+        "Kansas":                         "KS",
+        "Kentucky":                       "KY",
+        "Louisiana":                      "LA",
+        "Maine":                          "ME",
+        "Maryland":                       "MD",
+        "Massachusetts":                  "MA",
+        "Michigan":                       "MI",
+        "Minnesota":                      "MN",
+        "Mississippi":                    "MS",
+        "Missouri":                       "MO",
+        "Montana":                        "MT",
+        "Nebraska":                       "NE",
+        "Nevada":                         "NV",
+        "New Hampshire":                  "NH",
+        "New Jersey":                     "NJ",
+        "New Mexico":                     "NM",
+        "New York":                       "NY",
+        "North Carolina":                 "NC",
+        "North Dakota":                   "ND",
+        "Ohio":                           "OH",
+        "Oklahoma":                       "OK",
+        "Oregon":                         "OR",
+        "Pennsylvania":                   "PA",
+        "Rhode Island":                   "RI",
+        "South Carolina":                 "SC",
+        "South Dakota":                   "SD",
+        "Tennessee":                      "TN",
+        "Texas":                          "TX",
+        "Utah":                           "UT",
+        "Vermont":                        "VT",
+        "Virginia":                       "VA",
+        "Washington":                     "WA",
+        "West Virginia":                  "WV",
+        "Wisconsin":                      "WI",
+        "Wyoming":                        "WY",
+        "American Samoa":                 "AS",
+        "District of Columbia":           "DC",
+        "Federated States of Micronesia": "FM",
+        "Guam":                           "GU",
+        "Marshall Islands":               "MH",
+        "Northern Mariana Islands":       "MP",
+        "Palau":                          "PW",
+        "Puerto Rico":                    "PR",
+        "Virgin Islands":                 "VI",
+        "Armed Forces Africa":            "AE",
+        "Armed Forces Americas":          "AA",
+        "Armed Forces Canada":            "AE",
+        "Armed Forces Europe":            "AE",
+        "Armed Forces Middle East":       "AE",
+        "Armed Forces Pacific":           "AP"
+    };
 
 exports.init = function(req, res) {
-	res.locals.csrf = encodeURIComponent(req.csrfToken());
+    res.locals.csrf = encodeURIComponent(req.csrfToken());
     res.render('index');
+};
+/* MN: 7.31.2015 - This is a big refactoring of this file.
+ * The primary motivations for this were to effectively handle
+ * promise chaining as well as separating functionality into
+ * different functions in order to increase maintainability.
+ * saveRequest in its current form was becoming too unweidly, IMO.
+ *
+ * As a result, saveRequest as we know it is now fulfilled by 
+ * several functions, including:
+ * - getRequestData(req) - gets and parses request data from incoming request
+ * - saveRequestData(request) - saves the request to the DB
+ * - findAddressFromZip(zip) - gets the address (most importantly county) from
+     the UsAddress table so we can determine whether this county is covered
+     or not
+ * - findCountyFromAddress(address) - tries to find a county within a region
+     based upon the address
+ * - updateRequestWithRegion - if the address is in a region, we update the 
+     request with that info
+ * - sendEmail - sends Email to region representative
+ */
+
+// Request data context to use through the promise chain
+var requestData = {};
+
+var getRequestData = function(req) {
+    var zipToSelect = req.body.zip;
+    // Things we derive from the user-provided zip code.
+    var stateFromZip = null;   // remains null if no match
+    var countyFromZip = null;  // remains null if no match
+
+    // Treat state gingerly.  Because of the way ../views/index.js
+    // simulates placeholder text for State, there is a possibility
+    // that, unlike other fields, req.body.state may be undefined.
+    // For other fields we can assume they are strings, either empty
+    // or non-empty, so here we make state meet that assumption too.
+    if (req.body.state === undefined) {
+        req.body.state = '';
+    }
+    // Trim and sanitize the request values.
+    //
+    // Note: we could augment String like so
+    //
+    //     String.prototype.trimAndSlim() {
+    //         return this.trim().replace(/\s+/g, ' ');
+    //     };
+    //
+    // and use that to declutter the code below.  But I'm not sure
+    // whether such augmentation is frowned on or not.  Advice from
+    // more experienced Javascript programmers welcome.  -Karl
+    requestData.name = req.body.name.trim().replace(/\s+/g, ' ');
+    requestData.street_address = req.body.street_address.trim().replace(/\s+/g, ' ');
+    requestData.city = req.body.city.trim().replace(/\s+/g, ' ');
+    requestData.state = req.body.state.trim().replace(/\s+/g, ' ');
+    requestData.phone = req.body.phone.trim().replace(/\s+/g, ' ');
+    requestData.email = req.body.email.trim().replace(/\s+/g, ' ');
+
+    // Treat zip code specially.  For zip codes, we remove all
+    // internal spaces, since they can't possibly be useful.
+    requestData.zip_received = req.body.zip.trim().replace(/\s+/g, '');
+    // This is the zip code we will actually store in the database.
+    // Our canonical form for storing zip codes is any of the following:
+    // "NNNNN" (a 5 digit string), "NNNNN-NNNN" (a string consisting
+    // of 5 digits, a hyphen, and 4 digits), or null.  No other forms
+    // are to be stored, at least not without changing this comment.
+    requestData.zip_final = null;
+
+    // Parse 5-digit section and optional 4-digit section from the zip code.
+    requestData.zip_5 = null;
+    requestData.zip_4 = null;
+    var zip_re = /^([0-9][0-9][0-9][0-9][0-9]) *[-_+]{0,1} *([0-9][0-9][0-9][0-9]){0,1}$/g;
+    requestData.zip_match = zip_re.exec(requestData.zip_received);
+    if (requestData.zip_match) {
+        if (requestData.zip_match.length < 2) {
+            console.log("ERROR: zip matched, but match grouping is somehow wrong,");
+            console.log("       which implies that the regexp itself is not right");
+            console.log("       (or our use of it isn't right).");
+        }
+        else {
+            requestData.zip_5 = requestData.zip_match[1];
+            console.log("DEBUG: found the 5-digit portion of the zip code: '" + requestData.zip_5 + "'");
+            if (requestData.zip_match.length == 3 && requestData.zip_match[2] !== undefined) {
+                requestData.zip_4 = requestData.zip_match[2];
+                console.log("DEBUG: found a 4-digit portion in the zip code: '" + requestData.zip_4 + "'");
+                requestData.zip_final = requestData.zip_5 + "-" + requestData.zip_4;
+            } else {
+                requestData.zip_final = requestData.zip_5;
+            }
+        }
+    }
+
+    requestData.zip_for_lookup = requestData.zip_5;
+    if (! requestData.zip_for_lookup) {
+        // If the zip we got doesn't look like it was a real zip, then
+        // it won't work later as a key for database lookups.  But we
+        // should still pass it along so at least error messages can
+        // display it accurately.
+        requestData.zip_for_lookup = requestData.zip_received;
+    }
+    return requestData;
+};
+
+// Save the request data unconditionally.  Even if we can't
+// service the request -- or even if it contains some invalid
+// data, such as an unknown zip code -- we still want to record
+// that the person made the request.
+
+// TODO: We need to have sanitized all inputs by now.  We need to
+// know that all input is not problematic from an SQL point of
+// view (even though we're using an ORM here, we don't want to
+// store data that will later be a security risk for someone else
+// generating a report or whatever), and we need to make sure that
+// the email address does not have surrounding "<" and ">", and
+// that the phone number is in a standard 10-digit format
+// (actually, I think we've already validated that, but let's
+// check again here).
+
+var saveRequestData = function(requestData) {
+    console.log("DEBUG: Request Data" + JSON.stringify(requestData));
+    return db.Request.create({
+        name: requestData.name,
+        address: requestData.street_address,
+        city: requestData.city,
+        state: requestData.state,
+        zip: requestData.zip_final,
+        phone: requestData.phone,
+        email: requestData.email
+    });
+};
+
+// This function gets the address from the zip code in the request
+var findAddressFromZip = function(zip) {
+    return db.UsAddress.findOne({where: {zip: zip}});
+};
+
+// This function gets the selected county if it exists from the requests
+var findCountyFromAddress = function(address) {
+    if (!address) {
+        console.log("ERROR: no county found for zip '" + JSON.stringify(address.zip) + "'");
+        return res.render('sorry.jade', {zip: address.zip});
+    } 
+
+    console.log("DEBUG: county found: '" + JSON.stringify(address) + "'");
+
+    requestData.countyFromZip = address['county'].replace(" County", "");
+    requestData.stateFromZip = address['state'];
+
+    return db.SelectedCounties.findOne({
+        where: {
+            // Use the PostgreSQL "ILIKE" (case-insensitive LIKE)
+            // operator so that internal inconsistencies in the
+            // case-ness of our data don't cause problems.  For
+            // example, Lac qui Parle County, MN is "Lac qui
+            // Parle" (correct) in ../data/selected_counties.json
+            // but "Lac Qui Parle" (wrong) in us_addresses.json.
+            //
+            // Since us_addresses.json comes from an upstream data
+            // source, correcting all the cases there could be a
+            // maintenance problem.  It's easier just to do our
+            // matching case-insensitively.
+            //
+            // http://docs.sequelizejs.com/en/latest/docs/querying/
+            // has more about the use of operators like $ilike.
+            county: { $ilike: requestData.countyFromZip },
+            state: { $ilike: requestData.stateFromZip }
+        }
+    });
+};
+// Updates the request with the region if it is in a covered region
+var updateRequestWithRegion = function(request, region) {
+    request.selectedCountyId = region.id;
+    return request.save({fields: ['selectedCountyId']});
+};
+
+// sends an email to the regional representative
+var sendEmail = function(request, selectedRegion) {
+
+    var regionPresentableName = recipients_table[selectedRegion.region]["region_alt_name"];
+    var regionRecipientName   = recipients_table[selectedRegion.region]["contact_name"];
+    var regionRecipientEmail  = recipients_table[selectedRegion.region]["contact_email"];
+    var thisRequestID = request.id;
+
+    console.log("");
+    console.log("DEBUG: db request:");
+    console.log(request);
+    console.log("DEBUG: (end db request)");
+    console.log("");
+    console.log("DEBUG: Information for '" + selectedRegion.region + "':");
+    console.log("DEBUG:    Presentable region name: '" + regionPresentableName + "'");
+    console.log("DEBUG:    Contact name: '" + regionRecipientName + "'");
+    console.log("DEBUG:    Contact email: '<" + regionRecipientEmail + ">'");
+
+    var email_text = "We have received a smoke alarm installation request from:\n"
+        + "\n"
+        + "  " + request.name + "\n"
+        + "  " + request.address + "\n"
+        + "  " + request.city + ", " + state_abbrevs[request.state] + "  " + request.zip_final + "\n";
+
+    if (request.phone) {
+        email_text += "  Phone: " + request.phone + "\n";
+    } else {
+        email_text += "  Phone: ---\n";
+    };
+    if (request.email) {
+        email_text += "  Email: <" + request.email + ">\n";
+    } else {
+        email_text += "  Email: ---\n";
+    };
+
+    email_text += "\n"
+        + "This is installation request #" + thisRequestID + ".\n"
+        + "\n"
+        + "We're directing this request to the administrator for the\n"
+        + "ARC North Central Division, " + regionPresentableName + " region:\n"
+        + "\n"
+        + "  " + regionRecipientName + " <" + regionRecipientEmail + ">\n"
+        + "\n"
+        + "Thank you,\n"
+        + "-The Smoke Alarm Request Portal\n";
+
+    // Send an email to the appropriate Red Cross administrator.
+    var outbound_email = {
+        from: db.mail_from_addr,
+        to: regionRecipientName + " <" + regionRecipientEmail + ">",
+        subject: "Smoke alarm install request from " 
+            + request.name + " (#" + thisRequestID + ")",
+        text: email_text
+    };
+
+    console.log("");
+    console.log("DEBUG: This is the email we're about to send:");
+    console.log("");
+    console.log(outbound_email);
+    console.log("");
+    console.log("DEBUG: (end of email)");
+    console.log("");
+
+    db.mailgun.messages().send(outbound_email, function (error, body) {
+        console.log("DEBUG: BODY = " + JSON.stringify(body));
+        console.log("DEBUG: ERROR = " + JSON.stringify(error));
+        // TODO: We need to record the sent message's Message-ID 
+        // (which is body.id) in the database, with the request.
+        if (body.id === undefined) {
+            console.log("DEBUG: sent mail ID was undefined");
+        } else {
+            console.log("DEBUG: sent mail ID:  '" + body.id + "'");
+        }
+        if (body.message === undefined) {
+            console.log("DEBUG: sent mail msg was undefined");
+        } else {
+            console.log("DEBUG: sent mail msg: '" + body.message + "'");
+        }
+    });
 };
 
 exports.saveRequest = function(req, res) {
-	var zipToSelect = req.body.zip;
-	// Things we derive from the user-provided zip code.
-	var stateFromZip = null; // remains null if no match
-	var countyFromZip = null; // remains null if no match
-
-	// Trim and sanitize the request values.
-	//
-	// Note: we could augment String like so
-	//
-	//     String.prototype.trimAndSlim() {
-	//         return this.trim().replace(/\s+/g, ' ');
-	//     };
-	//
-	// and use that to declutter the code below.  But I'm not sure
-	// whether such augmentation is frowned on or not.  Advice from
-	// more experienced Javascript programmers welcome.  -Karl
-	var name = req.body.name.trim().replace(/\s+/g, ' ');
-	var street_address = req.body.street_address.trim().replace(/\s+/g, ' ');
-	var city = req.body.city.trim().replace(/\s+/g, ' ');
-	var state = req.body.state.trim().replace(/\s+/g, ' ');
-	var phone = req.body.phone.trim().replace(/\s+/g, ' ');
-	var email = req.body.email.trim().replace(/\s+/g, ' ');
-
-	// Treat zip code specially.  For zip codes, we remove all
-	// internal spaces, since they can't possibly be useful.
-	var zip_received = req.body.zip.trim().replace(/\s+/g, '');
-	// This is the zip code we will actually store in the database.
-	// Our canonical form for storing zip codes is any of the following:
-	// "NNNNN" (a 5 digit string), "NNNNN-NNNN" (a string consisting
-	// of 5 digits, a hyphen, and 4 digits), or null.  No other forms
-	// are to be stored, at least not without changing this comment.
-	var zip_final = null;
-
-	// Parse 5-digit section and optional 4-digit section from the zip code.
-	var zip_5 = null;
-	var zip_4 = null;
-	var zip_re = /^([0-9][0-9][0-9][0-9][0-9]) *[-_+]{0,1} *([0-9][0-9][0-9][0-9]){0,1}$/g;
-	var zip_match = zip_re.exec(zip_received);
-	if (zip_match) {
-	    if (zip_match.length < 2) {
-	        console.log("ERROR: zip matched, but match grouping is somehow wrong,");
-	        console.log("       which implies that the regexp itself is not right");
-	        console.log("       (or our use of it isn't right).");
-	    } else {
-	        zip_5 = zip_match[1];
-	        console.log("DEBUG: found the 5-digit portion of the zip code: '" + zip_5 + "'");
-	        if (zip_match.length == 3 && zip_match[2] !== undefined) {
-	            zip_4 = zip_match[2];
-	            console.log("DEBUG: found a 4-digit portion in the zip code: '" + zip_4 + "'");
-	            zip_final = zip_5 + "-" + zip_4;
-	        } else {
-	            zip_final = zip_5;
-	        }
-	    }
-	}
-
-	// Save the request data unconditionally.  Even if we can't
-	// service the request -- or even if it contains some invalid
-	// data, such as an unknown zip code -- we still want to record
-	// that the person made the request.
-
-	var request = db.Request.create({
-	    name: name,
-	    address: street_address,
-	    city: city,
-	    state: state,
-	    zip: zip_final,
-	    phone: phone,
-	    email: email,
-	}).then(function(successfulRequest) {
-	    console.log("DEBUG: Request entered successfully");
-	});
-
-	var zip_for_lookup = zip_5;
-	if (!zip_for_lookup) {
-	    // If the zip we got doesn't look like it was a real zip, then
-	    // it won't work later as a key for database lookups.  But we
-	    // should still pass it along so at least error messages can
-	    // display it accurately.
-	    zip_for_lookup = zip_received;
-	}
-
-	var requestedCountyAddress = null;
-	db.UsAddress.findOne({
-	    where: {
-	        zip: zip_for_lookup
-	    }
-	}).then(function(county) {
-	    if (!county) {
-	        console.log("ERROR: no county found for zip '" + JSON.stringify(zip_for_lookup) + "'");
-	        return res.render('sorry.jade', {
-	            zip: zip_for_lookup
-	        });
-	    }
-
-	    console.log("DEBUG: county found: '" + JSON.stringify(county) + "'");
-	    requestedCountyAddress = county;
-
-	    countyFromZip = requestedCountyAddress['county'].replace(" County", "");
-	    stateFromZip = requestedCountyAddress['state'];
-
-	    db.SelectedCounties.findOne({
-	        where: {
-	            county: countyFromZip,
-	            state: stateFromZip
-	        }
-	    }).then(function(selectedRegion) {
-	        if (selectedRegion !== null) {
-	            console.log("DEBUG: selected region: " + JSON.stringify(selectedRegion));
-	            res.render('thankyou.jade', {
-	                region: selectedRegion.region
-	            });
-	        } else {
-	            if (zip_5) {
-	                var zip_for_display = zip_for_lookup;
-	            } else {
-	                // A better way to handle this would be to display a sorry
-	                // page that discusses the invalidity of the zip code and
-	                // doesn't talk about anything else.  But this will do for now.
-	                var zip_for_display = "(INVALID ZIP CODE '" + zip_for_lookup + "')";
-	            }
-	            res.render('sorry.jade', {
-	                county: countyFromZip,
-	                state: stateFromZip,
-	                zip: zip_for_display
-	            });
-	        };
-	    });
-	});
-}
+    // One function to get and parse the data from the request
+    var savedRequest = {};
+    requestData = getRequestData(req);
+    console.log("DEBUG: Request Data: " + JSON.stringify(requestData));
+    saveRequestData(requestData).then(function(request) {
+        savedRequest = request;
+        return findAddressFromZip(requestData.zip_for_lookup)
+    }).then(function(address) { 
+        console.log("DEBUG: Getting Address in Promise Chain: Address = " + JSON.stringify(address));
+        return findCountyFromAddress(address); 
+    }).then(function(selectedRegion) {
+        console.log("DEBUG: Getting Region in Promise Chain:");
+        if (selectedRegion !== null) {
+            console.log("DEBUG: Region = " + JSON.stringify(selectedRegion));
+            // 7.31.2015: MN: Currently commented out due to not understood failure
+            // As is the body of the email is undefined, and I am not sure why
+            //
+            //sendEmail(savedRequest, selectedRegion);
+            res.render('thankyou.jade', {region: selectedRegion.region});
+        } else {
+            console.log("DEBUG: Region not found");
+            if (requestData.zip_5) {
+                var zip_for_display = requestData.zip_for_lookup;
+            } else {
+                // A better way to handle this would be to display a sorry
+                // page that discusses the invalidity of the zip code and
+                // doesn't talk about anything else.  But this will do for now.
+                var zip_for_display = "(INVALID ZIP CODE '" + requestData.zip_for_lookup + "')";
+            }
+            res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_display});
+        }
+    }).catch(function(error) {
+        console.log("ERROR: " + error);
+        res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_display});
+    });
+};

@@ -6,7 +6,7 @@ exports.find = function(req, res, next) {
         req.query.page = 1;
     }
     if (_.isUndefined(req.query.limit)) {
-        req.query.limit  = 20;
+        req.query.limit  = 500;
     }
     var outcome = {
         data: null,

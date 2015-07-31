@@ -90,73 +90,84 @@ var state_abbrevs =
 
 /* POST to the server */
 router.post('/', function(req, res, next) {
-    // Databases we'll need.
+    // One function to get and parse the data from the request
+    var getRequestData = function(req) {
+        var requestData = {};
+        var zipToSelect = req.body.zip;
+        // Things we derive from the user-provided zip code.
+        var stateFromZip = null;   // remains null if no match
+        var countyFromZip = null;  // remains null if no match
 
-    var zipToSelect = req.body.zip;
-    // Things we derive from the user-provided zip code.
-    var stateFromZip = null;   // remains null if no match
-    var countyFromZip = null;  // remains null if no match
-
-    // Treat state gingerly.  Because of the way ../views/index.js
-    // simulates placeholder text for State, there is a possibility
-    // that, unlike other fields, req.body.state may be undefined.
-    // For other fields we can assume they are strings, either empty
-    // or non-empty, so here we make state meet that assumption too.
-    if (req.body.state === undefined) {
-        req.body.state = '';
-    }
-
-    // Trim and sanitize the request values.
-    //
-    // Note: we could augment String like so
-    //
-    //     String.prototype.trimAndSlim() {
-    //         return this.trim().replace(/\s+/g, ' ');
-    //     };
-    //
-    // and use that to declutter the code below.  But I'm not sure
-    // whether such augmentation is frowned on or not.  Advice from
-    // more experienced Javascript programmers welcome.  -Karl
-    var name = req.body.name.trim().replace(/\s+/g, ' ');
-    var street_address = req.body.street_address.trim().replace(/\s+/g, ' ');
-    var city = req.body.city.trim().replace(/\s+/g, ' ');
-    var state = req.body.state.trim().replace(/\s+/g, ' ');
-    var phone = req.body.phone.trim().replace(/\s+/g, ' ');
-    var email = req.body.email.trim().replace(/\s+/g, ' ');
-
-    // Treat zip code specially.  For zip codes, we remove all
-    // internal spaces, since they can't possibly be useful.
-    var zip_received = req.body.zip.trim().replace(/\s+/g, '');
-    // This is the zip code we will actually store in the database.
-    // Our canonical form for storing zip codes is any of the following:
-    // "NNNNN" (a 5 digit string), "NNNNN-NNNN" (a string consisting
-    // of 5 digits, a hyphen, and 4 digits), or null.  No other forms
-    // are to be stored, at least not without changing this comment.
-    var zip_final = null;
-
-    // Parse 5-digit section and optional 4-digit section from the zip code.
-    var zip_5 = null;
-    var zip_4 = null;
-    var zip_re = /^([0-9][0-9][0-9][0-9][0-9]) *[-_+]{0,1} *([0-9][0-9][0-9][0-9]){0,1}$/g;
-    var zip_match = zip_re.exec(zip_received);
-    if (zip_match) {
-        if (zip_match.length < 2) {
-            console.log("ERROR: zip matched, but match grouping is somehow wrong,");
-            console.log("       which implies that the regexp itself is not right");
-            console.log("       (or our use of it isn't right).");
+        // Treat state gingerly.  Because of the way ../views/index.js
+        // simulates placeholder text for State, there is a possibility
+        // that, unlike other fields, req.body.state may be undefined.
+        // For other fields we can assume they are strings, either empty
+        // or non-empty, so here we make state meet that assumption too.
+        if (req.body.state === undefined) {
+            req.body.state = '';
         }
-        else {
-            zip_5 = zip_match[1];
-            console.log("DEBUG: found the 5-digit portion of the zip code: '" + zip_5 + "'");
-            if (zip_match.length == 3 && zip_match[2] !== undefined) {
-                zip_4 = zip_match[2];
-                console.log("DEBUG: found a 4-digit portion in the zip code: '" + zip_4 + "'");
-                zip_final = zip_5 + "-" + zip_4;
-            } else {
-                zip_final = zip_5;
+        // Trim and sanitize the request values.
+        //
+        // Note: we could augment String like so
+        //
+        //     String.prototype.trimAndSlim() {
+        //         return this.trim().replace(/\s+/g, ' ');
+        //     };
+        //
+        // and use that to declutter the code below.  But I'm not sure
+        // whether such augmentation is frowned on or not.  Advice from
+        // more experienced Javascript programmers welcome.  -Karl
+        var name = req.body.name.trim().replace(/\s+/g, ' ');
+        var street_address = req.body.street_address.trim().replace(/\s+/g, ' ');
+        var city = req.body.city.trim().replace(/\s+/g, ' ');
+        var state = req.body.state.trim().replace(/\s+/g, ' ');
+        var phone = req.body.phone.trim().replace(/\s+/g, ' ');
+        var email = req.body.email.trim().replace(/\s+/g, ' ');
+
+        // Treat zip code specially.  For zip codes, we remove all
+        // internal spaces, since they can't possibly be useful.
+        requestData.zip_received = req.body.zip.trim().replace(/\s+/g, '');
+        // This is the zip code we will actually store in the database.
+        // Our canonical form for storing zip codes is any of the following:
+        // "NNNNN" (a 5 digit string), "NNNNN-NNNN" (a string consisting
+        // of 5 digits, a hyphen, and 4 digits), or null.  No other forms
+        // are to be stored, at least not without changing this comment.
+        requestData.zip_final = null;
+
+        // Parse 5-digit section and optional 4-digit section from the zip code.
+        requestData.zip_5 = null;
+        requestData.zip_4 = null;
+        var zip_re = /^([0-9][0-9][0-9][0-9][0-9]) *[-_+]{0,1} *([0-9][0-9][0-9][0-9]){0,1}$/g;
+        requestData.zip_match = zip_re.exec(requestData.zip_received);
+        if (requestData.zip_match) {
+            if (requestData.zip_match.length < 2) {
+                console.log("ERROR: zip matched, but match grouping is somehow wrong,");
+                console.log("       which implies that the regexp itself is not right");
+                console.log("       (or our use of it isn't right).");
+            }
+            else {
+                requestData.zip_5 = requestData.zip_match[1];
+                console.log("DEBUG: found the 5-digit portion of the zip code: '" + requestData.zip_5 + "'");
+                if (requestData.zip_match.length == 3 && requestData.zip_match[2] !== undefined) {
+                    requestData.zip_4 = requestData.zip_match[2];
+                    console.log("DEBUG: found a 4-digit portion in the zip code: '" + requestData.zip_4 + "'");
+                    requestData.zip_final = requestData.zip_5 + "-" + requestData.zip_4;
+                } else {
+                    requestData.zip_final = requestData.zip_5;
+                }
             }
         }
-    }
+
+        requestData.zip_for_lookup = zip_5;
+        if (! requestData.zip_for_lookup) {
+            // If the zip we got doesn't look like it was a real zip, then
+            // it won't work later as a key for database lookups.  But we
+            // should still pass it along so at least error messages can
+            // display it accurately.
+            requestData.zip_for_lookup = requestData.zip_received;
+        }
+        return requestData;
+    };
 
     // Save the request data unconditionally.  Even if we can't
     // service the request -- or even if it contains some invalid
@@ -173,45 +184,28 @@ router.post('/', function(req, res, next) {
     // (actually, I think we've already validated that, but let's
     // check again here).
 
-    var request = db.Request.create({
-        name: name,
-        address: street_address,
-        city: city,
-        state: state,
-        zip: zip_final,
-        phone: phone,
-        email: email,
-    }).then(function(successfulRequest) {
-        console.log("DEBUG: Request entered successfully");
-    });
+    var saveRequest = function(requestData) {
+        return db.Request.create(requestData);
+    };
 
-    var zip_for_lookup = zip_5;
-    if (! zip_for_lookup) {
-        // If the zip we got doesn't look like it was a real zip, then
-        // it won't work later as a key for database lookups.  But we
-        // should still pass it along so at least error messages can
-        // display it accurately.
-        zip_for_lookup = zip_received;
-    }
+    // This function gets the address from the zip code in the request
+    var findAddressFromZip = function(zip) {
+        return db.UsAddress.findOne({where: {zip: zip}});
+    };
 
-    var requestedCountyAddress = null;
-    db.UsAddress.findOne({
-        where: {
-            zip: zip_for_lookup
-        }
-    }).then(function(county) {
-        if (! county) {
-            console.log("ERROR: no county found for zip '" + JSON.stringify(zip_for_lookup) + "'");
+    // This function gets the selected county if it exists from the requests
+    var findCountyFromAddress = function(address) {
+        if (! address) {
+            console.log("ERROR: no county found for zip '" + JSON.stringify(address.zip) + "'");
             return res.render('sorry.jade', {zip: zip_for_lookup});
         } 
 
         console.log("DEBUG: county found: '" + JSON.stringify(county) + "'");
-        requestedCountyAddress = county;
 
-        countyFromZip = requestedCountyAddress['county'].replace(" County", "");
-        stateFromZip = requestedCountyAddress['state'];
+        var countyFromZip = address['county'].replace(" County", "");
+        var stateFromZip = address['state'];
 
-        db.SelectedCounties.findOne({
+        return db.SelectedCounties.findOne({
             where: {
                 // Use the PostgreSQL "ILIKE" (case-insensitive LIKE)
                 // operator so that internal inconsistencies in the
@@ -230,99 +224,120 @@ router.post('/', function(req, res, next) {
                 county: { $ilike: countyFromZip },
                 state: { $ilike: stateFromZip }
             }
-        }).then(function(selectedRegion) {
+        }
+    };
+
+    var updateRequestWithRegion = function(request, region) {
+        request.selectedCountyId = region.id;
+        return request.save({fields: ['selectedCountyId']});
+    };
+
+
+    var sendEmail = function(request, selectedRegion) {
+        var regionPresentableName = recipients_table[selectedRegion.region]["region_alt_name"];
+        var regionRecipientName   = recipients_table[selectedRegion.region]["contact_name"];
+        var regionRecipientEmail  = recipients_table[selectedRegion.region]["contact_email"];
+        var thisRequestID = request._boundTo.dataValues.id;
+
+        console.log("")
+        console.log("DEBUG: db request:");
+        console.log(request);
+        console.log("DEBUG: (end db request)");
+        console.log("")
+        console.log("DEBUG: Information for '" + selectedRegion.region + "':");
+        console.log("DEBUG:    Presentable region name: '" + regionPresentableName + "'");
+        console.log("DEBUG:    Contact name: '" + regionRecipientName + "'");
+        console.log("DEBUG:    Contact email: '<" + regionRecipientEmail + ">'");
+
+        var email_text = "We have received a smoke alarm installation request from:\n"
+            + "\n"
+            + "  " + request.name + "\n"
+            + "  " + request.address + "\n"
+            + "  " + request.city + ", " + state_abbrevs[state] + "  " + request.zip_final + "\n";
+
+        if (request.phone) {
+            email_text += "  Phone: " + request.phone + "\n";
+        } else {
+            email_text += "  Phone: ---\n";
+        };
+        if (request.email) {
+            email_text += "  Email: <" + request.email + ">\n";
+        } else {
+            email_text += "  Email: ---\n";
+        };
+
+        email_text += "\n"
+            + "This is installation request #" + thisRequestID + ".\n"
+            + "\n"
+            + "We're directing this request to the administrator for the\n"
+            + "ARC North Central Division, " + regionPresentableName + " region:\n"
+            + "\n"
+            + "  " + regionRecipientName + " <" + regionRecipientEmail + ">\n"
+            + "\n"
+            + "Thank you,\n"
+            + "-The Smoke Alarm Request Portal\n";
+
+        // Send an email to the appropriate Red Cross administrator.
+        var outbound_email = {
+            from: db.mail_from_addr,
+            to: regionRecipientName + " <" + regionRecipientEmail + ">",
+            subject: "Smoke alarm install request from " 
+                + name + " (#" + thisRequestID + ")",
+            text: email_text
+        };
+
+        console.log("");
+        console.log("DEBUG: This is the email we're about to send:");
+        console.log("");
+        console.log(outbound_email);
+        console.log("");
+        console.log("DEBUG: (end of email)");
+        console.log("");
+
+        db.mailgun.messages().send(outbound_email, function (error, body) {
+            // TODO: We need to record the sent message's Message-ID 
+            // (which is body.id) in the database, with the request.
+            if (body.id === undefined) {
+                console.log("DEBUG: sent mail ID was undefined");
+            } else {
+                console.log("DEBUG: sent mail ID:  '" + body.id + "'");
+            }
+            if (body.message === undefined) {
+                console.log("DEBUG: sent mail msg was undefined");
+            } else {
+                console.log("DEBUG: sent mail msg: '" + body.message + "'");
+            }
+        });
+    };
+
+    var savedRequest = {};
+    var requestData = getRequestData(req);
+    saveRequestData(requestData)
+        .then(
+            savedRequest = request;
+            findAddressFromZip(request.zip)
+        )
+        .then(findCountyFromAddress(address))
+        .then(function(selectedRegion) {
             if (selectedRegion !== null) {
-                console.log("DEBUG: selected region: " + JSON.stringify(selectedRegion));
-
-                var regionPresentableName = recipients_table[selectedRegion.region]["region_alt_name"];
-                var regionRecipientName   = recipients_table[selectedRegion.region]["contact_name"];
-                var regionRecipientEmail  = recipients_table[selectedRegion.region]["contact_email"];
-                var thisRequestID = request._boundTo.dataValues.id;
-
-                console.log("")
-                console.log("DEBUG: db request:");
-                console.log(request);
-                console.log("DEBUG: (end db request)");
-                console.log("")
-                console.log("DEBUG: Information for '" + selectedRegion.region + "':");
-                console.log("DEBUG:    Presentable region name: '" + regionPresentableName + "'");
-                console.log("DEBUG:    Contact name: '" + regionRecipientName + "'");
-                console.log("DEBUG:    Contact email: '<" + regionRecipientEmail + ">'");
-
-                var email_text = "We have received a smoke alarm installation request from:\n"
-                    + "\n"
-                    + "  " + name + "\n"
-                    + "  " + street_address + "\n"
-                    + "  " + city + ", " + state_abbrevs[state] + "  " + zip_final + "\n";
-
-                if (phone) {
-                    email_text += "  Phone: " + phone + "\n";
-                } else {
-                    email_text += "  Phone: ---\n";
-                };
-                if (email) {
-                    email_text += "  Email: <" + email + ">\n";
-                } else {
-                    email_text += "  Email: ---\n";
-                };
-                
-                email_text += "\n"
-                    + "This is installation request #" + thisRequestID + ".\n"
-                    + "\n"
-                    + "We're directing this request to the administrator for the\n"
-                    + "ARC North Central Division, " + regionPresentableName + " region:\n"
-                    + "\n"
-                    + "  " + regionRecipientName + " <" + regionRecipientEmail + ">\n"
-                    + "\n"
-                    + "Thank you,\n"
-                    + "-The Smoke Alarm Request Portal\n";
-
-                // Send an email to the appropriate Red Cross administrator.
-                var outbound_email = {
-                    from: db.mail_from_addr,
-                    to: regionRecipientName + " <" + regionRecipientEmail + ">",
-                    subject: "Smoke alarm install request from " 
-                        + name + " (#" + thisRequestID + ")",
-                    text: email_text
-                };
-                
-                console.log("");
-                console.log("DEBUG: This is the email we're about to send:");
-                console.log("");
-                console.log(outbound_email);
-                console.log("");
-                console.log("DEBUG: (end of email)");
-                console.log("");
-
-                db.mailgun.messages().send(outbound_email, function (error, body) {
-                    // TODO: We need to record the sent message's Message-ID 
-                    // (which is body.id) in the database, with the request.
-                    if (body.id === undefined) {
-                        console.log("DEBUG: sent mail ID was undefined");
-                    } else {
-                        console.log("DEBUG: sent mail ID:  '" + body.id + "'");
-                    }
-                    if (body.message === undefined) {
-                        console.log("DEBUG: sent mail msg was undefined");
-                    } else {
-                        console.log("DEBUG: sent mail msg: '" + body.message + "'");
-                    }
-                });
-
+                sendEmail(request, selectedRegion);
                 res.render('thankyou.jade', {region: selectedRegion.region});
             } else {
-                if (zip_5) {
-                    var zip_for_display = zip_for_lookup;
+                if (requestData.zip_5) {
+                    var zip_for_display = requestData.zip_for_lookup;
                 } else {
                     // A better way to handle this would be to display a sorry
                     // page that discusses the invalidity of the zip code and
                     // doesn't talk about anything else.  But this will do for now.
-                    var zip_for_display = "(INVALID ZIP CODE '" + zip_for_lookup + "')";
+                    var zip_for_display = "(INVALID ZIP CODE '" + requestData.zip_for_lookup + "')";
                 }
                 res.render('sorry.jade', {county: countyFromZip, state: stateFromZip, zip: zip_for_display});
-            };
-        });
-    });
+            }
+        })
+
+
+
+    res.render('thankyou.jade', {region: selectedRegion.region});
 });
 
 module.exports = router;
