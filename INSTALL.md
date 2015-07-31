@@ -35,9 +35,12 @@ much difficulty to most other Unix-like operating systems.
 
   * Do `cp config/config.json.tmpl config/config.json`, then edit the latter.
 
-        You'll need to fill in database usernames and passwords, of
-        course.  You might also want to set up a whole new
-        environment, e.g., "demo" (e.g., based on the "test" example).
+        You'll need to fill in database usernames and passwords, and
+        the Mailgun.com API key and sender information that the app
+        will use to send out email notifications.  You can modify one
+        of the existing top-level environments listed in `config.json`
+        or set up a whole new environment, e.g., "demo" (e.g., based
+        on the "test" example).
 
   * Do `cp config/recipients.json.tmpl config/recipients.json`, then edit the latter.
 
