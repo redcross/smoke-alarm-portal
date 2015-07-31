@@ -40,7 +40,7 @@ db.Admin.belongsTo(db.User);
 db.Message.belongsTo(db.User);
 db.Account.belongsTo(db.User);
 db.Admin.belongsTo(db.AdminGroup);
-db.Request.belongsTo(db.SelectedCounties);
+db.Request.belongsTo(db.SelectedCounties, {foreignKey:'assignedRegion'});
 
 db.sequelize.sync(options);
 
