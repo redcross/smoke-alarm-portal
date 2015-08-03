@@ -47,7 +47,21 @@ much difficulty to most other Unix-like operating systems.
         You'll need to fill in appropriate contact names and email
         addresses.
 
-6. Create the databases and import the initial data.
+6. Get other required node modules.
+
+        $ npm install
+
+   6a. If you get errors from `npm install`, starting with something like
+   `sh: 1: node: not found`, you may need to install the legacy node
+   package (see [the
+   package](https://packages.debian.org/sid/nodejs-legacy)
+   and [this StackOverflow
+   answer](stackoverflow.com/questions/21168141/can-not-install-packages-using-node-package-manager-in-ubuntu)
+   for more information about what's going on here):
+
+        $ sudo apt-get install nodejs-legacy
+
+7. Create the databases and import the initial data.
 
         $ su - postgres
         $ psql
@@ -71,20 +85,6 @@ much difficulty to most other Unix-like operating systems.
         ### This will spew a lot of information to the screen and may
         ### take several minutes
         $ node data/import_into_postgres.js
-
-7. Get other required node modules.
-
-        $ npm install
-
-   7a. If you get errors from `npm install`, starting with something like
-   `sh: 1: node: not found`, you may need to install the legacy node
-   package (see [the
-   package](https://packages.debian.org/sid/nodejs-legacy)
-   and [this StackOverflow
-   answer](stackoverflow.com/questions/21168141/can-not-install-packages-using-node-package-manager-in-ubuntu)
-   for more information about what's going on here):
-
-        $ sudo apt-get install nodejs-legacy
 
 8. Start the smoke-alarm-portal app
 
