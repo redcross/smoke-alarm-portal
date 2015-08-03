@@ -201,7 +201,7 @@ access by iptables rules.  Below we describe this setup in detail.
         lrwxrwxrwx 1 root root 35 Jun  4 22:58 000-default.conf \
         -> ../sites-available/000-default.conf
         $ sudo rm 000-default.conf
-        $ ln -s ../sites-available/default-ssl.conf 000-default-ssl.conf
+        $ sudo ln -s ../sites-available/default-ssl.conf 000-default-ssl.conf
 
 4. _TBD: Do something magical with iptables to block port 3000_
 
