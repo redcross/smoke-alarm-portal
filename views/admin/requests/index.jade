@@ -106,6 +106,7 @@ block body
           th phone
           th email
           th date created 
+          th region
       tbody#results-rows
 
   script(type='text/template', id='tmpl-results-row')
@@ -119,6 +120,7 @@ block body
     td.nowrap <%- phone %>
     td.nowrap <%- email %>
     td.nowrap <%- moment(createdAt).format("YYYY-MM-DD HH:mm") %>
+    td.nowrap <%- assignedRegion %>
       div
       div
 

@@ -16,7 +16,8 @@
       state: '',
       zip: '',
       phone: '',
-      email: ''
+      email: '', 
+      assignedRegion: ''
     },
     url: function() {
       return '/admin/requests/'+ (this.isNew() ? '' : this.id +'/');
