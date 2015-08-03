@@ -3,16 +3,41 @@
   src: url('/third-party/HelveticaNeue.ttf');
 }
 
+html {
+    height: 100%;
+}
+
 body {
-    font-family: "Helvetica Neue", smokeAlarmDefault, Helvetica, Arial, sans-serif;
-    background: linear-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15)), url("../images/install_combined.jpg");
+    background: #ddd;
+
+    /* Note that unfortunately, repeating the url in each of these
+    "background" definitions is necessary. Adding a separate rule for
+    "background-image" below does not work. */
+
+    /* Browser-specific CSS rules from http://www.colorzilla.com/gradient-editor/ */
+
+    /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+    background: -moz-linear-gradient(top,  rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%), url("../images/install_supermegachop_bw.jpg") no-repeat; /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,1))), url("../images/install_supermegachop_bw.jpg"); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,1) 100%), url("../images/install_supermegachop_bw.jpg") no-repeat; /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,1) 100%), url("../images/install_supermegachop_bw.jpg") no-repeat; /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba(0,0,0,0) 0%,rgba(0,0,0,1) 100%), url("../images/install_supermegachop_bw.jpg") no-repeat; /* IE10+ */
+    background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%,rgba(0,0,0,1) 100%), url("../images/install_supermegachop_bw.jpg") no-repeat; /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#000000',GradientType=0 ); /* IE6-8 */
+
+    /* The next four rules fix a background gradient bug in Chrome. See
+    http://stackoverflow.com/questions/2869212/css3-gradient-background-set-on-body-doesnt-stretch-but-instead-repeats
+    */
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
     background-size: 100%;
-    background-repeat: repeat-y;
-    background-color: #DDD;
     color: #EEE;
+    font-family: "Helvetica Neue", smokeAlarmDefault, Helvetica, Arial, sans-serif;
+    font-weight: 300;
     font-size: 1.8em;
-    min-height: 100%;
-    position: relative;
 }
 
 /* Rules for .btn-primary class pasted in from DCSOps stylesheet */
@@ -138,19 +163,28 @@ body {
 #organization-name {
     margin-bottom: 10px;
 }
-
+/*
 #main {
     padding: 1em 0em 0em 0em;
     margin-left: 0em;
 }
+*/
 
-#left, #right {
+#logo {
+  margin: 1em 0em 10em 0em;
+}
+
+#left, #right, #availability {
     padding-top: 0.5em;
     padding-bottom: 0.5em;
     margin-bottom: 0.5em;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 4px;
-    border: 1px solid #999;
+}
+
+#bottom {
+  height: 100%;
+  background-color: black;
 }
 
 #right input {
@@ -158,15 +192,10 @@ body {
 }
 
 #singlebutton {
-<<<<<<< HEAD
-    font-size: 1em;
-    border: 3px solid #EEE;
-=======
-    font-size: 1.2em;
-    border: 3px solid #EEE;
+    font-size: 1.3em;
     padding-left: 1.5em;
     padding-right: 1.5em;
->>>>>>> email_demo
+    border-radius: 10px;
 }
 
 /* Select dropdowns don't support placeholder text directly in HTML,
@@ -189,12 +218,21 @@ body {
 }
 
 p.bigger {
-    font-size: 1.8em;
+    font-size: 1.4em;
     line-height: 120%
 }
 
 p.bigger-centered {
-    font-size: 1.8em;
+    font-size: 1.4em;
     text-align: center;
     line-height: 120%
+}
+
+.notabene {
+    font-weight: bold;
+}
+
+.notaoptime {
+    font-weight: bold;
+    text-decoration: underline;
 }
