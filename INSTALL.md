@@ -17,11 +17,16 @@ much difficulty to most other Unix-like operating systems.
 
    On Max OSX, use the Macintosh installer which can be downloaded from https://nodejs.org/download/. This will install both node and npm.
 
-3. Install Postgres
+3. Install PostgreSQL, at least version 9.2 (to support `JSON` column type).
 
-        $ sudo apt-get install postgresql
+        $ sudo apt-get install postgresql-9.4  # for example
 
-4. You'll need to set up a postgres user, if you don't already have one:
+   (This may result in your having multiple versions of PostgreSQL
+   installed, which in turn can lead to mysterious errors in the
+   coming import step.  If you encounter such errors, see the
+   appropriate part of the "Troubleshooting" section later on.)
+
+4. PostgreSQL probably created a `postgres` user, but if it didn't, add one:
 
         $ adduser postgres
 
@@ -213,3 +218,45 @@ access by iptables rules.  Below we describe this setup in detail.
 
    http://yourhost.example.com/ should auto-redirect to
    https://yourhost.example.com/ and show the front page.
+
+Appendix B: Troubleshooting
+---------------------------
+
+* Problems importing the initial static data.
+
+  If you get an error like
+
+        Unhandled rejection SequelizeDatabaseError: type "json" does not exist
+
+  when you run the `data/import_into_postgres.js` script, the problem
+  is most likely that you are connecting to an old version of
+  PostgreSQL that doesn't support JSON columns -- this can happene
+  even when a newer version of PostgreSQL that *does* support JSON is
+  also installed on your system.  Here's how you can ask what `psql`
+  connects to
+
+        $ psql
+        postgres=# \pset pager off
+        postgres=# SELECT version()
+        PostgreSQL 9.1.13 on x86_64-unknown-linux-gnu, ...etc...
+        postgres=#
+
+  Oops!  You need at least PostgreSQL 9.2 for JSON support.  On
+  Debian, you can use this to check whether a version of PostgreSQL
+  is installed:
+
+        $ dpkg -l postgresql-9.1
+        $ dpkg -l postgresql-9.4
+
+   etc, etc.  If you don't need the older versions. just remove them,
+   e.g.:
+
+        # apt-get purge postgresql-9.1
+
+   Note you may have to purge everything, including the newest
+   version, and then reinstall the newest version; at least, the
+   theoretical minimal set of purges doesn't always seem to do the
+   trick.  Obviously, don't purge a version if it is managing data.
+   If you need to keep older versions, then you'll need to find some
+   other way to make sure that `psql` and this application connect to
+   a new enough version of PostgreSQL to support the JSON type.
