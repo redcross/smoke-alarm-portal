@@ -6,7 +6,7 @@ much difficulty to most other Unix-like operating systems.
 
 1. Get the code.
 
-        $ git clone git@github.com:OpenTechStrategies/smoke-alarm-portal.git
+        $ git clone https://github.com/OpenTechStrategies/smoke-alarm-portal.git
         $ cd smoke-alarm-portal
 
 2. Install [Node](https://nodejs.org/download/) and npm (a package manager).
