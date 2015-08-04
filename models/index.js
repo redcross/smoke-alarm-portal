@@ -41,6 +41,7 @@ db.Message.belongsTo(db.User);
 db.Account.belongsTo(db.User);
 db.Admin.belongsTo(db.AdminGroup);
 db.Request.belongsTo(db.SelectedCounties, {foreignKey:'assignedRegion'});
+db.SelectedCounties.hasMany(db.Request, {foreignKey:'assignedRegion'});
 
 db.sequelize.sync(options);
 
