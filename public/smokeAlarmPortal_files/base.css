@@ -3,41 +3,27 @@
   src: url('/third-party/HelveticaNeue.ttf');
 }
 
+/* Override bootstrap's default widths */
+@media (min-width: 992px) {
+  .col-md-3 {
+    width: 30%;
+  }
+
+  .col-md-6 {
+    width: 40%;
+  }
+}
+
 html {
     height: 100%;
 }
 
 body {
-    background: #ddd;
-
-    /* Note that unfortunately, repeating the url in each of these
-    "background" definitions is necessary. Adding a separate rule for
-    "background-image" below does not work. */
-
-    /* Browser-specific CSS rules from http://www.colorzilla.com/gradient-editor/ */
-
-    /* IE9 SVG, needs conditional override of 'filter' to 'none' */
-    background: -moz-linear-gradient(top,  rgba(0,0,0,0) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,1) 100%), url("../images/install_repeatx_crop.jpg"); /* FF3.6+ */
-    background: -webkit-gradient(linear, top, bottom, color-stop(0%,rgba(0,0,0,0)), color-stop(20%,rgba(0,0,0,0)), color-stop(100%,rgba(0,0,0,1))), url("../images/install_repeatx_crop.jpg"); /* Chrome,Safari4+ */
-    background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,1) 100%), url("../images/install_repeatx_crop.jpg"); /* Chrome10+,Safari5.1+ */
-    background: -o-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,1) 100%), url("../images/install_repeatx_crop.jpg"); /* Opera 11.10+ */
-    background: -ms-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,1) 100%), url("../images/install_repeatx_crop.jpg"); /* IE10+ */
-    background: linear-gradient(to bottom,  rgba(0,0,0,0) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,1) 100%), url("../images/install_repeatx_crop.jpg"); /* W3C */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#000000',GradientType=0 ); /* IE6-8 */
-
-    /* The next four rules fix a background gradient bug in Chrome. See
-    http://stackoverflow.com/questions/2869212/css3-gradient-background-set-on-body-doesnt-stretch-but-instead-repeats
-    */
-    height: 100%;
-    margin: 0;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-
-    background-size: 100%;
+    background: #aaa;
     color: #EEE;
     font-family: "Helvetica Neue", smokeAlarmDefault, Helvetica, Arial, sans-serif;
     font-weight: 300;
-    font-size: 1.8em;
+    font-size: 1.6em;
 }
 
 /* Rules for .btn-primary class pasted in from DCSOps stylesheet */
@@ -171,24 +157,42 @@ body {
 */
 
 #logo {
-  margin: 1em 0em 10em 0em;
+  margin: 1em 0em;
 }
 
-#left, #right, #availability {
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-    margin-bottom: 0.5em;
+#triptych {
+  margin-top: 1.2em;
+}
+
+#banner p {
+  margin-bottom: 0em;
+}
+
+#left, #right {
+    padding: 0em;
+}
+
+#left div, #right div {
+    margin: 0em 0em 0.5em 0em;
+}
+
+#banner, #leftText, #rightText, #availability {
     background: rgba(0, 0, 0, 0.3);
     border-radius: 4px;
+    padding: 0.5em;
 }
 
-#bottom {
-  height: 100%;
-  background-color: black;
+#leftPicture img, #rightPicture img {
+    width: 100%;
+    border-radius: 4px;
 }
 
 #right input {
     padding: 0em;
+}
+
+#center #badBoy {
+    margin-top: 20%;
 }
 
 #singlebutton {
