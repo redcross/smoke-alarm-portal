@@ -15,24 +15,23 @@ installation requests.
 The expected user workflow is:
 
 * A person visits the front page and enters their installation request:
-  name, address, phone number, and a "can receive txt messages"
-  checkbox to indicate if that phone number can receive txts or not.
+  name, address, phone number, etc.
 
 * We log the request: all the information the user provided, plus the
   date of the request and a unique identifier for the request (i.e., a
   ticket number).
 
-* We geocode the request to find out what Red Cross region should
+* We geocode the request to figure out what Red Cross region should
   handle it.
 
-* If it is one of the regions included in this pilot, send an email to
-  the designated email address for that region, giving the details of
-  the request, and show the user a confirmation page telling them this
-  has been done.  Otherwise, show the user a page with a short message
-  explaining that Red Cross is not handling online requests for smoke
-  alarm installation in their region yet, but giving contact
-  information for the relevant Red Cross office to talk to about smoke
-  alarm installation for that location.
+* If it is one of the regions included in this pilot program, we send
+  an email to the designated contact person for that region, giving
+  the details of the request, and show the user a confirmation page
+  telling them this has been done.  Otherwise, we show the user a page
+  with a short message explaining that Red Cross is not handling
+  online requests for smoke alarm installation in their region yet,
+  but giving the user a toll-free number at which to contact the Red
+  Cross about getting a smoke alarm installated.
 
 For admins, there are some basic reports that can be generated:
 
@@ -44,7 +43,7 @@ For admins, there are some basic reports that can be generated:
 
 # Technologies Used
 
-Node.js, Jade templates, PostgreSQL, and the usual suspects.
+Node.js, Express, Jade, PostgreSQL, Sequelize, and the usual suspects.
 
 # Installation and Deployment
 
