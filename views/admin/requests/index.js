@@ -58,6 +58,7 @@ exports.find = function(req, res, next) {
             limit:req.query.limit,
             offset:req.query.offset,
             where: filters,
+            include: [req.app.db.SelectedCounties],
             order: [[req.query.sort.replace('-',''), sortOrder ]]
         }).then(function(results) {
             //final paging math
@@ -72,6 +73,7 @@ exports.find = function(req, res, next) {
                 outcome.items.end = outcome.items.total;
             }
             outcome.results = results;
+            console.log("DEBUG: results = " + JSON.stringify(results));
             return callback(null, 'done');
         })
         .catch(function(err) {

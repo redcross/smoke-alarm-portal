@@ -17,7 +17,8 @@
       zip: '',
       phone: '',
       email: '', 
-      assignedRegion: ''
+      assignedRegion: '',
+      selectedCounty: ''
     },
     url: function() {
       return '/admin/requests/'+ (this.isNew() ? '' : this.id +'/');
@@ -111,6 +112,7 @@
       this.$el.html( this.template() );
 
       var frag = document.createDocumentFragment();
+      console.log("DEBUG: COLLECTION in RENDER: " + JSON.stringify(this.collection));
       this.collection.each(function(record) {
         var view = new app.ResultsRowView({ model: record });
         frag.appendChild(view.render().el);
