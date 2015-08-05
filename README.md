@@ -1,6 +1,8 @@
 # Smoke Alarm Portal
 
-An open source web portal to handle requests for smoke alarm installation.
+An open source web portal to handle requests for smoke alarm
+installation.  Preview available at
+[demo.getasmokealarm.org](https://demo.getasmokealarm.org/).
 
 ## Overview
 
