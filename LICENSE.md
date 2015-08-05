@@ -1,3 +1,21 @@
+The new code here was written by Open Tech Strategies, LLC on behalf
+of the American Red Cross, and is licensed under the GNU Affero
+General Public License, Version 3, the text of which is given below.
+
+This application also uses various open source dependency libraries
+distributed by third parties.  Where the originating project has
+included copyright notices in their source files, we have preserved
+them, but we have not added such headers where they were not already
+present.  As far as we are aware, all the third-party dependencies are
+under the MIT license, the text of which is given further down in this
+file, preceded by per-dependency copyright notices.  If we have failed
+to list a dependency, the omission is not intentional -- please just
+submit a bug report (or better yet a pull request) and we'll fix it.
+
+=========================================================================
+The Smoke Alarm Installation Request Portal as a whole is under AGPL-3.0:
+=========================================================================
+
 ## GNU AFFERO GENERAL PUBLIC LICENSE
 ### Version 3, 19 November 2007
 
@@ -662,3 +680,64 @@ You should also get your employer (if you work as a programmer) or school,
 if any, to sign a "copyright disclaimer" for the program, if necessary.
 For more information on this, and how to apply and follow the GNU AGPL, see
 <http://www.gnu.org/licenses/>.
+
+=========================================================================
+Third-party dependencies under the MIT license:
+=========================================================================
+
+Node:
+  Copyright Joyent, Inc. and other Node contributors. All rights reserved.
+
+Express:
+  Copyright (c) 2009-2014 TJ Holowaychuk <tj@vision-media.ca>
+  Copyright (c) 2013-2014 Roman Shtylman <shtylman+expressjs@gmail.com>
+  Copyright (c) 2014-2015 Douglas Christopher Wilson <doug@somethingdoug.com>
+
+Jade:
+  Copyright (c) 2009-2014 TJ Holowaychuk <tj@vision-media.ca>
+
+Drywall:
+  Copyright (c) 2012 Reza Akhavan <reza@akhavan.me>
+
+Async: 
+  Copyright (c) 2010-2014 Caolan McMahon
+
+Bootstrap:
+  Copyright (c) 2011-2015 Twitter, Inc
+
+Backbone:
+  Copyright (c) 2010-2015 Jeremy Ashkenas, DocumentCloud
+
+jQuery:
+  Copyright jQuery Foundation and other contributors, https://jquery.org/
+
+Sequelize:
+  Copyright (c) 2014-2015 Sequelize contributors
+
+MomentJS:
+  Copyright (c) 2011-2015 Tim Wood, Iskren Chernev, Moment.js contributors
+
+(...and probably others; additions to this list welcome.)
+
+----------------
+The MIT license:
+----------------
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

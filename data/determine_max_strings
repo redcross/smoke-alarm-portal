@@ -1,14 +1,24 @@
 #!/usr/bin/env python
 # -*- python -*-
 
-# Print the maximum lengths of different fields in
-# us_addresses.
-#
-# Copyright 2015 Open Tech Strategies, LLC
-# Licensed under the AGPL-3.0; see LICENSE.md for details.
-#
-# This is written to work with Python 2.x.  For Python 3.x, see
+# Print the maximum lengths of different fields in us_addresses.
+# This is written for Python 2.x.  For 3.x, see
 # stackoverflow.com/questions/4843173/how-to-check-if-type-of-a-variable-is-string-in-python
+#
+# Copyright (C) 2015  American Red Cross
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+# 
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
 
