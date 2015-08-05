@@ -1,10 +1,6 @@
-/* - import_into_postgres.js - Node based script that imports JSON files
- * into Postgres in conjunction with the data store migration from CouchDB,
- * This script uses the Sequelize ORM (https://github.com/sequelize/sequelize)
- * for the application models.
- *
- * The script should be installed using the following syntax:
- * > node data/import_into_postgres.js
+/* - import_into_postgres.js - Node based script to import JSON files
+ * into PostgreSQL using Sequelize ORM (github.com/sequelize/sequelize)
+ * for the application models.  Usage: '$ node data/import_into_postgres.js'
  */
 console.log("BEGINNING: " + new Date());
 var _ = require('underscore'); // Used primarily for iterator

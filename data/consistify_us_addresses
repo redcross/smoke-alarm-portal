@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Ensure that all zip codes in our data are JSON strings.
+# 
+# The original us_addresses.json data represents zip codes that start
+# with 0 as strings and all other zip codes as numbers, e.g.,
+#
+#    "zip":"00601"  ...but...
+#    "zip":59115
+#
+# This script ensures that they're all strings, to avoid insanity.
+#
+# TBD: There are other inconsistencies in us_addresses.json that this
+# script could fix.  The "area_code" values are the empty string ("")
+# when there is no area code, are a number (e.g., 631) when there is
+# exactly one area code, and are a string (e.g., "508,774") when there
+# are multiple area codes.  Furthermore, one city, "Eighty Eight" in
+# Barren County, Kentucky, lists the raw number 88, rather than the
+# string "88", as the value in the "unacceptable_cities" field.
+
+sed -e 's/{"zip":\([0-9][0-9][0-9][0-9][0-9]\),/{"zip":"\1",/' \
+  < us_addresses.json > tmp_us_addresses.json
+
+mv tmp_us_addresses.json us_addresses.json
