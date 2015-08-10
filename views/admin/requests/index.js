@@ -1,5 +1,6 @@
 'use strict';
 var _ = require('underscore');
+var recipients_table = require(__dirname + '/../../../config/recipients.json');
 var moment = require('moment');
 exports.find = function(req, res, next) {
     if (_.isUndefined(req.query.page)) {
@@ -62,7 +63,14 @@ exports.find = function(req, res, next) {
             order: [[req.query.sort.replace('-',''), sortOrder ]]
         }).then(function(results) {
             //final paging math
-
+            var findRegionPresentableName = function(element, index) {
+                if (element.SelectedCounty) {
+                    var selectedRegion = element.SelectedCounty.region;
+                    return recipients_table[selectedRegion]["region_display_name"];
+                }
+            };
+            var results = _.each(results, findRegionPresentableName); 
+            console.log("DEBUG: Filtered List: " + JSON.stringify(results));
             outcome.data = results;
             outcome.pages.total = Math.ceil(outcome.items.total / req.query.limit);
             outcome.pages.next = ((outcome.pages.current + 1) > outcome.pages.total ? 0 : outcome.pages.current + 1);
@@ -73,7 +81,7 @@ exports.find = function(req, res, next) {
                 outcome.items.end = outcome.items.total;
             }
             outcome.results = results;
-            console.log("DEBUG: results = " + JSON.stringify(results));
+            
             return callback(null, 'done');
         })
         .catch(function(err) {

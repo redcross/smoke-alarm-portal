@@ -252,7 +252,7 @@ var updateRequestWithRegion = function(request, region) {
 // sends an email to the regional representative
 var sendEmail = function(request, selectedRegion) {
 
-    var regionPresentableName = recipients_table[selectedRegion.region]["region_alt_name"];
+    var regionPresentableName = recipients_table[selectedRegion.region]["region_display_name"];
     var regionRecipientName   = recipients_table[selectedRegion.region]["contact_name"];
     var regionRecipientEmail  = recipients_table[selectedRegion.region]["contact_email"];
     var thisRequestID = request.id;
@@ -337,9 +337,9 @@ exports.saveRequest = function(req, res) {
     saveRequestData(requestData).then(function(request) {
         savedRequest = request;
         return findAddressFromZip(requestData.zip_for_lookup)
-    }).then(function(address) { 
+    }).then(function(address) {
         console.log("DEBUG: Getting Address in Promise Chain: Address = " + JSON.stringify(address));
-        return findCountyFromAddress(address); 
+        return findCountyFromAddress(address);
     }).then(function(selectedRegion) {
         console.log("DEBUG: Getting Region in Promise Chain:");
         if (selectedRegion !== null) {
