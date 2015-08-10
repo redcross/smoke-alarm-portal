@@ -81,16 +81,16 @@ block body
             //-       e.g., "central-and-southern-illinois".  We could
             //-       define those in the same config file where we
             //-       define regions, ../../../config/recipients.json.
-            option(value="Central and Southern Illinois") Central & Southern Illinois
-            option(value="Chicago and Northern Illinois") Chicago & Northern Illinois
-            option(value="Dakotas") Dakotas
-            option(value="Eastern Missouri") Eastern Missouri
-            option(value="Iowa") Iowa
-            option(value="Idaho/Montana") Idaho/Montana
-            option(value="Kansas, Nebraska and SW Iowa") Kansas, Nebraska & SW Iowa
-            option(value="Minnesota") Minnesota
-            option(value="Western Missouri") Western Missouri
-            option(value="Wisconsin") Wisconsin
+            option(value="rc_southern_illinois") Central & Southern Illinois
+            option(value="rc_chicago_northern_illinois") Chicago & Northern Illinois
+            option(value="rc_dakotas") Dakotas
+            option(value="rc_eastern_missouri") Eastern Missouri
+            option(value="rc_iowa") Iowa
+            option(value="rc_idaho_montana") Idaho/Montana
+            option(value="rc_kansas_nebraska_sw_iowa") Kansas, Nebraska & SW Iowa
+            option(value="rc_minnesota") Minnesota
+            option(value="rc_western_missouri") Western Missouri
+            option(value="rc_wisconsin") Wisconsin
 
   script(type='text/template', id='tmpl-results-table')
     table.table.table-striped
@@ -120,7 +120,7 @@ block body
     td.nowrap <%- phone %>
     td.nowrap <%- email %>
     td.nowrap <%- moment(createdAt).format("YYYY-MM-DD HH:mm") %>
-    td.nowrap <%- (SelectedCounty) ? SelectedCounty.region : assignedRegion %>
+    td.nowrap <%- (SelectedCounty) ? address_2 : '' %>
       div
       div
 

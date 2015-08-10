@@ -31,6 +31,9 @@ exports.find = function(req, res, next) {
             callback(null, 'done counting');
         });
     };
+    var includeClause = {
+        model: req.app.db.SelectedCounties
+    };
     var getResults = function(callback) {
         var filters = {};
         req.query.search = req.query.search ? req.query.search : '';
@@ -50,6 +53,11 @@ exports.find = function(req, res, next) {
             };
         }
 
+        if (req.query.region) {
+            includeClause.where = {
+                region: req.query.region
+            };
+        }
         // Determine direction for order
         var sortOrder = (req.query.sort[0] === '-')? 'DESC' : 'ASC';
 
@@ -59,24 +67,21 @@ exports.find = function(req, res, next) {
             limit:req.query.limit,
             offset:req.query.offset,
             where: filters,
-            include: [req.app.db.SelectedCounties],
+            include: [includeClause],
             order: [[req.query.sort.replace('-',''), sortOrder ]]
         }).then(function(results) {
-            //final paging math
-            var findRegionPresentableName = function(element, index, list) {
-                if (element.SelectedCounty) {
-                    console.log("DEBUG: We are in here!: key = " + key);
-                    console.log("DEBUG: element beginning = " + JSON.stringify(element));
-                    console.log("DEBUG: list beginning = " + JSON.stringify(list));
-                    var selectedRegion = element.SelectedCounty.region;
-                    console.log("DEBUG: Region Display Name: " + recipients_table[selectedRegion]["region_display_name"]);
-                    element["region_display_name"] = recipients_table[selectedRegion]["region_display_name"];
-                    console.log("DEBUG: element    ending = " + JSON.stringify(element));
-                    console.log("DEBUG: list    ending = " + JSON.stringify(list));
+            // TODO: Right now this puts the region name in the address_2 field
+            // which is not being used. Long term, this value should be in another
+            // parameter.
+            var findRegionPresentableName = function(request, index) {
+                if (request.SelectedCounty) {
+                    console.log("DEBUG: We are in here!: request = " + request + " & key = " + index);
+                    var selectedRegion = request.SelectedCounty.region;
+                    request.address_2 = recipients_table[selectedRegion]["region_display_name"];
                 }
+                return request;
             };
-            var results = _.each(results, findRegionPresentableName); 
-            console.log("DEBUG: Filtered List: " + JSON.stringify(results));
+            var tmpResults = _.map(results, findRegionPresentableName); 
             outcome.data = results;
             outcome.pages.total = Math.ceil(outcome.items.total / req.query.limit);
             outcome.pages.next = ((outcome.pages.current + 1) > outcome.pages.total ? 0 : outcome.pages.current + 1);
@@ -86,7 +91,7 @@ exports.find = function(req, res, next) {
             if (outcome.items.end > outcome.items.total) {
                 outcome.items.end = outcome.items.total;
             }
-            outcome.results = results;
+            outcome.results = tmpResults;
             
             return callback(null, 'done');
         })
