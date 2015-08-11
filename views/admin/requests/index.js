@@ -63,10 +63,16 @@ exports.find = function(req, res, next) {
             order: [[req.query.sort.replace('-',''), sortOrder ]]
         }).then(function(results) {
             //final paging math
-            var findRegionPresentableName = function(element, index) {
+            var findRegionPresentableName = function(element, index, list) {
                 if (element.SelectedCounty) {
+                    console.log("DEBUG: We are in here!: key = " + key);
+                    console.log("DEBUG: element beginning = " + JSON.stringify(element));
+                    console.log("DEBUG: list beginning = " + JSON.stringify(list));
                     var selectedRegion = element.SelectedCounty.region;
-                    return recipients_table[selectedRegion]["region_display_name"];
+                    console.log("DEBUG: Region Display Name: " + recipients_table[selectedRegion]["region_display_name"]);
+                    element["region_display_name"] = recipients_table[selectedRegion]["region_display_name"];
+                    console.log("DEBUG: element    ending = " + JSON.stringify(element));
+                    console.log("DEBUG: list    ending = " + JSON.stringify(list));
                 }
             };
             var results = _.each(results, findRegionPresentableName); 
