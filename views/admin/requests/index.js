@@ -81,8 +81,8 @@ exports.find = function(req, res, next) {
                 }
                 return request;
             };
-            var tmpResults = _.map(results, findRegionPresentableName); 
-            outcome.data = results;
+            var resultsWithRegionDisplayName = _.map(results, findRegionPresentableName); 
+            outcome.data = resultsWithRegionDisplayName;
             outcome.pages.total = Math.ceil(outcome.items.total / req.query.limit);
             outcome.pages.next = ((outcome.pages.current + 1) > outcome.pages.total ? 0 : outcome.pages.current + 1);
             outcome.pages.hasNext = (outcome.pages.next !== 0);
@@ -91,7 +91,7 @@ exports.find = function(req, res, next) {
             if (outcome.items.end > outcome.items.total) {
                 outcome.items.end = outcome.items.total;
             }
-            outcome.results = tmpResults;
+            outcome.results = resultsWithRegionDisplayName;
             
             return callback(null, 'done');
         })
