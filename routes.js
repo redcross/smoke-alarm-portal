@@ -57,7 +57,6 @@ exports = module.exports = function(app, passport) {
   //front end
   app.get('/', require('./views/index').init);
   app.post('/', require('./views/index').saveRequest);
-  app.get('/about/', require('./views/about/index').init);
 
   //sign up
   app.all('/signup*', ensureSignupEnabled);
