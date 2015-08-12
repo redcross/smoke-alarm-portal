@@ -153,20 +153,6 @@ exports = module.exports = function(app, passport) {
   app.post('/admin/accounts/:id/status/', require('./views/admin/accounts/index').newStatus);
   app.delete('/admin/accounts/:id/', require('./views/admin/accounts/index').delete);
 
-  //admin > statuses
-  app.get('/admin/statuses/', require('./views/admin/statuses/index').find);
-  app.post('/admin/statuses/', require('./views/admin/statuses/index').create);
-  app.get('/admin/statuses/:id/', require('./views/admin/statuses/index').read);
-  app.put('/admin/statuses/:id/', require('./views/admin/statuses/index').update);
-  app.delete('/admin/statuses/:id/', require('./views/admin/statuses/index').delete);
-
-  //admin > categories
-  app.get('/admin/categories/', require('./views/admin/categories/index').find);
-  app.post('/admin/categories/', require('./views/admin/categories/index').create);
-  app.get('/admin/categories/:id/', require('./views/admin/categories/index').read);
-  app.put('/admin/categories/:id/', require('./views/admin/categories/index').update);
-  app.delete('/admin/categories/:id/', require('./views/admin/categories/index').delete);
-
   //admin > search
   app.get('/admin/search/', require('./views/admin/search/index').find);
 

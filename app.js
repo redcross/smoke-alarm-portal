@@ -35,7 +35,6 @@ var favicon = require('serve-favicon');
 
 var pg = require('pg');
 var db = require('./models');
-var users = require('./routes/users');
 
 var app = express();
 
