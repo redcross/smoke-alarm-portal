@@ -77,7 +77,7 @@ exports.find = function(req, res, next) {
                 if (request.SelectedCounty) {
                     console.log("DEBUG: We are in here!: request = " + request + " & key = " + index);
                     var selectedRegion = request.SelectedCounty.region;
-                    request.address_2 = selectedRegion;
+                    request.address_2 = recipients_table[selectedRegion]["region_display_name"];
                 }
                 return request;
             };
