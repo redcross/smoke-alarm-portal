@@ -11,7 +11,7 @@
       id: undefined,
       name: '',
       address: '',
-      address_2: '',
+      rc_region: '',
       city: '',
       state: '',
       zip: '',

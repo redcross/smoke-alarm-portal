@@ -20,7 +20,7 @@ module.exports = function(sequelize, DataTypes) {
   return sequelize.define('Request', {
 	  name: DataTypes.TEXT,
 		address: DataTypes.TEXT,
-		address_2: DataTypes.TEXT,
+		rc_region: DataTypes.TEXT,
 		city: DataTypes.TEXT,
 		state: DataTypes.TEXT,
 		zip: DataTypes.TEXT,
