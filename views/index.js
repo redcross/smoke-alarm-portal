@@ -154,10 +154,8 @@ var getRequestData = function(req) {
         }
         else {
             requestData.zip_5 = requestData.zip_match[1];
-            console.log("DEBUG: found the 5-digit portion of the zip code: '" + requestData.zip_5 + "'");
             if (requestData.zip_match.length == 3 && requestData.zip_match[2] !== undefined) {
                 requestData.zip_4 = requestData.zip_match[2];
-                console.log("DEBUG: found a 4-digit portion in the zip code: '" + requestData.zip_4 + "'");
                 requestData.zip_final = requestData.zip_5 + "-" + requestData.zip_4;
             } else {
                 requestData.zip_final = requestData.zip_5;
@@ -192,7 +190,6 @@ var getRequestData = function(req) {
 // check again here).
 
 var saveRequestData = function(requestData) {
-    console.log("DEBUG: Request Data" + JSON.stringify(requestData));
     return db.Request.create({
         name: requestData.name,
         address: requestData.street_address,
@@ -212,11 +209,9 @@ var findAddressFromZip = function(zip) {
 // This function gets the selected county if it exists from the requests
 var findCountyFromAddress = function(address) {
     if (!address) {
-        console.log("ERROR: no county found for zip '" + JSON.stringify(address.zip) + "'");
         return res.render('sorry.jade', {zip: address.zip});
     } 
 
-    console.log("DEBUG: county found: '" + JSON.stringify(address) + "'");
 
     requestData.countyFromZip = address['county'].replace(" County", "");
     requestData.stateFromZip = address['state'];
@@ -245,7 +240,6 @@ var findCountyFromAddress = function(address) {
 // Updates the request with the region if it is in a covered region
 var updateRequestWithRegion = function(request, region) {
     request.assignedRegion = region.id;
-    console.log("DEBUG: updateRequestWithRegion: data = " + JSON.stringify(request));
     return request.save({fields: ['assignedRegion']});
 };
 
@@ -256,16 +250,6 @@ var sendEmail = function(request, selectedRegion) {
     var regionRecipientName   = recipients_table[selectedRegion.region]["contact_name"];
     var regionRecipientEmail  = recipients_table[selectedRegion.region]["contact_email"];
     var thisRequestID = request.id;
-
-    console.log("");
-    console.log("DEBUG: db request:");
-    console.log(request);
-    console.log("DEBUG: (end db request)");
-    console.log("");
-    console.log("DEBUG: Information for '" + selectedRegion.region + "':");
-    console.log("DEBUG:    Presentable region name: '" + regionPresentableName + "'");
-    console.log("DEBUG:    Contact name: '" + regionRecipientName + "'");
-    console.log("DEBUG:    Contact email: '<" + regionRecipientEmail + ">'");
 
     var email_text = "We have received a smoke alarm installation request from:\n"
         + "\n"
@@ -304,17 +288,8 @@ var sendEmail = function(request, selectedRegion) {
         text: email_text
     };
 
-    console.log("");
-    console.log("DEBUG: This is the email we're about to send:");
-    console.log("");
-    console.log(outbound_email);
-    console.log("");
-    console.log("DEBUG: (end of email)");
-    console.log("");
 
     db.mailgun.messages().send(outbound_email, function (error, body) {
-        console.log("DEBUG: BODY = " + JSON.stringify(body));
-        console.log("DEBUG: ERROR = " + JSON.stringify(error));
         // TODO: We need to record the sent message's Message-ID 
         // (which is body.id) in the database, with the request.
         if (body.id === undefined) {
@@ -333,23 +308,18 @@ var sendEmail = function(request, selectedRegion) {
 exports.saveRequest = function(req, res) {
     var savedRequest = {};
     requestData = getRequestData(req);
-    console.log("DEBUG: Request Data: " + JSON.stringify(requestData));
     saveRequestData(requestData).then(function(request) {
         savedRequest = request;
         return findAddressFromZip(requestData.zip_for_lookup)
     }).then(function(address) {
-        console.log("DEBUG: Getting Address in Promise Chain: Address = " + JSON.stringify(address));
         return findCountyFromAddress(address);
     }).then(function(selectedRegion) {
-        console.log("DEBUG: Getting Region in Promise Chain:");
         if (selectedRegion !== null) {
-            console.log("DEBUG: Region = " + JSON.stringify(selectedRegion));
             updateRequestWithRegion(savedRequest, selectedRegion).then(function() {
                 sendEmail(savedRequest, selectedRegion);
                 res.render('thankyou.jade', {region: selectedRegion.region});
             });
         } else {
-            console.log("DEBUG: Region not found");
             if (requestData.zip_5) {
                 var zip_for_display = requestData.zip_for_lookup;
             } else {
@@ -361,7 +331,6 @@ exports.saveRequest = function(req, res) {
             res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: zip_for_display});
         }
     }).catch(function(error) {
-        console.log("ERROR: " + error);
         res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_display});
     });
 };

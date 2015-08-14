@@ -112,7 +112,6 @@
       this.$el.html( this.template() );
 
       var frag = document.createDocumentFragment();
-      console.log("DEBUG: COLLECTION in RENDER: " + JSON.stringify(this.collection));
       this.collection.each(function(record) {
         var view = new app.ResultsRowView({ model: record });
         frag.appendChild(view.render().el);
