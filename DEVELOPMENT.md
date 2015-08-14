@@ -33,3 +33,21 @@ for specific tasks
 
 	 
 
+## Notes:
+
+### DB Table Usage for Red Cross Smoke Alarm App. This lists the models (and accompanying tables) and their current status regarding the application. The tables that are not used
+are candidates for removal later.
+
+* Account - Used by Drywall for user management.
+* Admin - Used by Drywall for user management.
+* AdminGroup - Used by Drywall for user management.
+* Category - Part of Drywall package, but not used for this application.
+* LoginAttempt - Used by Drywall for user management.
+* Message - Part of Drywall package, but not used for this application.
+* Note - Part of Drywall package, but not used for this application.
+* Requests - Used in this application.
+* SelectedCounties - Used in this application.
+* Status - Part of Drywall package, but not used for this application.
+* StatusLog - Part of Drywall package, but not used for this application.
+* UsAddress - Used in this application.
+* User -  Used by Drywall for user management.
