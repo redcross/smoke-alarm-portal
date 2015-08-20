@@ -2,41 +2,43 @@ extends layout
 
 block content
   #container.container-fluid
-    #main
+    #top
       #logo.text-center
         img.logo(src='./smokeAlarmPortal_files/redcross-logo-white-letters.png', alt='American Red Cross')
-      #banner.row.text-center
+      #safety-message.row.text-center(role='complementary')
         p.col-xs-12.bigger-centered
           | Smoke alarms save lives.  Installing a smoke alarm is&nbsp;the&nbsp;first&nbsp;step&nbsp;to keeping&nbsp;your&nbsp;family&nbsp;safe.
-    #triptych.row
+    #main.row(role='main')
       #left.col-md-3
         #leftText
           p
             | Thank you for your interest in having smoke alarms installed in your home.  To request an installation, please complete all fields in the form below and click “Submit.”
           p
             | After submitting your request, you will be contacted by an American Red Cross representative with information on installation availability in your area.
-
-      // I added this to center the fields, but I think it's probably incorrect                    
       #center.col-md-6
-        .container-fluid
+        .container-fluid(role='form')
           form(action="/", method="POST", class="form-horizontal")
             fieldset
               .row
                 // Text input
                 .form-group
                   .col-xs-12
+                    label.screenreader(for='name') Your Name
                     input#name.form-control.input-md(name='name', type='text', placeholder='Your Name', class='validate[required]', data-prompt-position='topLeft:0,5')
               .row
                   // Text input
                   .form-group
                     .col-xs-12
+                      label.screenreader(for='street_address') Street Address & Unit (e.g., 123 Main St., Unit Q)
                       input#street_address.form-control.input-md(name='street_address', type='text', placeholder='Address & Unit', class='validate[required]', data-prompt-position='topLeft:50,5')
               .row
                   // Text input
                   .form-group
                     .col-xs-5
+                      label.screenreader(for='city') City
                       input#city.form-control.input-md(name='city', type='text', placeholder='City' class='validate[required]', data-prompt-position='topLeft:0,5')
                     .col-xs-3
+                      label.screenreader(for='state') State
                       select#state.form-control(name='state', class='validate[required]', data-prompt-position='topRight:-40,5')
                         option(value='' disabled selected) State
                         option(value='Alabama') AL
@@ -91,12 +93,15 @@ block content
                         option(value='Wisconsin') WI
                         option(value='Wyoming') WY
                     .col-xs-4
+                      label.screenreader(for='zip') Zip Code
                       input#zip.form-control.input-md(name='zip', type='text', placeholder='Zip Code', class='validate[required, custom[zip]]', data-prompt-position='topRight:-40,5')
               .row
                   .form-group
                     .col-xs-5
+                      label.screenreader(for='phone') Phone Number
                       input#phone.form-control.input-md(name='phone', type='text', placeholder='Phone #', class='validate[groupRequired[contactPreference], custom[phone-10-digit-US]]', data-prompt-position='topRight:0,5')
                     .col-xs-7
+                      label.screenreader(for='email') Email Address
                       input#email.form-control.input-md(name='email', type='text', placeholder='Email', class='validate[groupRequired[contactPreference], custom[email]]', data-prompt-position='topRight:0,5')
               .row
                 // http://www.sitepoint.com/understanding-bootstrap-grid-system/ helped
