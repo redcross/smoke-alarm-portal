@@ -255,7 +255,7 @@ var sendEmail = function(request, selectedRegion) {
         + "\n"
         + "  " + request.name + "\n"
         + "  " + request.address + "\n"
-        + "  " + request.city + ", " + state_abbrevs[request.state] + "  " + request.zip_final + "\n";
+        + "  " + request.city + ", " + state_abbrevs[request.state] + "  " + request.zip + "\n";
 
     if (request.phone) {
         email_text += "  Phone: " + request.phone + "\n";
