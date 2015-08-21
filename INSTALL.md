@@ -112,26 +112,31 @@ much difficulty to most other Unix-like operating systems.
    TBD: Need instructions for changing to port 80 and eventually 443
    for demo and production.
 
-10. Initialize admin user, test admin area (TBD: this process will change)
+10. Create an admin user.
 
-   Visit http://localhost:3000/login
+   To create the admin user, you must first temporarily re-enable
+   signups, which are disabled by default.
 
-   Click "Sign Up" and create a user named "admin", with any password you want.
-   
-   At http://localhost:3000/admin/requests you can see smoke alarm
-   installation requests.  You will have to enter some test requests
-   on the front page (http://localhost:3000/) before any requests will
-   be listed on the /admin/requests page.
+   1. In `config.js`, change `exports.signupEnabled` from `false` to `true`.  
 
-   [This
-   ticket](https://github.com/OpenTechStrategies/smoke-alarm-portal/issues/44)
-   (and any sub-tickets it links to) describes improvements planned
-   for the admin area.
+   2. Visit http://localhost:3000/signup in your browser
 
-11. In config.js, change `config.signupEnabled` to 'false' and restart
-    the server to disable any future admin and/or user signups. This is
-    an important step, without which anyone who can figure out the URL
-    can create an admin on the server, which we do not want.
+   3. Create a user named `admin` there (remember the password you choose)
+
+   4. In `config.js`, change `exports.signupEnabled` back to `false`.
+      (If you don't do this step, anyone who can figure out the URL can
+      create a user account with administrative privileges, which would
+      obviously be bad.)
+
+   Now you can visit http://localhost:3000/login/ at any time, log in
+   as `admin`, and from there click on "Smoke Alarm Installation Requests"
+   to get to http://localhost:3000/admin/requests/, which is the
+   primary admin area for this application -- it's where you can list
+   installation requests, run reports, etc.
+
+   (Of course, you'd have to enter some test requests from the front
+   page (http://localhost:3000/) before any requests would be listed
+   on the /admin/requests page.)
 
 Appendix A: Setting up Apache->Node ProxyPass with https://
 -----------------------------------------------------------
