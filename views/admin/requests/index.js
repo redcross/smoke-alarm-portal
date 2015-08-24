@@ -129,7 +129,7 @@ exports.find = function(req, res, next) {
                     console.log("DEBUG: outcome: " + JSON.stringify(outcome.results));
                     console.log("DEBUG: csv: " + JSON.stringify(csv));
                     res.setHeader('Content-Type','application/csv');
-                    res.setHeader('Content-Disposition','attachment; filename=requests' + moment().format() + '.csv;');
+                    res.setHeader('Content-Disposition','attachment; filename=smoke-alarm-requests-' + moment().format() + '.csv;');
                     res.send(csv);
                 });
             }
