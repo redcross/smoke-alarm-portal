@@ -123,8 +123,9 @@ exports.find = function(req, res, next) {
                     }
                 });
             } else {
-                var requestFields = ['id','name','address','city','state','zip','phone','email','date created','region'];
-                json2csv({ data: outcome.results, fields: requestFields }, function(err, csv) {
+                var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created','region'];
+                var requestFields = ['id','name','address','city','state','zip','phone','email','createdAt','rc_region'];
+                json2csv({ data: outcome.results, fields: requestFields, fieldNames: requestFieldNames }, function(err, csv) {
                     if (err) console.log("ERROR: error converting to CSV" + err);
                     console.log("DEBUG: outcome: " + JSON.stringify(outcome.results));
                     console.log("DEBUG: csv: " + JSON.stringify(csv));
