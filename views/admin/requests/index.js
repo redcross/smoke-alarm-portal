@@ -1,6 +1,7 @@
 'use strict';
 var _ = require('underscore');
 var recipients_table = require(__dirname + '/../../../config/recipients.json');
+var json2csv = require('json2csv');
 var moment = require('moment');
 exports.find = function(req, res, next) {
     if (_.isUndefined(req.query.page)) {
@@ -43,6 +44,7 @@ exports.find = function(req, res, next) {
         req.query.offset = (req.query.page - 1) * req.query.limit;
         req.query.startDate = (req.query.startDate) ? moment(req.query.startDate): moment('01-01-1980');
         req.query.endDate = (req.query.endDate) ? moment(req.query.endDate) : moment('01-01-2040');
+        req.query.format = (req.query.format) ? req.query.format : 'json';
 
         filters.createdAt = {
             $between:[req.query.startDate.format(), req.query.endDate.format()]
@@ -91,8 +93,8 @@ exports.find = function(req, res, next) {
             if (outcome.items.end > outcome.items.total) {
                 outcome.items.end = outcome.items.total;
             }
+
             outcome.results = resultsWithRegionDisplayName;
-            
             return callback(null, 'done');
         })
         .catch(function(err) {
@@ -108,15 +110,29 @@ exports.find = function(req, res, next) {
 
         if (req.xhr) {
             res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+            console.log("DEBUG: Check 1: " + JSON.stringify(req.query));
             outcome.filters = req.query;
+            console.log("DEBUG: Check 2: " + JSON.stringify(req.query));
             res.send(outcome);
         } else {
             outcome.results.filters = req.query;
-            res.render('admin/requests/index', {
-                data: {
-                    results: escape(JSON.stringify(outcome))
-                }
-            });
+            if (req.query.format !== "csv") {
+                res.render('admin/requests/index', {
+                    data: {
+                        results: escape(JSON.stringify(outcome))
+                    }
+                });
+            } else {
+                var requestFields = ['id','name','address','city','state','zip','phone','email','date created','region'];
+                json2csv({ data: outcome.results, fields: requestFields }, function(err, csv) {
+                    if (err) console.log("ERROR: error converting to CSV" + err);
+                    console.log("DEBUG: outcome: " + JSON.stringify(outcome.results));
+                    console.log("DEBUG: csv: " + JSON.stringify(csv));
+                    res.setHeader('Content-Type','application/csv');
+                    res.setHeader('Content-Disposition','attachment; filename=requests.csv;');
+                    res.send(csv);
+                });
+            }
         }
     };
     require('async').parallel([countResults, getResults], asyncFinally);
