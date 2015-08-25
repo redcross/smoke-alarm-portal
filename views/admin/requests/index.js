@@ -108,12 +108,29 @@ exports.find = function(req, res, next) {
             return next(err);
         }
 
+        // TODO: This section has duplicated logic which can be removed
+        // For some reason, after using a filter, Backbone treats all links 
+        // as XHR requests, even if they're not. This works around the 
+        // issue for now, but should be fixed moving forward
         if (req.xhr) {
-            res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-            console.log("DEBUG: Check 1: " + JSON.stringify(req.query));
-            outcome.filters = req.query;
-            console.log("DEBUG: Check 2: " + JSON.stringify(req.query));
-            res.send(outcome);
+            if (req.query.format !== "csv") {
+                res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+                console.log("DEBUG: Check 1: " + JSON.stringify(req.query));
+                outcome.filters = req.query;
+                console.log("DEBUG: Check 2: " + JSON.stringify(req.query));
+                res.send(outcome);
+            } else {
+                var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created','region'];
+                var requestFields = ['id','name','address','city','state','zip','phone','email','createdAt','rc_region'];
+                json2csv({ data: outcome.results, fields: requestFields, fieldNames: requestFieldNames }, function(err, csv) {
+                    if (err) console.log("ERROR: error converting to CSV" + err);
+                    console.log("DEBUG: outcome: " + JSON.stringify(outcome.results));
+                    console.log("DEBUG: csv: " + JSON.stringify(csv));
+                    res.setHeader('Content-Type','application/csv');
+                    res.setHeader('Content-Disposition','attachment; filename=smoke-alarm-requests-' + moment().format() + '.csv;');
+                    res.send(csv);
+                });
+            }
         } else {
             outcome.results.filters = req.query;
             if (req.query.format !== "csv") {
