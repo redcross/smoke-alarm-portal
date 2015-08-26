@@ -4,10 +4,14 @@ block head
   title Smoke Alarm Installation Requests
 
 block neck
-  link(rel='stylesheet', href='/views/admin/requests/index.min.css?#{cacheBreaker}')
+  link(rel='stylesheet', href='/views/admin/requests/index.min.css')
 
 block feet
-  script(src='/views/admin/requests/index.min.js?#{cacheBreaker}')
+  script(type='text/javascript' src='/third-party/jquery.min.js')
+  script(type='text/javascript' src='/third-party/jquery-ui-1.11.4.custom/jquery-ui.min.js')
+  link(rel='stylesheet', href='/third-party/datepicker.css')
+  link(rel='stylesheet', href='/third-party/jquery-ui-1.11.4.custom/jquery-ui.min.css')
+  script(src='/views/admin/requests/index.min.js')
 
 block body
   div.row
@@ -49,10 +53,16 @@ block body
       div.row
         div.col-sm-3
           label Start Date
-          input.form-control(name='startDate', type='text')
+          .datepickerWrapper
+            input.form-control(name='startDate', type='hidden')
+            input(type='hidden').datepickerTrigger
+            .pickedDate no date selected
         div.col-sm-3
           label End Date
-          input.form-control(name='endDate', type='text')
+          .datepickerWrapper
+            input.form-control(name='endDate', type='hidden')
+            input(type='hidden').datepickerTrigger
+            .pickedDate no date selected
         div.col-sm-3
           label Region
           select.form-control(name='region')
@@ -93,6 +103,9 @@ block body
             option(value="rc_minnesota") Minnesota
             option(value="rc_western_missouri") Western Missouri
             option(value="rc_wisconsin") Wisconsin
+
+    script(type='text/javascript' src='/third-party/datepickerInit.js')
+
 
   script(type='text/template', id='tmpl-results-table')
     table.table.table-striped
@@ -141,3 +154,4 @@ block body
       div.clearfix
 
   script(type='text/template', id='data-results') !{data.results}
+

@@ -1,0 +1,16 @@
+.datepickerWrapper {
+    height: 34px; /* to match height of other input elements */
+}
+
+.datepickerWrapper img {
+    cursor: pointer;
+    display: inline-block;
+}
+
+.pickedDate {
+    margin-left: 15px;
+    font-style: italic;
+    line-height: 34px;
+    height: 100%;
+    display: inline-block;
+}
