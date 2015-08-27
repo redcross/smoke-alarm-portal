@@ -34,7 +34,8 @@ _.times(requestCount, function(index) {
 		state: faker.address.state(),
 		zip: faker.address.zipCode(),
 		phone: faker.phone.phoneNumber(),
-		email: faker.internet.email()
+		email: faker.internet.email(),
+  	        rc_region: faker.TBD.THIS.NEEDS.TO.BE.FILLED.IN.BUT.HOW()
 	}
 	requests.push(requestData);
 });
