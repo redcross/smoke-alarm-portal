@@ -54,15 +54,13 @@ block body
         div.col-sm-3
           label Start Date
           .datepickerWrapper
-            input.form-control(name='startDate', type='hidden')
-            input(type='hidden').datepickerTrigger
-            .pickedDate no date selected
+            input.form-control(name='startDate', type='hidden').datepickerTrigger
+            .pickedDate
         div.col-sm-3
           label End Date
           .datepickerWrapper
-            input.form-control(name='endDate', type='hidden')
-            input(type='hidden').datepickerTrigger
-            .pickedDate no date selected
+            input.form-control(name='endDate', type='hidden').datepickerTrigger
+            .pickedDate
         div.col-sm-3
           label Region
           select.form-control(name='region')
@@ -103,9 +101,10 @@ block body
             option(value="rc_minnesota") Minnesota
             option(value="rc_western_missouri") Western Missouri
             option(value="rc_wisconsin") Wisconsin
-
-    script(type='text/javascript' src='/third-party/datepickerInit.js')
-
+      div.row
+        div.col-sm-12
+          input#applyFilters(type='button', value='apply filters')
+          input#clearFilters(type='button', value='clear filters')
 
   script(type='text/template', id='tmpl-results-table')
     table.table.table-striped

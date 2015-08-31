@@ -146,26 +146,50 @@
     template: _.template( $('#tmpl-filters').html() ),
     events: {
       'submit form': 'preventSubmit',
-      'keypress input[type="text"]': 'filterOnEnter',
-      'change select': 'filter'
+      // 'keypress input[type="text"]': 'filterOnEnter',
+      // 'change select': 'filter',
+      'click input#applyFilters': 'filter',
+      'click input#clearFilters': 'clearFilter'
     },
     initialize: function() {
       this.model = new app.Filter( app.mainView.results.filters);
       this.listenTo(this.model, 'change', this.render);
       this.render();
+      this.initializeFormElements();
+    },
+    initializeFormElements: function() {
+      $("#filters form")[0].reset();
+      // Form elements of type="hidden" don't get cleared by "reset", so
+      // clear them manually.
+      $(".datepickerWrapper input[type='hidden']").val('');
+      $(".datepickerWrapper .pickedDate").text("no date selected");
     },
     render: function() {
       this.$el.html(this.template( this.model.attributes ));
-
       for (var key in this.model.attributes) {
         if (this.model.attributes.hasOwnProperty(key)) {
-          if ((key === "startDate" && this.model.attributes[key] === "1980-01-01T05:00:00.000Z") ||
-              (key === "endDate" && this.model.attributes[key] === "2040-01-01T05:00:00.000Z")) {
-                this.model.attributes[key] = '';
-              }
-          this.$el.find('[name="'+ key +'"]').val(this.model.attributes[key]);
+          // if ((key === "startDate" && this.model.attributes[key] === "1980-01-01T05:00:00.000Z") ||
+          //     (key === "endDate" && this.model.attributes[key] === "2040-01-01T05:00:00.000Z")) {
+          //       this.model.attributes[key] = '';
+          // }
+          var el = this.$el.find('[name="'+ key +'"]');
+          el.val(this.model.attributes[key]);
+          if (key === "startDate" || key === "endDate") {
+            // Also display the selected date so the user can see it.
+            var text = this.model.attributes[key] != "" ? this.model.attributes[key] : "no date selected";
+            el.siblings(".pickedDate").text(text);
+          }
         }
       }
+      $(".datepickerTrigger").datepicker({
+          buttonImage: "/third-party/Farm-Fresh_calendar_view_month.png",
+          buttonImageOnly: true,
+          changeMonth: true,
+          changeYear: true,
+          dateFormat: "yy-mm-dd",
+          showOn: 'both',
+          onSelect: this.onSelect
+      });
     },
     preventSubmit: function(event) {
       event.preventDefault();
@@ -177,6 +201,31 @@
     filter: function() {
       var query = $('#filters form').serialize();
       Backbone.history.navigate('q/'+ query, { trigger: true });
+    },
+    clearFilter: function () {
+      this.initializeFormElements();
+      this.filter();
+    },
+    onSelect: function(dateText) {
+      // $(this) is the (hidden) input field to which the datepicker is attached.
+      if ($(this).prop("name") == "startDate") {
+          var startDate = new Date(dateText);
+          var endDate = new Date($("input.form-control[name='endDate']").val());
+      }
+      else {  // We assume this is the "endDate" field
+          var startDate = new Date($("input.form-control[name='startDate']").val());
+          var endDate = new Date(dateText);
+      }
+      // Make sure startDate is not later than endDate.
+      if (startDate > endDate) {
+          alert("The start date must be earlier or the same as the end date.");
+      }
+      else {
+        // put the selected date into the field for filtering
+        $(this).val(dateText);
+        // Also display the selected date so the user can see it.
+        $(this).siblings(".pickedDate").text(dateText);
+      }
     }
   });
 
