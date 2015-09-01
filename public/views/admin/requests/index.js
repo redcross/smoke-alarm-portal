@@ -41,9 +41,11 @@
   app.Filter = Backbone.Model.extend({
     defaults: {
       search: '',
-      status: '',
       sort: '',
-      limit: ''
+      limit: '',
+      startDate: '',
+      endDate: '',
+      region: ''
     }
   });
 
@@ -162,22 +164,24 @@
       // Form elements of type="hidden" don't get cleared by "reset", so
       // clear them manually.
       $(".datepickerWrapper input[type='hidden']").val('');
-      $(".datepickerWrapper .pickedDate").text("no date selected");
     },
     render: function() {
       this.$el.html(this.template( this.model.attributes ));
       for (var key in this.model.attributes) {
         if (this.model.attributes.hasOwnProperty(key)) {
-          // if ((key === "startDate" && this.model.attributes[key] === "1980-01-01T05:00:00.000Z") ||
-          //     (key === "endDate" && this.model.attributes[key] === "2040-01-01T05:00:00.000Z")) {
-          //       this.model.attributes[key] = '';
-          // }
           var el = this.$el.find('[name="'+ key +'"]');
           el.val(this.model.attributes[key]);
           if (key === "startDate" || key === "endDate") {
             // Also display the selected date so the user can see it.
-            var text = this.model.attributes[key] != "" ? this.model.attributes[key] : "no date selected";
-            el.siblings(".pickedDate").text(text);
+            if (this.model.attributes[key] != "") {
+              var text = moment(this.model.attributes[key]).format("YYYY-MM-DD");
+              el.val(text);
+              el.siblings(".pickedDate").text(text);
+            }
+            else {
+              el.val("");
+              el.siblings(".pickedDate").text("no date selected");
+            }
           }
         }
       }
@@ -203,8 +207,7 @@
       Backbone.history.navigate('q/'+ query, { trigger: true });
     },
     clearFilter: function () {
-      this.initializeFormElements();
-      this.filter();
+      Backbone.history.navigate('', { trigger: true });
     },
     onSelect: function(dateText) {
       // $(this) is the (hidden) input field to which the datepicker is attached.
@@ -217,8 +220,8 @@
           var endDate = new Date(dateText);
       }
       // Make sure startDate is not later than endDate.
-      if (startDate > endDate) {
-          alert("The start date must be earlier or the same as the end date.");
+      if (startDate >= endDate) {
+          alert("The start date must be earlier than the end date.");
       }
       else {
         // put the selected date into the field for filtering
