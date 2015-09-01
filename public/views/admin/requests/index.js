@@ -153,6 +153,11 @@
       'click input#applyFilters': 'filter',
       'click input#clearFilters': 'clearFilter'
     },
+    endpointDates: {
+      'earliest': new Date(2000, 1, 1),
+      'latest': moment().toDate(),
+      'yearRange': '2000:nnnn'
+    },
     initialize: function() {
       this.model = new app.Filter( app.mainView.results.filters);
       this.listenTo(this.model, 'change', this.render);
@@ -172,16 +177,16 @@
           var el = this.$el.find('[name="'+ key +'"]');
           el.val(this.model.attributes[key]);
           if (key === "startDate" || key === "endDate") {
-            // Also display the selected date so the user can see it.
             if (this.model.attributes[key] != "") {
-              var text = moment(this.model.attributes[key]).format("YYYY-MM-DD");
-              el.val(text);
-              el.siblings(".pickedDate").text(text);
+              var date = moment(this.model.attributes[key]);
+              if (date > this.endpointDates.earliest && date <= this.endpointDates.latest) {
+                el.val(date.format("YYYY-MM-DD"));
+                el.siblings(".pickedDate").text(date.format("YYYY-MM-DD"));
+                continue;
+              }
             }
-            else {
-              el.val("");
-              el.siblings(".pickedDate").text("no date selected");
-            }
+            el.val("");
+            el.siblings(".pickedDate").text("no date selected");
           }
         }
       }
@@ -191,7 +196,10 @@
           changeMonth: true,
           changeYear: true,
           dateFormat: "yy-mm-dd",
+          minDate: this.endpointDates.earliest,
+          maxDate: this.endpointDates.latest,
           showOn: 'both',
+          yearRange: this.endpointDates.yearRange,
           onSelect: this.onSelect
       });
     },
