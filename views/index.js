@@ -239,8 +239,8 @@ var findCountyFromAddress = function(address) {
 };
 // Updates the request with the region if it is in a covered region
 var updateRequestWithRegion = function(request, region) {
-    request.assignedRegion = region.id;
-    return request.save({fields: ['assignedRegion']});
+    request.selected_county = region.id;
+    return request.save({fields: ['selected_county']});
 };
 
 // sends an email to the regional representative

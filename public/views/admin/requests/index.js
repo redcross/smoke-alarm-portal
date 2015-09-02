@@ -11,14 +11,13 @@
       id: undefined,
       name: '',
       address: '',
-      rc_region: '',
+      assigned_rc_region: '',
       city: '',
       state: '',
       zip: '',
       phone: '',
       email: '', 
-      assignedRegion: '',
-      selectedCounty: ''
+      selected_county: ''
     },
     url: function() {
       return '/admin/requests/'+ (this.isNew() ? '' : this.id +'/');

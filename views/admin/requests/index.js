@@ -79,7 +79,7 @@ exports.find = function(req, res, next) {
                 if (request.SelectedCounty) {
                     console.log("DEBUG: We are in here!: request = " + request + " & key = " + index);
                     var selectedRegion = request.SelectedCounty.region;
-                    request.rc_region = recipients_table[selectedRegion]["region_display_name"];
+                    request.assigned_rc_region = recipients_table[selectedRegion]["region_display_name"];
                 }
                 return request;
             };
@@ -124,7 +124,7 @@ exports.find = function(req, res, next) {
                 });
             } else {
                 var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created','region'];
-                var requestFields = ['id','name','address','city','state','zip','phone','email','createdAt','rc_region'];
+                var requestFields = ['id','name','address','city','state','zip','phone','email','createdAt','assigned_rc_region'];
                 json2csv({ data: outcome.results, fields: requestFields, fieldNames: requestFieldNames }, function(err, csv) {
                     if (err) console.log("ERROR: error converting to CSV" + err);
                     console.log("DEBUG: outcome: " + JSON.stringify(outcome.results));
