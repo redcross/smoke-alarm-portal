@@ -58,6 +58,7 @@ db.Admin.belongsTo(db.User);
 db.Message.belongsTo(db.User);
 db.Account.belongsTo(db.User);
 db.Admin.belongsTo(db.AdminGroup);
+db.Request.belongsTo(db.activeRegion, {foreignKey:'assigned_rc_region'});
 db.Request.belongsTo(db.SelectedCounties, {foreignKey:'selected_county'});
 db.SelectedCounties.hasMany(db.Request, {foreignKey:'selected_county'});
 
