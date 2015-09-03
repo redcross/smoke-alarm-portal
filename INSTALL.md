@@ -88,8 +88,20 @@ much difficulty to most other Unix-like operating systems.
         $ NODE_ENV="development" 
 
         ### This will spew a lot of information to the screen and may
-        ### take several minutes
+        ### take several minutes.  It creates the tables and loads data
+        ### into UsAddress and SelectedCounties.
         $ node data/import_into_postgres.js
+        
+        ### Load the active regions and recipients.  Alter
+        ### recipients.sql, once you've created it, so that it has the
+        ### correct recipients, region names to display, and active
+        ### regions are set to "true."
+        $ cp config/recipients.sql.tmpl config/recipients.sql
+        ### get back into the postgres prompt, using the smokealarm_development db
+        $ psql smokealarm_development
+        ### Import the regions and recipients to the "activeRegions" table.
+        smokealarm_development=# \i config/recipients.sql
+
 
 8. Start the smoke-alarm-portal app
 

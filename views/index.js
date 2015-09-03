@@ -1,6 +1,5 @@
 'use strict';
 var db = require('./../models');
-var recipients_table = require(__dirname + '/../config/recipients.json');
 
 // Any reason not to just hardcode this here?
 var state_abbrevs =
@@ -209,7 +208,15 @@ var findAddressFromZip = function(zip) {
 // This function gets the selected county if it exists from the requests
 var findCountyFromAddress = function(address) {
     if (!address) {
-        return res.render('sorry.jade', {zip: address.zip});
+        if (requestData.zip_5) {
+            var zip_for_display = requestData.zip_for_lookup;
+        } else {
+            // A better way to handle this would be to display a sorry
+            // page that discusses the invalidity of the zip code and
+            // doesn't talk about anything else.  But this will do for now.
+            var zip_for_display = "(INVALID ZIP CODE '" + requestData.zip_for_lookup + "')";
+        }
+        return res.render('sorry.jade', {zip: zip_for_display});
     } 
 
 
@@ -237,6 +244,16 @@ var findCountyFromAddress = function(address) {
         }
     });
 };
+
+var isActiveRegion = function(selectedRegion) {
+    return db.activeRegion.findOne({
+        where: {
+            rc_region: selectedRegion.region,
+            is_active: true
+        }
+    });
+};
+
 // Updates the request with the region if it is in a covered region
 var updateRequestWithRegion = function(request, region) {
     request.selected_county = region.id;
@@ -245,10 +262,10 @@ var updateRequestWithRegion = function(request, region) {
 
 // sends an email to the regional representative
 var sendEmail = function(request, selectedRegion) {
-
-    var regionPresentableName = recipients_table[selectedRegion.region]["region_display_name"];
-    var regionRecipientName   = recipients_table[selectedRegion.region]["contact_name"];
-    var regionRecipientEmail  = recipients_table[selectedRegion.region]["contact_email"];
+    // selectedRegion is now a row from the activeRegions table
+    var regionPresentableName = selectedRegion.region_name;
+    var regionRecipientName   = selectedRegion.contact_name;
+    var regionRecipientEmail  = selectedRegion.contact_email;
     var thisRequestID = request.id;
 
     var email_text = "We have received a smoke alarm installation request from:\n"
@@ -313,24 +330,19 @@ exports.saveRequest = function(req, res) {
         return findAddressFromZip(requestData.zip_for_lookup)
     }).then(function(address) {
         return findCountyFromAddress(address);
-    }).then(function(selectedRegion) {
-        if (selectedRegion !== null) {
-            updateRequestWithRegion(savedRequest, selectedRegion).then(function() {
-                sendEmail(savedRequest, selectedRegion);
-                res.render('thankyou.jade', {region: selectedRegion.region});
+    }).then(function(selectedRegion, requestData) {
+        return isActiveRegion(selectedRegion);
+    }).then( function(activeRegion){
+        if (activeRegion.is_active === true) {
+            updateRequestWithRegion(savedRequest, activeRegion).then(function() {
+                sendEmail(savedRequest, activeRegion);
+                res.render('thankyou.jade', {region: activeRegion.rc_region});
             });
-        } else {
-            if (requestData.zip_5) {
-                var zip_for_display = requestData.zip_for_lookup;
-            } else {
-                // A better way to handle this would be to display a sorry
-                // page that discusses the invalidity of the zip code and
-                // doesn't talk about anything else.  But this will do for now.
-                var zip_for_display = "(INVALID ZIP CODE '" + requestData.zip_for_lookup + "')";
-            }
-            res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: zip_for_display});
+        }
+        else{
+            res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup});
         }
     }).catch(function(error) {
-        res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_display});
+        res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup});
     });
 };
