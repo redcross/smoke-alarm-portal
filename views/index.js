@@ -252,7 +252,8 @@ var isActiveRegion = function(selectedRegion) {
 // Updates the request with the region if it is in a covered region
 var updateRequestWithRegion = function(request, region) {
     request.selected_county = region.id;
-    return request.save({fields: ['selected_county']});
+    request.assigned_rc_region = region.region;
+    return request.save({fields: ['selected_county', 'assigned_rc_region']});
 };
 
 // sends an email to the regional representative
@@ -326,13 +327,12 @@ exports.saveRequest = function(req, res) {
     }).then(function(address) {
         return findCountyFromAddress(address);
     }).then(function(selectedRegion, requestData) {
+        updateRequestWithRegion(savedRequest, selectedRegion);
         return isActiveRegion(selectedRegion);
     }).then( function(activeRegion){
         if (activeRegion.is_active === true) {
-            updateRequestWithRegion(savedRequest, activeRegion).then(function() {
-                sendEmail(savedRequest, activeRegion);
-                res.render('thankyou.jade', {region: activeRegion.rc_region});
-            });
+            sendEmail(savedRequest, activeRegion);
+            res.render('thankyou.jade', {region: activeRegion.rc_region});
         }
         else{
             res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup});
