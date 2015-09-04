@@ -208,15 +208,10 @@ var findAddressFromZip = function(zip) {
 // This function gets the selected county if it exists from the requests
 var findCountyFromAddress = function(address) {
     if (!address) {
-        if (requestData.zip_5) {
-            var zip_for_display = requestData.zip_for_lookup;
-        } else {
-            // A better way to handle this would be to display a sorry
-            // page that discusses the invalidity of the zip code and
-            // doesn't talk about anything else.  But this will do for now.
-            var zip_for_display = "(INVALID ZIP CODE '" + requestData.zip_for_lookup + "')";
-        }
-        return res.render('sorry.jade', {zip: zip_for_display});
+        // Then no valid zipcode was found, so make sure that the
+        // "invalid zip" page is displayed
+        requestData.countyFromZip = null;
+        requestData.stateFromZip = null;
     } 
 
 
