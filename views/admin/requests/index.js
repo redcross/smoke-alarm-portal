@@ -73,7 +73,7 @@ exports.find = function(req, res, next) {
         }).reduce( function(previousValue, request, index, results) {
             return queryRegionPresentableName(request).then(
                 function (displayName) {
-                    if (displayName.region_name) {
+                    if (displayName) {
                         request.assigned_rc_region = displayName.region_name;
                     }
                     if (previousValue[0]) {
