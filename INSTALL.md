@@ -47,7 +47,7 @@ much difficulty to most other Unix-like operating systems.
         or set up a whole new environment, e.g., "demo" (e.g., based
         on the "test" example).
 
-  * Do `cp config/recipients.json.tmpl config/recipients.json`, then edit the latter.
+  * Do `cp config/recipients.sql.tmpl config/recipients.sql`, then edit the latter.
 
         You'll need to fill in appropriate contact names and email
         addresses.
@@ -92,12 +92,7 @@ much difficulty to most other Unix-like operating systems.
         ### into UsAddress and SelectedCounties.
         $ node data/import_into_postgres.js
         
-        ### Load the active regions and recipients.  Alter
-        ### recipients.sql, once you've created it, so that it has the
-        ### correct recipients, region names to display, and active
-        ### regions are set to "true."
-        $ cp config/recipients.sql.tmpl config/recipients.sql
-        ### get back into the postgres prompt, using the smokealarm_development db
+        ### Load the active regions and recipients.  
         $ psql smokealarm_development
         ### Import the regions and recipients to the "activeRegions" table.
         smokealarm_development=# \i config/recipients.sql
