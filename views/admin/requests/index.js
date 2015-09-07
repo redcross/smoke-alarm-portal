@@ -70,16 +70,24 @@ exports.find = function(req, res, next) {
             offset:req.query.offset,
             where: filters,
             order: [[req.query.sort.replace('-',''), sortOrder ]]
-        }).then(function(results) {
-            // TODO: Right now this puts the region name in the address_2 field
-            // which is not being used. Long term, this value should be in another
-            // parameter.
-            var findRegionPresentableName = function(request, index) {
-                
-                return request;
-            };
-            var resultsWithRegionDisplayName = _.map(results, findRegionPresentableName); 
-            outcome.data = resultsWithRegionDisplayName;
+        }).reduce( function(previousValue, request, index, results) {
+            return queryRegionPresentableName(request).then(
+                function (displayName) {
+                    if (displayName.region_name) {
+                        request.assigned_rc_region = displayName.region_name;
+                    }
+                    if (previousValue[0]) {
+                        // if this is not the first call of this
+                        // anonymous function
+                        previousValue.push(request);
+                    }
+                    else {
+                        previousValue = [request];
+                    }
+                    return previousValue;
+                });
+        }, []).then( function (results_array) {
+            outcome.data = results_array;
             outcome.pages.total = Math.ceil(outcome.items.total / req.query.limit);
             outcome.pages.next = ((outcome.pages.current + 1) > outcome.pages.total ? 0 : outcome.pages.current + 1);
             outcome.pages.hasNext = (outcome.pages.next !== 0);
@@ -89,7 +97,7 @@ exports.find = function(req, res, next) {
                 outcome.items.end = outcome.items.total;
             }
 
-            outcome.results = resultsWithRegionDisplayName;
+            outcome.results = results_array;
             return callback(null, 'done');
         })
         .catch(function(err) {
