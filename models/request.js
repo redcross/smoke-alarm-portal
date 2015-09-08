@@ -17,15 +17,16 @@
  */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('Request', {
-	  name: DataTypes.TEXT,
-		address: DataTypes.TEXT,
-		assigned_rc_region: DataTypes.TEXT,
-		city: DataTypes.TEXT,
-		state: DataTypes.TEXT,
-		zip: DataTypes.TEXT,
-		phone: DataTypes.TEXT,
-		email: DataTypes.TEXT,
-		permission_to_text: DataTypes.BOOLEAN
-	})
+    return sequelize.define('Request', {
+	name: DataTypes.TEXT,
+	address: DataTypes.TEXT,
+	assigned_rc_region: DataTypes.TEXT,
+	city: DataTypes.TEXT,
+	state: DataTypes.TEXT,
+	zip: DataTypes.TEXT,
+	phone: DataTypes.TEXT,
+	email: DataTypes.TEXT,
+        permission_to_text: DataTypes.BOOLEAN,
+        serial: DataTypes.TEXT
+    })
 }

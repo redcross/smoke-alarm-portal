@@ -240,6 +240,7 @@ var findCountyFromAddress = function(address) {
     });
 };
 
+// find out whether a region is active or not
 var isActiveRegion = function(selectedRegion) {
     return db.activeRegion.findOne({
         where: {
@@ -247,6 +248,44 @@ var isActiveRegion = function(selectedRegion) {
             is_active: true
         }
     });
+};
+
+// get count of requests saved on a given date
+var countRequestsPerDate = function (date) {
+    var psql_date = new Date(Date.parse(date));
+    var dateForQuery = new Date(psql_date.getFullYear(), psql_date.getMonth(), psql_date.getDate());
+    return db.Request.count({
+        where: {
+            createdAt: {
+                gte: dateForQuery
+            }
+        }
+    });
+};
+
+// takes a "value" that needs to be a certain "length" (in this file,
+// either a date or a sequence number) and pads it with leading zeroes
+// until it is "length" long.
+function padWithZeroes(value, length){
+    while (value.length < length) {
+        value = "0" + value;
+    }
+    return value;
+}
+
+// Takes a request, creates a serial number for that request, and
+// updates the request with the serial number
+var updateRequestWithSerial = function(request) {
+    // lock here
+    countRequestsPerDate(request.createdAt)
+        .then( function (numberOfRequests) {
+            var sequenceNumber = padWithZeroes(numberOfRequests.toString(), 4);
+            var show_date = new Date(Date.parse(request.createdAt));
+            var displayDate = show_date.getFullYear().toString()+padWithZeroes(show_date.getMonth().toString(), 2) + padWithZeroes(show_date.getDate().toString(), 2);
+            request.serial = "SAIR-" + displayDate + "-" + sequenceNumber;
+            return request.save({fields: ['serial']});
+        });
+    // release lock
 };
 
 // Updates the request with the region if it is in a covered region
@@ -323,6 +362,7 @@ exports.saveRequest = function(req, res) {
     requestData = getRequestData(req);
     saveRequestData(requestData).then(function(request) {
         savedRequest = request;
+        updateRequestWithSerial(savedRequest);
         return findAddressFromZip(requestData.zip_for_lookup)
     }).then(function(address) {
         return findCountyFromAddress(address);
