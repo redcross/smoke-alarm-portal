@@ -71,6 +71,29 @@ var state_abbrevs =
         "Armed Forces Pacific":           "AP"
     };
 
+// get count of requests saved on a given date
+var countRequestsPerDate = function (date) {
+    var dateForQuery = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    return db.Request.count({
+        where: {
+            createdAt: {
+                gte: dateForQuery
+            }
+        }
+    });
+};
+
+// takes a "value" that needs to be a certain "length" (in this file,
+// either a date or a sequence number) and pads it with leading zeroes
+// until it is "length" long.
+function padWithZeroes(value, length){
+    while (value.length < length) {
+        value = "0" + value;
+    }
+    return value;
+}
+
+
 exports.init = function(req, res) {
     res.locals.csrf = encodeURIComponent(req.csrfToken());
     res.render('index');
@@ -98,7 +121,12 @@ exports.init = function(req, res) {
 // Request data context to use through the promise chain
 var requestData = {};
 
-var getRequestData = function(req) {
+var getRequestData = function(req, numberOfRequests) {
+    // construct today date object
+    var today = new Date();
+    var sequenceNumber = padWithZeroes(numberOfRequests.toString(), 4);
+    var displayDate = today.getFullYear().toString()+padWithZeroes((today.getMonth() +1).toString(), 2) + padWithZeroes(today.getDate().toString(), 2);
+    var serial = "SAIR-" + displayDate + "-" + sequenceNumber;
     var zipToSelect = req.body.zip;
     // Things we derive from the user-provided zip code.
     var stateFromZip = null;   // remains null if no match
@@ -123,6 +151,7 @@ var getRequestData = function(req) {
     // and use that to declutter the code below.  But I'm not sure
     // whether such augmentation is frowned on or not.  Advice from
     // more experienced Javascript programmers welcome.  -Karl
+    requestData.serial = serial;
     requestData.name = req.body.name.trim().replace(/\s+/g, ' ');
     requestData.street_address = req.body.street_address.trim().replace(/\s+/g, ' ');
     requestData.city = req.body.city.trim().replace(/\s+/g, ' ');
@@ -196,7 +225,14 @@ var saveRequestData = function(requestData) {
         state: requestData.state,
         zip: requestData.zip_final,
         phone: requestData.phone,
-        email: requestData.email
+        email: requestData.email,
+        serial: requestData.serial
+    }).catch( function () {
+        // uniqueness failed; increment serial
+        var serial_array = requestData.serial.split("-");
+        var new_serial = padWithZeroes((parseInt(serial_array[2]) + 1).toString(), 4);
+        requestData.serial = serial_array[0] + "-" + serial_array[1] + "-" + new_serial;
+        saveRequestData(requestData); //loop until save works
     });
 };
 
@@ -250,43 +286,6 @@ var isActiveRegion = function(selectedRegion) {
     });
 };
 
-// get count of requests saved on a given date
-var countRequestsPerDate = function (date) {
-    var psql_date = new Date(Date.parse(date));
-    var dateForQuery = new Date(psql_date.getFullYear(), psql_date.getMonth(), psql_date.getDate());
-    return db.Request.count({
-        where: {
-            createdAt: {
-                gte: dateForQuery
-            }
-        }
-    });
-};
-
-// takes a "value" that needs to be a certain "length" (in this file,
-// either a date or a sequence number) and pads it with leading zeroes
-// until it is "length" long.
-function padWithZeroes(value, length){
-    while (value.length < length) {
-        value = "0" + value;
-    }
-    return value;
-}
-
-// Takes a request, creates a serial number for that request, and
-// updates the request with the serial number
-var updateRequestWithSerial = function(request) {
-    // lock here
-    countRequestsPerDate(request.createdAt)
-        .then( function (numberOfRequests) {
-            var sequenceNumber = padWithZeroes(numberOfRequests.toString(), 4);
-            var show_date = new Date(Date.parse(request.createdAt));
-            var displayDate = show_date.getFullYear().toString()+padWithZeroes(show_date.getMonth().toString(), 2) + padWithZeroes(show_date.getDate().toString(), 2);
-            request.serial = "SAIR-" + displayDate + "-" + sequenceNumber;
-            return request.save({fields: ['serial']});
-        });
-    // release lock
-};
 
 // Updates the request with the region if it is in a covered region
 var updateRequestWithRegion = function(request, region) {
@@ -359,10 +358,13 @@ var sendEmail = function(request, selectedRegion) {
 
 exports.saveRequest = function(req, res) {
     var savedRequest = {};
-    requestData = getRequestData(req);
-    saveRequestData(requestData).then(function(request) {
+    var today = new Date();
+    countRequestsPerDate(today).then( function(numRequests) {
+        requestData = getRequestData(req, numRequests);
+        return saveRequestData(requestData);
+        // catch here
+    }).then(function(request) {
         savedRequest = request;
-        updateRequestWithSerial(savedRequest);
         return findAddressFromZip(requestData.zip_for_lookup)
     }).then(function(address) {
         return findCountyFromAddress(address);
