@@ -232,7 +232,7 @@ var saveRequestData = function(requestData) {
         var serial_array = requestData.serial.split("-");
         var new_serial = padWithZeroes((parseInt(serial_array[2]) + 1).toString(), 4);
         requestData.serial = serial_array[0] + "-" + serial_array[1] + "-" + new_serial;
-        saveRequestData(requestData); //loop until save works
+        return saveRequestData(requestData); //loop until save works
     });
 };
 
@@ -362,7 +362,6 @@ exports.saveRequest = function(req, res) {
     countRequestsPerDate(today).then( function(numRequests) {
         requestData = getRequestData(req, numRequests);
         return saveRequestData(requestData);
-        // catch here
     }).then(function(request) {
         savedRequest = request;
         return findAddressFromZip(requestData.zip_for_lookup)
