@@ -300,7 +300,7 @@ var sendEmail = function(request, selectedRegion) {
     var regionPresentableName = selectedRegion.region_name;
     var regionRecipientName   = selectedRegion.contact_name;
     var regionRecipientEmail  = selectedRegion.contact_email;
-    var thisRequestID = request.id;
+    var thisRequestID = request.serial;
 
     var email_text = "We have received a smoke alarm installation request from:\n"
         + "\n"
@@ -374,7 +374,7 @@ exports.saveRequest = function(req, res) {
     }).then( function(activeRegion){
         if (activeRegion.is_active === true) {
             sendEmail(savedRequest, activeRegion);
-            res.render('thankyou.jade', {region: activeRegion.rc_region});
+            res.render('thankyou.jade', {region: activeRegion.region_name, id: savedRequest.serial});
         }
         else{
             res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup});
