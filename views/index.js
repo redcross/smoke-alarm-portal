@@ -124,7 +124,7 @@ var requestData = {};
 var getRequestData = function(req, numberOfRequests) {
     // construct today date object
     var today = new Date();
-    var sequenceNumber = padWithZeroes(numberOfRequests.toString(), 4);
+    var sequenceNumber = padWithZeroes(numberOfRequests.toString(), 5);
     var displayDate = today.getFullYear().toString()+padWithZeroes((today.getMonth() +1).toString(), 2) + padWithZeroes(today.getDate().toString(), 2);
     var serial = "SAIR-" + displayDate + "-" + sequenceNumber;
     var zipToSelect = req.body.zip;
@@ -230,7 +230,7 @@ var saveRequestData = function(requestData) {
     }).catch( function () {
         // uniqueness failed; increment serial
         var serial_array = requestData.serial.split("-");
-        var new_serial = padWithZeroes((parseInt(serial_array[2]) + 1).toString(), 4);
+        var new_serial = padWithZeroes((parseInt(serial_array[2]) + 1).toString(), 5);
         requestData.serial = serial_array[0] + "-" + serial_array[1] + "-" + new_serial;
         return saveRequestData(requestData); //loop until save works
     });
