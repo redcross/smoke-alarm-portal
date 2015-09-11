@@ -71,16 +71,22 @@ var state_abbrevs =
         "Armed Forces Pacific":           "AP"
     };
 
-// get count of requests saved on a given date
-var countRequestsPerDate = function (date) {
-    var dateForQuery = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    return db.Request.count({
-        where: {
-            createdAt: {
-                gte: dateForQuery
+// get count of requests saved for a given region
+var countRequestsPerRegion = function (region) {
+    if (region){
+        return db.Request.count({
+            where: {
+                assigned_rc_region: region
             }
-        }
-    });
+        });
+    }
+    else {
+        return db.Request.count({
+            where: {
+                assigned_rc_region: null
+            }
+        });
+    }
 };
 
 // takes a "value" that needs to be a certain "length" (in this file,
@@ -113,21 +119,61 @@ exports.init = function(req, res) {
      or not
  * - findCountyFromAddress(address) - tries to find a county within a region
      based upon the address
- * - updateRequestWithRegion(request, selectedRegion) - if the address is in a region, we update the 
-     request with that info
  * - sendEmail(request, selectedRegion) - sends Email to region representative
  */
 
 // Request data context to use through the promise chain
 var requestData = {};
 
-var getRequestData = function(req, numberOfRequests) {
-    // construct today date object
-    var today = new Date();
-    var sequenceNumber = padWithZeroes(numberOfRequests.toString(), 5);
-    var displayDate = today.getFullYear().toString()+padWithZeroes((today.getMonth() +1).toString(), 2) + padWithZeroes(today.getDate().toString(), 2);
-    var serial = "SAIR-" + displayDate + "-" + sequenceNumber;
-    var zipToSelect = req.body.zip;
+var findZipForLookup = function (req) {
+    // get zip_for_lookup from req
+    // Treat zip code specially.  For zip codes, we remove all
+    // internal spaces, since they can't possibly be useful.
+    var requestZip = {};
+    requestZip.zip_received = req.body.zip.trim().replace(/\s+/g, '');
+    // This is the zip code we will actually store in the database.
+    // Our canonical form for storing zip codes is any of the following:
+    // "NNNNN" (a 5 digit string), "NNNNN-NNNN" (a string consisting
+    // of 5 digits, a hyphen, and 4 digits), or null.  No other forms
+    // are to be stored, at least not without changing this comment.
+    requestZip.zip_final = null;
+
+    // Parse 5-digit section and optional 4-digit section from the zip code.
+    requestZip.zip_5 = null;
+    requestZip.zip_4 = null;
+    var zip_re = /^([0-9][0-9][0-9][0-9][0-9]) *[-_+]{0,1} *([0-9][0-9][0-9][0-9]){0,1}$/g;
+    requestZip.zip_match = zip_re.exec(requestZip.zip_received);
+    if (requestZip.zip_match) {
+        if (requestZip.zip_match.length < 2) {
+            console.log("ERROR: zip matched, but match grouping is somehow wrong,");
+            console.log("       which implies that the regexp itself is not right");
+            console.log("       (or our use of it isn't right).");
+        }
+        else {
+            requestZip.zip_5 = requestZip.zip_match[1];
+            if (requestZip.zip_match.length == 3 && requestZip.zip_match[2] !== undefined) {
+                requestZip.zip_4 = requestZip.zip_match[2];
+                requestZip.zip_final = requestZip.zip_5 + "-" + requestZip.zip_4;
+            } else {
+                requestZip.zip_final = requestZip.zip_5;
+            }
+        }
+    }
+
+    requestZip.zip_for_lookup = requestZip.zip_5;
+    if (! requestZip.zip_for_lookup) {
+        // If the zip we got doesn't look like it was a real zip, then
+        // it won't work later as a key for database lookups.  But we
+        // should still pass it along so at least error messages can
+        // display it accurately.
+        requestZip.zip_for_lookup = requestZip.zip_received;
+    }
+    
+    return requestZip.zip_for_lookup;
+};
+
+var getRequestData = function(req, numberOfRequests, region) {
+    requestData.zip = findZipForLookup(req);
     // Things we derive from the user-provided zip code.
     var stateFromZip = null;   // remains null if no match
     var countyFromZip = null;  // remains null if no match
@@ -151,54 +197,36 @@ var getRequestData = function(req, numberOfRequests) {
     // and use that to declutter the code below.  But I'm not sure
     // whether such augmentation is frowned on or not.  Advice from
     // more experienced Javascript programmers welcome.  -Karl
-    requestData.serial = serial;
     requestData.name = req.body.name.trim().replace(/\s+/g, ' ');
     requestData.street_address = req.body.street_address.trim().replace(/\s+/g, ' ');
     requestData.city = req.body.city.trim().replace(/\s+/g, ' ');
     requestData.state = req.body.state.trim().replace(/\s+/g, ' ');
     requestData.phone = req.body.phone.trim().replace(/\s+/g, ' ');
     requestData.email = req.body.email.trim().replace(/\s+/g, ' ');
+    requestData.assigned_rc_region = region;
 
-    // Treat zip code specially.  For zip codes, we remove all
-    // internal spaces, since they can't possibly be useful.
-    requestData.zip_received = req.body.zip.trim().replace(/\s+/g, '');
-    // This is the zip code we will actually store in the database.
-    // Our canonical form for storing zip codes is any of the following:
-    // "NNNNN" (a 5 digit string), "NNNNN-NNNN" (a string consisting
-    // of 5 digits, a hyphen, and 4 digits), or null.  No other forms
-    // are to be stored, at least not without changing this comment.
-    requestData.zip_final = null;
-
-    // Parse 5-digit section and optional 4-digit section from the zip code.
-    requestData.zip_5 = null;
-    requestData.zip_4 = null;
-    var zip_re = /^([0-9][0-9][0-9][0-9][0-9]) *[-_+]{0,1} *([0-9][0-9][0-9][0-9]){0,1}$/g;
-    requestData.zip_match = zip_re.exec(requestData.zip_received);
-    if (requestData.zip_match) {
-        if (requestData.zip_match.length < 2) {
-            console.log("ERROR: zip matched, but match grouping is somehow wrong,");
-            console.log("       which implies that the regexp itself is not right");
-            console.log("       (or our use of it isn't right).");
+    // construct today date object
+    var today = new Date();
+    var sequenceNumber = padWithZeroes(numberOfRequests.toString(), 5);
+    var displayDate = today.getFullYear().toString()+padWithZeroes((today.getMonth() +1).toString(), 2) + padWithZeroes(today.getDate().toString(), 2);
+    if (region) {
+        var serial = region + "-" + displayDate + "-" + sequenceNumber;
+    }
+    else {
+        // construct code from state
+        var state_code = "";
+        if (requestData.state != ""){
+            // get abbreviation
+            state_code = "XX" + state_abbrevs[requestData.state];
         }
         else {
-            requestData.zip_5 = requestData.zip_match[1];
-            if (requestData.zip_match.length == 3 && requestData.zip_match[2] !== undefined) {
-                requestData.zip_4 = requestData.zip_match[2];
-                requestData.zip_final = requestData.zip_5 + "-" + requestData.zip_4;
-            } else {
-                requestData.zip_final = requestData.zip_5;
-            }
+            state_code = "XXNA";
         }
+        var serial = state_code + "-" + displayDate + "-" + sequenceNumber;
     }
 
-    requestData.zip_for_lookup = requestData.zip_5;
-    if (! requestData.zip_for_lookup) {
-        // If the zip we got doesn't look like it was a real zip, then
-        // it won't work later as a key for database lookups.  But we
-        // should still pass it along so at least error messages can
-        // display it accurately.
-        requestData.zip_for_lookup = requestData.zip_received;
-    }
+    requestData.serial = serial;
+
     return requestData;
 };
 
@@ -226,7 +254,8 @@ var saveRequestData = function(requestData) {
         zip: requestData.zip_final,
         phone: requestData.phone,
         email: requestData.email,
-        serial: requestData.serial
+        serial: requestData.serial,
+        assigned_rc_region: requestData.assigned_rc_region
     }).catch( function () {
         // uniqueness failed; increment serial
         var serial_array = requestData.serial.split("-");
@@ -277,22 +306,17 @@ var findCountyFromAddress = function(address) {
 };
 
 // find out whether a region is active or not
-var isActiveRegion = function(selectedRegion) {
+var isActiveRegion = function(request) {
     return db.activeRegion.findOne({
         where: {
-            rc_region: selectedRegion.region,
+            rc_region: request.assigned_rc_region,
             is_active: true
         }
     });
 };
 
 
-// Updates the request with the region if it is in a covered region
-var updateRequestWithRegion = function(request, region) {
-    request.selected_county = region.id;
-    request.assigned_rc_region = region.region;
-    return request.save({fields: ['selected_county', 'assigned_rc_region']});
-};
+
 
 // sends an email to the regional representative
 var sendEmail = function(request, selectedRegion) {
@@ -358,20 +382,28 @@ var sendEmail = function(request, selectedRegion) {
 
 exports.saveRequest = function(req, res) {
     var savedRequest = {};
-    var today = new Date();
-    countRequestsPerDate(today).then( function(numRequests) {
-        requestData = getRequestData(req, numRequests);
+    var region_code = "";
+    // get zip in a function, to clean this up
+    var zip_for_lookup = findZipForLookup(req);
+    findAddressFromZip(zip_for_lookup).then(function(address) {
+        return findCountyFromAddress(address);
+    }).then( function(county_id){
+        if (county_id){
+            region_code = county_id.region;
+        }
+        else {
+            region_code = null
+        }
+        return countRequestsPerRegion(region_code);
+    }).then( function(numRequests) {
+        
+        requestData = getRequestData(req, numRequests, region_code);
         return saveRequestData(requestData);
     }).then(function(request) {
         savedRequest = request;
-        return findAddressFromZip(requestData.zip_for_lookup)
-    }).then(function(address) {
-        return findCountyFromAddress(address);
-    }).then(function(selectedRegion, requestData) {
-        updateRequestWithRegion(savedRequest, selectedRegion);
-        return isActiveRegion(selectedRegion);
+        return isActiveRegion(savedRequest);
     }).then( function(activeRegion){
-        if (activeRegion.is_active === true) {
+        if (activeRegion) {
             sendEmail(savedRequest, activeRegion);
             res.render('thankyou.jade', {region: activeRegion.region_name, id: savedRequest.serial});
         }
