@@ -169,11 +169,13 @@ var findZipForLookup = function (req) {
         requestZip.zip_for_lookup = requestZip.zip_received;
     }
     
-    return requestZip.zip_for_lookup;
+    return requestZip;
 };
 
 var getRequestData = function(req, numberOfRequests, region) {
-    requestData.zip = findZipForLookup(req);
+    var zipArray = findZipForLookup(req);
+    requestData.zip_for_lookup = zipArray.zip_for_lookup;
+    requestData.zip_final = zipArray.zip_final;
     // Things we derive from the user-provided zip code.
     var stateFromZip = null;   // remains null if no match
     var countyFromZip = null;  // remains null if no match
@@ -384,7 +386,8 @@ exports.saveRequest = function(req, res) {
     var savedRequest = {};
     var region_code = "";
     // get zip in a function, to clean this up
-    var zip_for_lookup = findZipForLookup(req);
+    var zip_set = findZipForLookup(req);
+    var zip_for_lookup = zip_set.zip_for_lookup;
     findAddressFromZip(zip_for_lookup).then(function(address) {
         return findCountyFromAddress(address);
     }).then( function(county_id){
