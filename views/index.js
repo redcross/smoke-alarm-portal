@@ -273,12 +273,14 @@ var findAddressFromZip = function(zip) {
 };
 
 // This function gets the selected county if it exists from the requests
-var findCountyFromAddress = function(address) {
+var findCountyFromAddress = function(address, zip) {
     if (!address) {
         // Then no valid zipcode was found, so make sure that the
         // "invalid zip" page is displayed
         requestData.countyFromZip = null;
         requestData.stateFromZip = null;
+        // make sure that the correct "zip_for_lookup" is specified here...
+        requestData.zip_for_lookup = zip;
     } 
 
 
@@ -389,7 +391,7 @@ exports.saveRequest = function(req, res) {
     var zip_set = findZipForLookup(req);
     var zip_for_lookup = zip_set.zip_for_lookup;
     findAddressFromZip(zip_for_lookup).then(function(address) {
-        return findCountyFromAddress(address);
+        return findCountyFromAddress(address, zip_for_lookup);
     }).then( function(county_id){
         if (county_id){
             region_code = county_id.region;
