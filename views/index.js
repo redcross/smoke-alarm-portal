@@ -285,6 +285,7 @@ var findCountyFromAddress = function(address, zip) {
         requestData.stateFromZip = null;
         // make sure that the correct "zip_for_lookup" is specified here...
         requestData.zip_for_lookup = zip;
+        return null;
     } 
 
 
@@ -405,7 +406,6 @@ exports.saveRequest = function(req, res) {
         }
         return countRequestsPerRegion(region_code);
     }).then( function(numRequests) {
-        
         requestData = getRequestData(req, numRequests, region_code);
         return saveRequestData(requestData);
     }).then(function(request) {
