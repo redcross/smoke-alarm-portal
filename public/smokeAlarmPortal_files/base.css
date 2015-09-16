@@ -51,14 +51,26 @@ html, body, body::after {
 }
 
 body {
-    background: url("../images/install_combined.jpg");
+    /* background commented out now that we're going with an image of
+    class ".bg" that can stretch and stay centered on any screen
+    size. Only problem is it doesn't tile. */
+    /* background: url("../images/install_combined.jpg"); */
     color: #EEE;
     font-family: "Helvetica Neue", smokeAlarmDefault, Helvetica, Arial, sans-serif;
     font-weight: 100;
     font-size: 1.6em;
 }
 
-body::after {
+.bg {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: hidden;
+    z-index: -2;
+}
+
+.bg-screen {
     background: black;
     content: "";
     position: fixed;
@@ -67,6 +79,8 @@ body::after {
     left: 0;
     right: 0;
     opacity: 0.5;
+    filter: alpha(opacity=50); /* for IE 8 and below */
+    overflow-y: hidden;
     z-index: -1;
 }
 

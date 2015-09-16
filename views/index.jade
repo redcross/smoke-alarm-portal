@@ -11,7 +11,7 @@ block content
     #main.row(role='main')
       #left.col-md-3
         p
-          | Thank you for your interest in having smoke alarms installed in your home.  To request an installation, please complete all fields in the form below and click “Submit.”
+          | Thank you for your interest in having FREE smoke alarms installed in your home. To request a FREE installation, please complete all fields in the form below and click “Submit.”
         p
           | After submitting your request, you will be contacted by an American Red Cross representative with information on installation availability in your area.
       #center.col-md-6
@@ -114,7 +114,7 @@ block content
     #bottom.row
       p#availability.col-xs-12
         | This form can accept requests from the following States and Counties: IA (except Harrison, Mills and Pottawattamie Counties), IL, MN, MO, MT, ND, SD, WI, Dakota County, NE as well as all counties in ID (except Benewah, Bonner, Boundary, Kootenal and Shoshone Counties) and Malheur County, OR and Garfield and Asotin Counties in WA.
-        span.notabene If your location is not listed, please call 800-RED-CROSS to be connected to&nbsp;
+        span.notabene  If your location is not listed, please call 800-RED-CROSS to be connected to&nbsp;
         span.notaoptime your
         span.notabene &nbsp;local Red Cross Chapter.
 
@@ -148,7 +148,7 @@ block content
           },
           '#email': {
             'groupRequired': {
-              'message': '* A Please provide either a phone number or an email address'
+              'message': '* Please provide either a phone number or an email address'
             },
             'custom[email]': {
               'message': '* The email address is invalid'
@@ -156,3 +156,6 @@ block content
           }
         }
       });
+      // Fix Safari font-weight. The bizzare if-clause is feature-detection for Safari.
+      if (Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0) { $("body").css("font-weight", "400"); }
+
