@@ -145,6 +145,8 @@ much difficulty to most other Unix-like operating systems.
    page (http://localhost:3000/) before any requests would be listed
    on the /admin/requests page.)
 
+11. Manually perform tests listed in [TESTING.md](docs/TESTING.md).
+
 Appendix A: Setting up Apache->Node ProxyPass with https://
 -----------------------------------------------------------
 
