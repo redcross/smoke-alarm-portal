@@ -209,6 +209,10 @@ var getRequestData = function(req, numberOfRequests, region) {
 
     // construct today date object
     var today = new Date();
+    // avoid the first request having a serial number of
+    // "region-date-00000."  I think that would be confusing for users.
+    // We might as well start with 1.
+    numberOfRequests = numberOfRequests + 1;
     var sequenceNumber = padWithZeroes(numberOfRequests.toString(), 5);
     var displayDate = today.getFullYear().toString()+padWithZeroes((today.getMonth() +1).toString(), 2) + padWithZeroes(today.getDate().toString(), 2);
     if (region) {
@@ -222,7 +226,7 @@ var getRequestData = function(req, numberOfRequests, region) {
             state_code = "XX" + state_abbrevs[requestData.state];
         }
         else {
-            state_code = "XXNA";
+            state_code = "XXXX";
         }
         var serial = state_code + "-" + displayDate + "-" + sequenceNumber;
     }
