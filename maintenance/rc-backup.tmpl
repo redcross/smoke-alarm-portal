@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# Here's one way to do backups on the production server:
+#
+# Create a user named 'rcbackup', who has no password, whose shell
+# is set to /bin/bash, and whose home directory is readable only by
+# that user & group.
+#
+# Add this user as a Postgres role and give it read access to the smoke
+# alarm database:
+#
+#   CREATE USER rcbackup PASSWORD '<password>';
+#   GRANT CONNECT ON DATABASE <db_name> TO rcbackup;
+#   GRANT USAGE ON SCHEMA public TO rcbackup;
+#   GRANT SELECT ON ALL TABLES IN SCHEMA public TO rcbackup;
+#   GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO rcbackup;
+#
+# Then edit this script with your destination directory and DB username
+# and password.
+#
+# Now you have an 'rc-backup' script that you can run as in a cron job
+# as user 'rcbackup', assuming you set up permissions appropriately.
+# For example, you could put this in /etc/crontab
+#
+#   30 3 * * * rcbackup /usr/local/bin/rc-backup
+#
+# ...to have the script run at 3:30am every morning and put the backup
+# in /home/rcbackup/backups/DATE/.  (Of course, you might want to have
+# another cron job that then copies the backup to a remote location.)
+#
+#  ************************ <<< IMPORTANT NOTE >>> ************************
+#  **                                                                    **
+#  **  Keep the final 'rc-backup' script private!  It contains a         **
+#  **  password that allows read-only access to your database.           **
+#  **                                                                    **
+#  ************************************************************************
+
+BACKUPS_TOP=/home/rcbackup
+BACKUP_USER=__USER__
+DATE_YMD_PREFIX="%Y-%m-%d"
+DATE_FULL_FORMAT="%Y-%m-%d_%H.%M.%S"
+DATABASE_NAME=<db_name>
+
+# You could customize this if you want, but there's no real reason to:
+BACKUP_PREFIX=smokealarm-prod-backup
+
+# Get the date now, so that even if intermediate steps are so slow as
+# to let more than a second pass, or if they cross midnight and change
+# the day, none of that will affect the name of the backup.
+BACKUP_TIME=`(date +"${DATE_FULL_FORMAT}")`
+
+# Do everything within BACKUPS_TOP, to avoid leading-"/" warnings from tar.
+cd ${BACKUPS_TOP}
+
+THIS_BACKUP_DIR=${BACKUP_PREFIX}-${BACKUP_TIME}
+
+test -d "${THIS_BACKUP_DIR}" || mkdir -p "${THIS_BACKUP_DIR}"
+pg_dump "${DATABASE_NAME}" -C -f "${THIS_BACKUP_DIR}/backup-${BACKUP_TIME}.sql"
+tar zcf ${THIS_BACKUP_DIR}.tar.gz ${THIS_BACKUP_DIR}
+rm -rf ${THIS_BACKUP_DIR}
+
+# Remove backup(s) from two weeks ago, _after_ creating new backup above.
+if [ $(date +%u) = 1 ]; then
+  rm -f ${BACKUP_PREFIX}-`date -d'monday-fortnight ago' +${DATE_YMD_PREFIX}`_*.tar.gz
+fi
+if [ $(date +%u) = 2 ]; then
+  rm -f ${BACKUP_PREFIX}-`date -d'tuesday-fortnight ago' +${DATE_YMD_PREFIX}`_*.tar.gz
+fi
+if [ $(date +%u) = 3 ]; then
+  rm -f ${BACKUP_PREFIX}-`date -d'wednesday-fortnight ago' +${DATE_YMD_PREFIX}`_*.tar.gz
+fi
+if [ $(date +%u) = 4 ]; then
+  rm -f ${BACKUP_PREFIX}-`date -d'thursday-fortnight ago' +${DATE_YMD_PREFIX}`_*.tar.gz
+fi
+if [ $(date +%u) = 5 ]; then
+  rm -f ${BACKUP_PREFIX}-`date -d'friday-fortnight ago' +${DATE_YMD_PREFIX}`_*.tar.gz
+fi
+if [ $(date +%u) = 6 ]; then
+  rm -f ${BACKUP_PREFIX}-`date -d'saturday-fortnight ago' +${DATE_YMD_PREFIX}`_*.tar.gz
+fi
+if [ $(date +%u) = 7 ]; then
+  rm -f ${BACKUP_PREFIX}-`date -d'sunday-fortnight ago' +${DATE_YMD_PREFIX}`_*.tar.gz
+fi
