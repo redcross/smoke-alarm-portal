@@ -46,6 +46,7 @@
     "sequelize-cli": "^1.7.0",
     "serve-favicon": "~2.2.1",
     "serve-static": "^1.9.x",
+    "twilio": "^2.5.1",
     "underscore": "^1.x.x"
   },
   "devDependencies": {
