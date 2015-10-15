@@ -21,14 +21,44 @@ var request_object = {};
 // include the functions from views/index.js
 var save_utils = require('../utilities');
 
-// Generally to find the county and region we use the zipcode, so this
-// takes the entered zip.
-// TODO: it needs to return a serial number and a contact phone number
-// for the region the person is requesting from.  Or, of course, a
-// generic "sorry" if they're out of area or in an inactive region.
+/*
+ * Takes: the "outcome" (a boolean that is true iff the entered zip code
+ * is valid and in an active region),
+ * If the outcome was successful:
+ * serial: the serial number assigned to the request
+ * county: the county found based on the entered zipcode
+ * contact: the phone number for this RC region
+ *
+ * Returns: a message with "thank you," the serial number, and a contact
+ * phone for successful outcomes and a "sorry" message with a generic RC
+ * phone number for out-of-area zip codes (just like the website).
+*/
+var constructFinalText = function (outcome, request, contact) {
+    var twiml = new twilio.TwimlResponse();
+    if (outcome) {
+        var msg = "Thank you for your smoke alarm installation request. If you need to contact the Red Cross about this request, use ID number " + request.serial +  " and call your local group at " + contact + ". Your information has been sent to the Red Cross representative for " + request.county +  ". A representative will contact you with information on installation availability in your area. Please allow two to four weeks for a response.";
+        twiml.message(msg);
+    }
+    else {
+        if (request.county) {
+            var msg = "Sorry, the Red Cross Region serving " + request.county +  " does not yet offer smoke alarm installation service. However, we will remember your request with ID number " + request.serial + " and contact you when smoke alarm installation service is available in your region. Thank you for contacting the Red Cross.";
+        }
+        else {
+            // invalid zip
+            var msg = "Sorry, we couldn't find a county for zip code " + request.zip_final + ".  However, we will remember your request with ID number " + request.serial + ".  Thank you for contacting the Red Cross.";
+        }
+        twiml.message(msg);
+    }
+};
 
+
+/* Generally to find the county and region we use the zipcode, so this
+ * takes the entered zip.
+ * Returns nothing, but saves the request to the database.
+*/
 var saveRequest = function (zip) {
     save_utils.findAddressFromZip(zip).then(function(address) {
+        request_object.county = address['county'];
         return save_utils.findCountyFromAddress(address, zip);
     }).then( function(county_id){
         if (county_id){
@@ -50,15 +80,21 @@ var saveRequest = function (zip) {
         savedRequest = request;
         return save_utils.isActiveRegion(savedRequest);
     }).then( function(activeRegion){
+        var is_valid = null;
+        var contact_num = null;
         if (activeRegion) {
             save_utils.sendEmail(savedRequest, activeRegion);
-            // send thank you
+            is_valid = true;
+            contact_num = activeRegion.contact_email
         }
         else{
-            // send sorry
+            is_valid = false;
         }
+        constructFinalText(is_valid, request_object, contact_num); 
+
     }).catch(function(error) {
         // send sorry
+        constructFinalText(false, savedRequest.serial, savedRequest.county, null);
     });
 };
  
@@ -105,8 +141,10 @@ exports.respond = function(req, res) {
 
     // construct a request object and insert it into the db
     console.log("DEBUG: " + JSON.stringify(request_object));
-
-    twiml.message(responses_array[counter]);
+    if (counter < (responses_array.length -1 )){
+        twiml.message(responses_array[counter]);
+    }
+    // else the message will be sent from "construct final text"
 
     counter = counter + 1;
     res.cookie('counter',counter);
