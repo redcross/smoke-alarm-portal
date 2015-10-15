@@ -200,7 +200,7 @@ module.exports  = {
         else {
             // construct code from state
             var state_code = "";
-            if (requestData.state != ""){
+            if (requestData.state != "" && state_abbrevs[requestData.state]){
                 // get abbreviation
                 state_code = "XX" + state_abbrevs[requestData.state];
             }
@@ -348,7 +348,6 @@ module.exports  = {
                 + request.name + " (#" + thisRequestID + ")",
             text: email_text
         };
-
 
         db.mailgun.messages().send(outbound_email, function (error, body) {
             // TODO: We need to record the sent message's Message-ID 

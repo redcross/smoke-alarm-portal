@@ -48,9 +48,18 @@ var saveRequest = function (zip) {
         return save_utils.saveRequestData(requestData);
     }).then(function(request) {
         savedRequest = request;
-        // TODO: construct the final text with the new serial number
+        return save_utils.isActiveRegion(savedRequest);
+    }).then( function(activeRegion){
+        if (activeRegion) {
+            save_utils.sendEmail(savedRequest, activeRegion);
+            // send thank you
+        }
+        else{
+            // send sorry
+        }
+    }).catch(function(error) {
+        // send sorry
     });
-
 };
  
 exports.respond = function(req, res) {
@@ -79,7 +88,7 @@ exports.respond = function(req, res) {
         // handle any capitalization
         phone_check = phone_check.toLowerCase();
         
-        if (phone_check == "yes") { 
+        if (phone_check == "yes") {
             request_object.phone = req.query.From;
         }
         else {
@@ -89,14 +98,14 @@ exports.respond = function(req, res) {
     else if (counter == 4) {
         // this is their email address, or none.
         request_object.email = req.query.Body;
+        if (request_object.address) {
+            var response_elements = saveRequest(request_object.address.zip);
+        }
     }
 
     // construct a request object and insert it into the db
-    if (request_object.address) {
-        var response_elements = saveRequest(request_object.address.zip);
-    }
     console.log("DEBUG: " + JSON.stringify(request_object));
-    
+
     twiml.message(responses_array[counter]);
 
     counter = counter + 1;
