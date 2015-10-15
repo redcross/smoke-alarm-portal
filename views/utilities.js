@@ -1,5 +1,75 @@
 var db = require('./../models');
 var requestData = {};
+
+var state_abbrevs =
+    {
+        "Alabama":                        "AL",
+        "Alaska":                         "AK",
+        "Arizona":                        "AZ",
+        "Arkansas":                       "AR",
+        "California":                     "CA",
+        "Colorado":                       "CO",
+        "Connecticut":                    "CT",
+        "Delaware":                       "DE",
+        "Florida":                        "FL",
+        "Georgia":                        "GA",
+        "Hawaii":                         "HI",
+        "Idaho":                          "ID",
+        "Illinois":                       "IL",
+        "Indiana":                        "IN",
+        "Iowa":                           "IA",
+        "Kansas":                         "KS",
+        "Kentucky":                       "KY",
+        "Louisiana":                      "LA",
+        "Maine":                          "ME",
+        "Maryland":                       "MD",
+        "Massachusetts":                  "MA",
+        "Michigan":                       "MI",
+        "Minnesota":                      "MN",
+        "Mississippi":                    "MS",
+        "Missouri":                       "MO",
+        "Montana":                        "MT",
+        "Nebraska":                       "NE",
+        "Nevada":                         "NV",
+        "New Hampshire":                  "NH",
+        "New Jersey":                     "NJ",
+        "New Mexico":                     "NM",
+        "New York":                       "NY",
+        "North Carolina":                 "NC",
+        "North Dakota":                   "ND",
+        "Ohio":                           "OH",
+        "Oklahoma":                       "OK",
+        "Oregon":                         "OR",
+        "Pennsylvania":                   "PA",
+        "Rhode Island":                   "RI",
+        "South Carolina":                 "SC",
+        "South Dakota":                   "SD",
+        "Tennessee":                      "TN",
+        "Texas":                          "TX",
+        "Utah":                           "UT",
+        "Vermont":                        "VT",
+        "Virginia":                       "VA",
+        "Washington":                     "WA",
+        "West Virginia":                  "WV",
+        "Wisconsin":                      "WI",
+        "Wyoming":                        "WY",
+        "American Samoa":                 "AS",
+        "District of Columbia":           "DC",
+        "Federated States of Micronesia": "FM",
+        "Guam":                           "GU",
+        "Marshall Islands":               "MH",
+        "Northern Mariana Islands":       "MP",
+        "Palau":                          "PW",
+        "Puerto Rico":                    "PR",
+        "Virgin Islands":                 "VI",
+        "Armed Forces Africa":            "AE",
+        "Armed Forces Americas":          "AA",
+        "Armed Forces Canada":            "AE",
+        "Armed Forces Europe":            "AE",
+        "Armed Forces Middle East":       "AE",
+        "Armed Forces Pacific":           "AP"
+    };
+
 module.exports  = {
 
     // get count of requests saved for a given region
@@ -78,7 +148,7 @@ module.exports  = {
     },
 
     getRequestData: function(req, numberOfRequests, region) {
-        var zipArray = findZipForLookup(req);
+        var zipArray = module.exports.findZipForLookup(req);
         requestData.zip_for_lookup = zipArray.zip_for_lookup;
         requestData.zip_final = zipArray.zip_final;
         // Things we derive from the user-provided zip code.
@@ -112,11 +182,10 @@ module.exports  = {
         requestData.email = req.body.email.trim().replace(/\s+/g, ' ');
         requestData.assigned_rc_region = region;
 
-
         return requestData;
     },
 
-    createSerial: function (numberOfRequests, requestData, region){
+    createSerial: function (numberOfRequests, requestData, region) {
         // construct today date object
         var today = new Date();
         // avoid the first request having a serial number of
@@ -200,7 +269,6 @@ module.exports  = {
 
         requestData.countyFromZip = address['county'].replace(" County", "");
         requestData.stateFromZip = address['state'];
-
         return db.SelectedCounties.findOne({
             where: {
                 // Use the PostgreSQL "ILIKE" (case-insensitive LIKE)

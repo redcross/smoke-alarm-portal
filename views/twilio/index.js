@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser())
 var serial_num = "example serial";
 var rc_local = "(555)-not-real";
-var client = require('twilio')(config.twilio_accountSid, config.twilio_authToken);
+
 // array of script responses
 var responses_array = ["Welcome to the smoke alarm request system (para español, texto 'ES'). We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?", "What is your address, including the unit number, city, state, and zipcode?", "Is the number you're texting from the best way to get in touch with you? If so, text YES. Otherwise, please text a phone number where we can reach you.", "One last question: is there an email address we can use to contact you? If not, text NONE. If yes, please text us the email address.", "Thank you for your smoke alarm request! Your request number is " + serial_num + ". To contact your local Red Cross about this request, call " + rc_local + ". We will be in touch with you to schedule an installation."];
 var request_object = {};
