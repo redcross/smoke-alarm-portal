@@ -232,7 +232,7 @@ module.exports  = {
     saveRequestData: function(requestData) {
         return db.Request.create({
             name: requestData.name,
-            source: 'sms',
+            source: requestData.is_sms,
             address: requestData.street_address,
             city: requestData.city,
             state: requestData.state,
@@ -317,7 +317,14 @@ module.exports  = {
             + "\n"
             + "  " + request.name + "\n"
             + "  " + request.address + "\n"
-            + "  " + request.city + ", " + state_abbrevs[request.state] + "  " + request.zip + "\n";
+            + "  " + request.city + ", ";
+        if (state_abbrevs[request.state]){
+            email_text = email_text + state_abbrevs[request.state];
+        }
+        else {
+            email_text = email_text + request.state;
+        }
+        email_text = email_text + "  " + request.zip + "\n";
 
         if (request.phone) {
             email_text += "  Phone: " + request.phone + "\n";

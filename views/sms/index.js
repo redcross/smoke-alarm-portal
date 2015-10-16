@@ -67,7 +67,14 @@ var saveRequest = function (zip) {
         else {
             region_code = null
         }
-        request_object.street_address = request_object.address.number + " " + request_object.address.street + " " + request_object.address.type + " " + request_object.address.sec_unit_type + " " + request_object.address.sec_unit_num;
+        // add pieces of the street address as they exist
+        request_object.street_address = "";
+        var street_address_arr = [request_object.address.number, request_object.address.street, request_object.address.type, request_object.address.sec_unit_type, request_object.address.sec_unit_num];
+        street_address_arr.forEach( function (element) {
+            if (element) {
+                request_object.street_address = request_object.street_address + " " + element;
+            }
+        });
         request_object.city = request_object.address.city;
         request_object.state = request_object.address.state;
         request_object.zip_final = request_object.address.zip;
