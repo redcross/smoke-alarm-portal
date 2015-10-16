@@ -31,6 +31,7 @@ exports.saveRequest = function(req, res) {
     }).then( function(numRequests) {
         requestData = utils.getRequestData(req, numRequests, region_code);
         requestData = utils.createSerial(numRequests, requestData, region_code);
+        requestData.is_sms = 'web';
         return utils.saveRequestData(requestData);
     }).then(function(request) {
         savedRequest = request;

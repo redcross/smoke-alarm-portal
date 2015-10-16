@@ -75,6 +75,7 @@ var saveRequest = function (zip) {
         return save_utils.countRequestsPerRegion(region_code);
     }).then( function(numRequests) {
         requestData = save_utils.createSerial(numRequests, request_object, region_code);
+        requestData.is_sms = 'sms';
         return save_utils.saveRequestData(requestData);
     }).then(function(request) {
         savedRequest = request;
@@ -85,7 +86,7 @@ var saveRequest = function (zip) {
         if (activeRegion) {
             save_utils.sendEmail(savedRequest, activeRegion);
             is_valid = true;
-            contact_num = activeRegion.contact_email
+            contact_num = activeRegion.contact_phone;
         }
         else{
             is_valid = false;
@@ -94,7 +95,7 @@ var saveRequest = function (zip) {
 
     }).catch(function(error) {
         // send sorry
-        constructFinalText(false, savedRequest.serial, savedRequest.county, null);
+        constructFinalText(false, request_object, null);
     });
 };
  

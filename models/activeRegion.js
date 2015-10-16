@@ -22,6 +22,7 @@ module.exports = function(sequelize, DataTypes) {
       region_name: DataTypes.TEXT,
       contact_name: DataTypes.TEXT,
       contact_email: DataTypes.TEXT,
+      contact_phone: DataTypes.TEXT,      
       is_active: DataTypes.BOOLEAN
   })
 }

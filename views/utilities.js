@@ -232,6 +232,7 @@ module.exports  = {
     saveRequestData: function(requestData) {
         return db.Request.create({
             name: requestData.name,
+            source: 'sms',
             address: requestData.street_address,
             city: requestData.city,
             state: requestData.state,
