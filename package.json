@@ -22,6 +22,7 @@
     "express-session": "^1.11.3",
     "forever": "^0.14.1",
     "helmet": "^0.7.x",
+    "i18n-2": "^0.4.6",
     "jade": "^1.x.x",
     "json2csv": "^2.11.0",
     "mailgun-js": "~0.7.1",

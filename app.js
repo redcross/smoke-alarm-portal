@@ -31,6 +31,8 @@ var config = require('./config'),
     csrf = require('csurf'),
     moment = require('moment');
 
+var i18n = require('i18n-2');
+
 var favicon = require('serve-favicon');
 
 var pg = require('pg');
@@ -74,6 +76,21 @@ app.use(csrf({
         signed: true
     }
 }));
+i18n.expressBind(app, {
+    // setup some locales - other locales default to en silently
+    locales: ['en', 'es'],
+    // change the cookie name from 'lang' to 'locale'
+    cookieName: 'locale'
+});
+
+
+app.use(function(req, res, next) {
+    req.i18n.setLocaleFromCookie();
+    // can set this here for testing purposes
+    // req.i18n.setLocale('es');
+    next();
+});
+
 helmet(app);
 
 //response locals
