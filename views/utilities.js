@@ -105,7 +105,13 @@ module.exports  = {
         // Treat zip code specially.  For zip codes, we remove all
         // internal spaces, since they can't possibly be useful.
         var requestZip = {};
-        requestZip.zip_received = req.body.zip.trim().replace(/\s+/g, '');
+        // may be called from sms or website:
+        if (req.body.zip) {
+            requestZip.zip_received = req.body.zip.trim().replace(/\s+/g, '');
+        }
+        else if (req.query.Body) {
+            requestZip.zip_received = req.query.Body.trim().replace(/\s+/g, '');
+        }
         // This is the zip code we will actually store in the database.
         // Our canonical form for storing zip codes is any of the following:
         // "NNNNN" (a 5 digit string), "NNNNN-NNNN" (a string consisting
@@ -338,7 +344,8 @@ module.exports  = {
         };
 
         email_text += "\n"
-            + "This is installation request #" + thisRequestID + ".\n"
+            + "This is installation request #" + thisRequestID
+            + ".  It was received via " + request.source + ".\n"
             + "\n"
             + "We're directing this request to the administrator for the\n"
             + "ARC North Central Division, " + regionPresentableName + " region:\n"

@@ -15,7 +15,7 @@ var serial_num = "example serial";
 var rc_local = "(555)-not-real";
 
 // array of script responses
-var responses_array = ["Welcome to the smoke alarm request system (para español, texto 'ES'). We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?", "What is your address, including the unit number, city, state, and zipcode?", "Is the number you're texting from the best way to get in touch with you? If so, text YES. Otherwise, please text a phone number where we can reach you.", "One last question: is there an email address we can use to contact you? If not, text NONE. If yes, please text us the email address.", "Thank you for your smoke alarm request! Your request number is " + serial_num + ". To contact your local Red Cross about this request, call " + rc_local + ". We will be in touch with you to schedule an installation."];
+var responses_array = ["Welcome to the smoke alarm request system (para español, texto 'ES'). We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?", "What is your address, including the unit number, city, state, and zipcode?", "Sorry, we couldn't process your zipcode. Please text us your 5-digit zipcode.", "Is the number you're texting from the best way to get in touch with you? If so, text YES. Otherwise, please text a phone number where we can reach you.", "One last question: is there an email address we can use to contact you? If not, text NONE. If yes, please text us the email address.", "Thank you for your smoke alarm request! Your request number is " + serial_num + ". To contact your local Red Cross about this request, call " + rc_local + ". We will be in touch with you to schedule an installation."];
 var request_object = {};
 
 // include the functions from views/index.js
@@ -37,7 +37,6 @@ var constructFinalText = function (outcome, request, contact) {
     var twiml = new twilio.TwimlResponse();
     if (outcome) {
         var msg = "Thank you for your smoke alarm installation request. If you need to contact the Red Cross about this request, use ID number " + request.serial +  " and call your local group at " + contact + ". Your information has been sent to the Red Cross representative for " + request.county +  ". A representative will contact you with information on installation availability in your area. Please allow two to four weeks for a response.";
-        twiml.message(msg);
     }
     else {
         if (request.county) {
@@ -47,8 +46,8 @@ var constructFinalText = function (outcome, request, contact) {
             // invalid zip
             var msg = "Sorry, we couldn't find a county for zip code " + request.zip_final + ".  However, we will remember your request with ID number " + request.serial + ".  Thank you for contacting the Red Cross.";
         }
-        twiml.message(msg);
     }
+    twiml.message(msg);
 };
 
 
@@ -116,22 +115,50 @@ exports.respond = function(req, res) {
         counter = 0;
     }
 
+    // Not thrilled about the magic numbers here.  What's a better way
+    // to do this?
+
     // Use the counter to find out what information is arriving:
     if (counter == 1) {
-        request_object.name = req.query.Body;
+        if (req.query.Body == 'ES'){
+            // start sending spanish texts
+            // set i18n to spanish
+            //i18n.setLocale('es');
+            
+            // may need to reset the counter here.
+            
+        }
+        else{
+            request_object.name = req.query.Body;
+        }
     }
     else if (counter == 2) {
         // then it is their address
         request_object.address = req.query.Body;
         request_object.address = parser.parseLocation(request_object.address);
-        // TODO: if we didn't get a zip, add another response in here to
-        // ask for it specifically
+        if (request_object.address.zip) {
+            // if they've included their zip, skip the extra "please
+            // send your zip" text.
+            counter = counter + 1;
+        }
     }
     else if (counter == 3) {
+        // should only be here if we had to send the zipcode text
+        // process it slightly
+        req.query.Body;
+        var zipset = save_utils.findZipForLookup(req);
+        if (request_object.address) {
+            request_object.address.zip = zipset.zip_final;
+        }
+        else {
+            request_object.address = "";
+            request_object.address.zip =  zipset.zip_final;
+        }
+    }
+    else if (counter == 4) {
         var phone_check = req.query.Body;
         // handle any capitalization
         phone_check = phone_check.toLowerCase();
-        
         if (phone_check == "yes") {
             request_object.phone = req.query.From;
         }
@@ -139,7 +166,7 @@ exports.respond = function(req, res) {
             request_object.phone = req.query.Body;
         }
     }
-    else if (counter == 4) {
+    else if (counter == 5) {
         // this is their email address, or none.
         request_object.email = req.query.Body;
         if (request_object.address) {
@@ -148,7 +175,8 @@ exports.respond = function(req, res) {
     }
 
     // construct a request object and insert it into the db
-    console.log("DEBUG: " + JSON.stringify(request_object));
+
+    // may need to change this to account for varying scripts with i18n.
     if (counter < (responses_array.length -1 )){
         twiml.message(responses_array[counter]);
     }
