@@ -1,9 +1,9 @@
 {
-  "Get a Smoke Alarm": "Get a Smoke Alarm",
-  "American Red Cross": "American Red Cross",
+	"Get a Smoke Alarm": "Get a Smoke Alarm",
+	"American Red Cross": "American Red Cross",
 	"Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.": "Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.",
 	"Thank you for your interest in having FREE smoke alarms installed in your home.": "Thank you for your interest in having FREE smoke alarms installed in your home.",
-	"To request a FREE installation, please complete all fields in the form below and click “Submit.\"": "To request a FREE installation, please complete all fields in the form below and click “Submit.\"",
+	"To request a FREE installation, please complete all fields in the form below and click “Submit.”": "To request a FREE installation, please complete all fields in the form below and click “Submit.”",
 	"After submitting your request, you will be contacted by an American Red Cross representative with information on installation availability in your area.": "After submitting your request, you will be contacted by an American Red Cross representative with information on installation availability in your area.",
 	"The American Red Cross and its partners have launched the Home Fire Campaign to reduce deaths and injuries caused by home fires by 25 percent over five years.": "The American Red Cross and its partners have launched the Home Fire Campaign to reduce deaths and injuries caused by home fires by 25 percent over five years.",
 	"The Red Cross asks every household in America to take two simple steps to help save lives: check or install smoke alarms and practice fire drills at home.": "The Red Cross asks every household in America to take two simple steps to help save lives: check or install smoke alarms and practice fire drills at home.",
@@ -36,5 +36,6 @@
 	"Thank you for your smoke alarm installation request.": "Thank you for your smoke alarm installation request.",
 	"If you need to contact the Red Cross about this request, use ID number %s.": "If you need to contact the Red Cross about this request, use ID number %s.",
 	"Your information has been sent to the Red Cross representative for %s.": "Your information has been sent to the Red Cross representative for %s.",
-	"A representative will contact you with information on installation availability in your area.  Please allow two to four weeks for a response.": "A representative will contact you with information on installation availability in your area.  Please allow two to four weeks for a response."
+	"A representative will contact you with information on installation availability in your area.  Please allow two to four weeks for a response.": "A representative will contact you with information on installation availability in your area.  Please allow two to four weeks for a response.",
+	"To request a FREE installation, please complete all fields in the form below and click “Submit.\"": "To request a FREE installation, please complete all fields in the form below and click “Submit.\""
 }
