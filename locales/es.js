@@ -1,4 +1,6 @@
 {
+  "Get a Smoke Alarm": "Solicite un Detector de Humo",
+  "American Red Cross": "La Cruz Roja Americana",
 	"Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.": "Los detectores de humo salvan vidas. La instalación de un detector de humo es el primer paso para mantener a su familia segura.",
 	"Thank you for your interest in having FREE smoke alarms installed in your home.": "Gracias por su interés en detectores de humo, que se pueden instalar GRATIS en su casa.",
 	"To request a FREE installation, please complete all fields in the form below and click “Submit.\"": "Para solicitar una instalación GRATIS, llene por favor todos los campos en el formulario siguiente y haga clic en “Enviar.\"",
@@ -11,8 +13,8 @@
 	"your": "su",
 	" local Red Cross Chapter.": " oficina local de la Cruz Roja.",
 	"Your Name": "Su Nombre",
-	"Street Address & Unit (e.g., 123 Main St., Unit Q)": "Dirección y Número de Unidad (por ejemplo 123 Main St., Unit Q)",
 	"Address & Unit": "Dirección y Número de Unidad",
+	"Street Address & Unit (e.g., 123 Main St., Unit Q)": "Dirección y Número de Unidad (por ejemplo 123 Main St., Unit Q)",
 	"City": "Ciudad",
 	"State": "Estado",
 	"Zip Code": "Código Postal",
