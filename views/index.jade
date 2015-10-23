@@ -2,6 +2,11 @@ extends layout
 
 block content
   #container.container-fluid
+    #language
+      span view this page in&nbsp;
+      a(onclick='setLocale("EN")') EN
+      | &nbsp;|&nbsp;
+      a(onclick='setLocale("ES")') ES
     #top
       #logo.text-center
         img.logo(src='./smokeAlarmPortal_files/redcross-logo-white-letters.png', alt='American Red Cross')
@@ -120,8 +125,13 @@ block content
 
 
     script(type="text/javascript").
-      $("select").addClass('state-not-yet-selected');
-      $("select").bind("focus", function () {
+      function setLocale(locale) { document.cookie= "locale=" + locale; location.reload(); }
+      var locale = /locale=([^;]+)/.exec(document.cookie);
+      if (locale[1]) {
+        $("select#language-switcher").val(locale[1]);
+      }
+      $("select#state").addClass('state-not-yet-selected');
+      $("select#state").bind("focus", function () {
         $(this).children('option[value="state-not-yet-selected"]').remove();
         $(this).removeClass('state-not-yet-selected');
       });

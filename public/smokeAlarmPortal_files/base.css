@@ -207,6 +207,21 @@ body {
 #organization-name {
     margin-bottom: 10px;
 }
+
+#language {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+#language span {
+    font-style: italic;
+}
+
+#language a {
+    cursor: pointer;
+}
+
 /*
 #top {
     padding: 1em 0em 0em 0em;
