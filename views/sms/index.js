@@ -30,13 +30,13 @@ i18n.expressBind(app, {
 app.use(function(req, res, next) {
     req.i18n.setLocaleFromCookie();
     // can set this here for testing purposes
-    req.i18n.setLocale('es');
+    // req.i18n.setLocale('es');
     next();
 });
 
 var i18n_inst = new (i18n)({
     // setup some locales - other locales default to en silently
-    locales: ['es', 'en'],
+    locales: ['en', 'es'],
     // change the cookie name from 'lang' to 'locale'
     cookieName: 'locale'
 });
