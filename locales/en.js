@@ -37,5 +37,15 @@
 	"If you need to contact the Red Cross about this request, use ID number %s.": "If you need to contact the Red Cross about this request, use ID number %s.",
 	"Your information has been sent to the Red Cross representative for %s.": "Your information has been sent to the Red Cross representative for %s.",
 	"A representative will contact you with information on installation availability in your area.  Please allow two to four weeks for a response.": "A representative will contact you with information on installation availability in your area.  Please allow two to four weeks for a response.",
-	"To request a FREE installation, please complete all fields in the form below and click “Submit.\"": "To request a FREE installation, please complete all fields in the form below and click “Submit.\""
+	"To request a FREE installation, please complete all fields in the form below and click “Submit.\"": "To request a FREE installation, please complete all fields in the form below and click “Submit.\"",
+	"Welcome to the smoke alarm request system (para español, texto \"ES\").": "Welcome to the smoke alarm request system (para español, texto \"ES\").",
+	"We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?": "We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?",
+	"What is your address, including the unit number, city, state, and zipcode?": "What is your address, including the unit number, city, state, and zipcode?",
+	"Sorry, we couldn't process your zipcode. Please text us your 5-digit zipcode.": "Sorry, we couldn't process your zipcode. Please text us your 5-digit zipcode.",
+	"Is the number you're texting from the best way to get in touch with you?": "Is the number you're texting from the best way to get in touch with you?",
+	"If so, text YES. Otherwise, please text a phone number where we can reach you.": "If so, text YES. Otherwise, please text a phone number where we can reach you.",
+	"One last question: is there an email address we can use to contact you?": "One last question: is there an email address we can use to contact you?",
+	"If not, text NONE. If yes, please text us the email address.": "If not, text NONE. If yes, please text us the email address.",
+	"Thank you for your smoke alarm request! Your request number is %s.": "Thank you for your smoke alarm request! Your request number is %s.",
+	"To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.": "To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation."
 }

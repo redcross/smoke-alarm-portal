@@ -1,6 +1,6 @@
 {
-  "Get a Smoke Alarm": "Solicite un Detector de Humo",
-  "American Red Cross": "La Cruz Roja Americana",
+	"Get a Smoke Alarm": "Solicite un Detector de Humo",
+	"American Red Cross": "La Cruz Roja Americana",
 	"Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.": "Los detectores de humo salvan vidas. La instalación de un detector de humo es el primer paso para mantener a su familia segura.",
 	"Thank you for your interest in having FREE smoke alarms installed in your home.": "Gracias por su interés en detectores de humo, que se pueden instalar GRATIS en su casa.",
 	"To request a FREE installation, please complete all fields in the form below and click “Submit.”": "Para solicitar una instalación GRATIS, llene por favor todos los campos en el formulario siguiente y haga clic en “Enviar”.",
@@ -36,5 +36,15 @@
 	"Thank you for your smoke alarm installation request.": "Gracias por su solicitud de que un detector de humo se instale en su casa.",
 	"If you need to contact the Red Cross about this request, use ID number %s.": "Si necesita contactar la Cruz Roja sobre esta solicitud, utilice el número de ID %s.",
 	"Your information has been sent to the Red Cross representative for %s.": "Su información se ha enviado al representante de la Cruz Roja para %s.",
-	"A representative will contact you with information on installation availability in your area.  Please allow two to four weeks for a response.": "Un representante se pondrá en contacto con usted para informarle sobre la disponibilidad de instalaciones en su área. Por favor espere entre dos y cuatro semanas para una respuesta."
+	"A representative will contact you with information on installation availability in your area.  Please allow two to four weeks for a response.": "Un representante se pondrá en contacto con usted para informarle sobre la disponibilidad de instalaciones en su área. Por favor espere entre dos y cuatro semanas para una respuesta.",
+	"Welcome to the smoke alarm request system (para español, texto \"ES\").": "Bienvenidos al sistema de solicitud de detectores de humo (for English, text 'EN').",
+	"We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?": "Para procesar su solicitud, se necesitan respuestas a cuatro preguntas. Por favor mande mensajes de texto con cada respuesta y luego espere la siguiente pregunta. En primer lugar, ¿cuál es su nombre?",
+	"What is your address, including the unit number, city, state, and zipcode?": "¿Cuál es su dirección? Asegúrese de incluir su número de unidad, ciudad, estado y código postal",
+	"Sorry, we couldn't process your zipcode. Please text us your 5-digit zipcode.": "Lo sentimos, pero no podemos identificar su código postal. Por favor mande su código postal de cinco dígitos por mensaje de texto.",
+	"Is the number you're texting from the best way to get in touch with you?": "¿Es el número de teléfono que está usando ahora la mejor forma por la que podemos ponernos en contacto con Ud.? Se es así, mande 'SI' por mensaje de texto. Si no, mande un número de teléfono donde...FINSIH SPANISH TRANSLATION",
+	"If so, text YES. Otherwise, please text a phone number where we can reach you.": "SPANISH TRANSLATION NEEDED",
+	"One last question: is there an email address we can use to contact you?": "SPANISH TRANSLATION NEEDED",
+	"If not, text NONE. If yes, please text us the email address.": "SPANISH TRANSLATION NEEDED",
+	"Thank you for your smoke alarm request! Your request number is %s.": "SPANISH TRANSLATION NEEDED",
+	"To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.": "SPANISH TRANSLATION NEEDED"
 }
