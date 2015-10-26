@@ -4,10 +4,10 @@ block content
   #container
     .row
       .col-sm-12
-        h1 American Red Cross of Chicago & Northern Illinois
+        h1 #{__('American Red Cross')}
         if county
           p
-            | Sorry, the Red Cross Region serving #{county} County, #{state} does not yet offer smoke alarm installation service. However, we will remember your request and contact you when smoke alarm installation service is available in your region. Thank you for contacting the Red Cross.
+            | #{__('Sorry, the Red Cross Region serving %s County, %s does not yet offer smoke alarm installation service.', county, state)} #{__('However, we will remember your request and contact you when smoke alarm installation service is available in your region.')} #{__('Thank you for contacting the Red Cross.')}
         else
           p
-            | Sorry, we don't recognize any U.S. location for Zip Code "#{zip}".  Are you sure you entered an accurate Zip Code?
+            | #{__('Sorry, we don\'t recognize any U.S. location for Zip Code "%s".  Are you sure you entered an accurate Zip Code?', zip)}
