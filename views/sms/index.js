@@ -1,7 +1,8 @@
 var env = process.env.NODE_ENV || 'development';
 var config = require(__dirname + '/../../config/config.json')[env];
-var twilio = require('twilio');
 var parser = require('parse-address'); 
+
+var client = require('twilio')(config.twilio_accountSid, config.twilio_authToken);
 
 var http = require('http'),
     express = require('express'),
@@ -40,20 +41,38 @@ var save_utils = require('../utilities');
  * phone number for out-of-area zip codes (just like the website).
 */
 var constructFinalText = function (outcome, request, contact) {
-    var twiml = new twilio.TwimlResponse();
+    var msg = "";
     if (outcome) {
-        var msg = "Thank you for your smoke alarm installation request. If you need to contact the Red Cross about this request, use ID number " + request.serial +  " and call your local group at " + contact + ". Your information has been sent to the Red Cross representative for " + request.county +  ". A representative will contact you with information on installation availability in your area. Please allow two to four weeks for a response.";
+        msg = "Thank you for your smoke alarm installation request. If you need to contact the Red Cross about this request, use ID number " + request.serial +  " and call your local group at " + contact + ". Your information has been sent to the Red Cross representative for " + request.county +  ". A representative will contact you with information on installation availability in your area. Please allow two to four weeks for a response.";
     }
     else {
         if (request.county) {
-            var msg = "Sorry, the Red Cross Region serving " + request.county +  " does not yet offer smoke alarm installation service. However, we will remember your request with ID number " + request.serial + " and contact you when smoke alarm installation service is available in your region. Thank you for contacting the Red Cross.";
+            msg = "Sorry, the Red Cross Region serving " + request.county +  " does not yet offer smoke alarm installation service. However, we will remember your request with ID number " + request.serial + " and contact you when smoke alarm installation service is available in your region. Thank you for contacting the Red Cross.";
         }
         else {
             // invalid zip
-            var msg = "Sorry, we couldn't find a county for zip code " + request.zip_final + ".  However, we will remember your request with ID number " + request.serial + ".  Thank you for contacting the Red Cross.";
+            msg = "Sorry, we couldn't find a county for zip code " + request.zip_final + ".  However, we will remember your request with ID number " + request.serial + ".  Thank you for contacting the Red Cross.";
         }
     }
-    twiml.message(msg);
+        client.sendMessage({
+            to: req.query.From,
+            from: config.twilio_phone,
+            body: msg
+        }, function(err, responseData) {
+            if (!err) {
+                console.log("DEBUG: message sent successfully");
+                counter = counter + 1;
+                res.cookie('counter', counter);
+                res.cookie('locale', i18n_inst.getLocale());
+                res.writeHead(200, {'Content-Type': 'text/xml'});
+                res.end(msg.toString());
+            }
+            else {
+                console.log("DEBUG: error sending message");
+                console.log(err);
+                // don't increment counter...maybe resend the message?
+            }
+        });
 };
 
 
@@ -123,7 +142,6 @@ exports.respond = function(req, res) {
     req.cookies.locale = req.cookies.locale.toLowerCase();
     i18n_inst.setLocale(req.cookies.locale);
     var responses_array = [__('Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto "ES"\).') + " " + __('We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?'), __('What is your address, including the unit number, city, state, and zipcode?'), __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.'), __('Thank you for your smoke alarm request! Your request number is %s.', serial_num), __('To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.', rc_local)];
-    var twiml = new twilio.TwimlResponse();
     var counter = parseInt(req.cookies.counter) || 0;
 
     // Increment or initialize views, up to the length of our array.  If
@@ -206,16 +224,27 @@ exports.respond = function(req, res) {
 
     // may need to change this to account for varying scripts with i18n.
     if (counter < (responses_array.length -1 )){
-        twiml.message(responses_array[counter]);
+        client.sendMessage({
+            to: req.query.From,
+            from: config.twilio_phone,
+            body: responses_array[counter]
+        }, function(err, responseData) {
+            if (!err) {
+                console.log("DEBUG: message sent successfully");
+                counter = counter + 1;
+                res.cookie('counter', counter);
+                res.cookie('locale', i18n_inst.getLocale());
+                res.writeHead(200, {'Content-Type': 'text/xml'});
+                res.end(responses_array[counter].toString());
+            }
+            else {
+                console.log("DEBUG: error sending message");
+                console.log(err);
+                // don't increment counter and maybe resend the message
+            }
+        });
     }
     // else the message will be sent from "construct final text"
-
-    counter = counter + 1;
-    res.cookie('counter', counter);
-    res.cookie('locale', i18n_inst.getLocale());
-    res.writeHead(200, {'Content-Type': 'text/xml'});
-    res.end(twiml.toString());
-
 };
 
 
