@@ -14,41 +14,16 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(cookieParser());
 
-/* Apparently this function call is unnecessary since we instantiate an
-   i18n object below, but how does that accomplish the same task??
-
-// Attach the i18n property to the express request object
-// And attach helper methods for use in templates
-i18n.expressBind(app, {
-    // setup some locales - other locales default to en silently
-    locales: ['en', 'de'],
-    // change the cookie name from 'lang' to 'locale'
-    cookieName: 'locale'
-});
-*/
-
 app.use(function(req, res, next) {
     req.i18n.setLocaleFromCookie();
     // can set this here for testing purposes
     // req.i18n.setLocale('es');
     next();
 });
-
-var i18n_inst = new (i18n)({
-    // setup some locales - other locales default to en silently
-    locales: ['en', 'es'],
-    // change the cookie name from 'lang' to 'locale'
-    cookieName: 'locale'
-});
-var __ = function(s) { return i18n_inst.__(s); }
-
 var serial_num = "example serial";
 var rc_local = "(555)-not-real";
 
-// array of script responses
-var responses_array = [__('Welcome to the smoke alarm request system \(para español, texto "ES"\).') + " " + __('We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?'), __('What is your address, including the unit number, city, state, and zipcode?'), __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.'), __('Thank you for your smoke alarm request! Your request number is %s.', serial_num), __('To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.', rc_local)];
 var request_object = {};
-
 // include the functions from views/index.js
 var save_utils = require('../utilities');
 
@@ -137,6 +112,17 @@ var saveRequest = function (zip) {
 };
  
 exports.respond = function(req, res) {
+    
+    var i18n_inst = new (i18n)({
+        // setup some locales - other locales default to en silently
+        locales: ['en', 'es'],
+        // change the cookie name from 'lang' to 'locale'
+        cookieName: 'locale'
+    });
+    var __ = function(s) { return i18n_inst.__(s); }
+    req.cookies.locale = req.cookies.locale.toLowerCase();
+    i18n_inst.setLocale(req.cookies.locale);
+    var responses_array = [__('Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto "ES"\).') + " " + __('We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?'), __('What is your address, including the unit number, city, state, and zipcode?'), __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.'), __('Thank you for your smoke alarm request! Your request number is %s.', serial_num), __('To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.', rc_local)];
     var twiml = new twilio.TwimlResponse();
     var counter = parseInt(req.cookies.counter) || 0;
 
@@ -145,19 +131,28 @@ exports.respond = function(req, res) {
     if (counter >= responses_array.length) {
         counter = 0;
     }
-    counter = 0; // REMEMBER TO TAKE THIS OUT!!
+
     // Not thrilled about the magic numbers here.  What's a better way
     // to do this?
 
     // Use the counter to find out what information is arriving:
+
     if (counter == 1) {
+        // need to abstract this so that we can add locales without
+        // adding another block here.
         if (req.query.Body == 'ES'){
             // start sending spanish texts
             // set i18n to spanish
-            //i18n.setLocale('es');
-            
-            // may need to reset the counter here.
-            
+            req.cookies.locale = 'es';
+            i18n_inst.setLocale(req.cookies.locale);
+            // reset counter so they get the intro text in their language
+            counter = 0;
+        }
+        else if (req.query.Body == 'EN') {
+            req.cookies.locale = 'en';
+            i18n_inst.setLocale(req.cookies.locale);
+            // reset counter so they get the intro text in their language
+            counter = 0;
         }
         else{
             request_object.name = req.query.Body;
@@ -189,7 +184,9 @@ exports.respond = function(req, res) {
     else if (counter == 4) {
         var phone_check = req.query.Body;
         // handle any capitalization
-        phone_check = phone_check.toLowerCase();
+        if (phone_check) {
+            phone_check = phone_check.toLowerCase();
+        }
         if (phone_check == "yes") {
             request_object.phone = req.query.From;
         }
@@ -214,7 +211,8 @@ exports.respond = function(req, res) {
     // else the message will be sent from "construct final text"
 
     counter = counter + 1;
-    res.cookie('counter',counter);
+    res.cookie('counter', counter);
+    res.cookie('locale', i18n_inst.getLocale());
     res.writeHead(200, {'Content-Type': 'text/xml'});
     res.end(twiml.toString());
 
