@@ -21,6 +21,13 @@ app.use(function(req, res, next) {
     // req.i18n.setLocale('es');
     next();
 });
+var i18n_inst = new (i18n)({
+    // setup some locales - other locales default to en silently
+    locales: ['en', 'es'],
+    // change the cookie name from 'lang' to 'locale'
+    cookieName: 'locale'
+});
+var __ = function(s) { return i18n_inst.__(s); }
 var serial_num = "example serial";
 var rc_local = "(555)-not-real";
 
@@ -35,52 +42,49 @@ var save_utils = require('../utilities');
  * serial: the serial number assigned to the request
  * county: the county found based on the entered zipcode
  * contact: the phone number for this RC region
+ * phone: the number to send the message to
  *
  * Returns: a message with "thank you," the serial number, and a contact
  * phone for successful outcomes and a "sorry" message with a generic RC
  * phone number for out-of-area zip codes (just like the website).
 */
-var constructFinalText = function (outcome, request, contact) {
+var constructFinalText = function (outcome, request, contact, phone) {
     var msg = "";
     if (outcome) {
-        msg = "Thank you for your smoke alarm installation request. If you need to contact the Red Cross about this request, use ID number " + request.serial +  " and call your local group at " + contact + ". Your information has been sent to the Red Cross representative for " + request.county +  ". A representative will contact you with information on installation availability in your area. Please allow two to four weeks for a response.";
+        msg = __("Thank you for your smoke alarm request! Your request number is %s.", request.serial)+ __("To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.", contact);
     }
     else {
         if (request.county) {
-            msg = "Sorry, the Red Cross Region serving " + request.county +  " does not yet offer smoke alarm installation service. However, we will remember your request with ID number " + request.serial + " and contact you when smoke alarm installation service is available in your region. Thank you for contacting the Red Cross.";
+            msg = __("Sorry, the Red Cross Region serving %s County, %s does not yet offer smoke alarm installation service.", request.county, request.state);
         }
         else {
             // invalid zip
-            msg = "Sorry, we couldn't find a county for zip code " + request.zip_final + ".  However, we will remember your request with ID number " + request.serial + ".  Thank you for contacting the Red Cross.";
+            msg = __("Sorry, we don't recognize any U.S. location for Zip Code \"%s\".  Are you sure you entered an accurate Zip Code?", request.zip);
         }
     }
         client.sendMessage({
-            to: request.query.From,
+            to: phone,
             from: config.twilio_phone,
             body: msg
         }, function(err, responseData) {
             if (!err) {
                 console.log("DEBUG: message sent successfully");
-                counter = counter + 1;
-                res.cookie('counter', counter);
-                res.cookie('locale', i18n_inst.getLocale());
-                res.writeHead(200, {'Content-Type': 'text/xml'});
-                res.end(msg.toString());
+                return;
             }
             else {
                 console.log("DEBUG: error sending message");
                 console.log(err);
-                // don't increment counter...maybe resend the message?
+                return;
             }
         });
 };
 
 
 /* Generally to find the county and region we use the zipcode, so this
- * takes the entered zip.
+ * takes the entered zip and the phone number to send the final message to.
  * Returns nothing, but saves the request to the database.
 */
-var saveRequest = function (zip) {
+var saveRequest = function (zip, phone) {
     save_utils.findAddressFromZip(zip).then(function(address) {
         request_object.county = address['county'];
         return save_utils.findCountyFromAddress(address, zip);
@@ -122,23 +126,16 @@ var saveRequest = function (zip) {
         else{
             is_valid = false;
         }
-        constructFinalText(is_valid, request_object, contact_num); 
+        constructFinalText(is_valid, request_object, contact_num, phone); 
 
     }).catch(function(error) {
         // send sorry
-        constructFinalText(false, request_object, null);
+        constructFinalText(false, request_object, null, phone);
     });
 };
  
 exports.respond = function(req, res) {
     
-    var i18n_inst = new (i18n)({
-        // setup some locales - other locales default to en silently
-        locales: ['en', 'es'],
-        // change the cookie name from 'lang' to 'locale'
-        cookieName: 'locale'
-    });
-    var __ = function(s) { return i18n_inst.__(s); }
     if (req.cookies.locale) {
         req.cookies.locale = req.cookies.locale.toLowerCase();
     }
@@ -222,7 +219,16 @@ exports.respond = function(req, res) {
         // this is their email address, or none.
         request_object.email = req.query.Body;
         if (request_object.address) {
-            var response_elements = saveRequest(request_object.address.zip);
+            // send final text to the number the user has been texting from
+            var to_phone;
+            if (req.query.From) {
+                to_phone = req.query.From;
+            }
+            counter = counter + 1;
+            var response_elements = saveRequest(request_object.address.zip, to_phone);
+        }
+        else {
+            console.log("DEBUG: no address");
         }
     }
 
