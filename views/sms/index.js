@@ -51,15 +51,21 @@ var save_utils = require('../utilities');
 var constructFinalText = function (outcome, request, contact, phone) {
     var msg = "";
     if (outcome) {
-        msg = __("Thank you for your smoke alarm request! Your request number is %s.", request.serial)+ __("To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.", contact);
+        msg = __("Thank you for your smoke alarm request! Your request number is %s.");
+        msg = msg.replace('%s', request.serial);
+        msg += __(" To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.", contact);
+        msg = msg.replace('%s', contact);
     }
     else {
         if (request.county) {
-            msg = __("Sorry, the Red Cross Region serving %s County, %s does not yet offer smoke alarm installation service.", request.county, request.state);
+            msg = __("Sorry, the Red Cross Region serving %s County, %s does not yet offer smoke alarm installation service.");
+            msg = msg.replace('%s', request.county);
+            msg = msg.replace('%s', request.state);
         }
         else {
             // invalid zip
-            msg = __("Sorry, we don't recognize any U.S. location for Zip Code \"%s\".  Are you sure you entered an accurate Zip Code?", request.zip);
+            msg = __("Sorry, we don't recognize any U.S. location for Zip Code \"%s\".  Are you sure you entered an accurate Zip Code?");
+            msg = msg.replace('%s', request.zip);
         }
     }
         client.sendMessage({
@@ -151,7 +157,7 @@ exports.respond = function(req, res) {
         req.cookies.locale = 'en';
     }
     i18n_inst.setLocale(req.cookies.locale);
-    var responses_array = [__('Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto "ES"\).') + " " + __('We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?'), __('What is your address, including the unit number, city, state, and zipcode?'), __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.'), __('Thank you for your smoke alarm request! Your request number is %s.', serial_num) + __('To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.', rc_local)];
+    var responses_array = [__('Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto "ES"\).') + " " + __('We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?'), __('What is your address, including the unit number, city, state, and zipcode?'), __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.'), __('Thank you for your smoke alarm request! Your request number is %s.', serial_num) + " " + __('To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.', rc_local)];
     var counter = parseInt(req.cookies.counter) || 0;
 
     // Increment or initialize views, up to the length of our array.  If
