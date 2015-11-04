@@ -100,6 +100,7 @@ var finishRequest = function (res, counter) {
 var saveRequest = function (zip, phone) {
     save_utils.findAddressFromZip(zip).then(function(address) {
         request_object.county = address['county'];
+        request_object.state = address['state'];
         return save_utils.findCountyFromAddress(address, zip);
     }).then( function(county_id){
         if (county_id){
@@ -118,7 +119,12 @@ var saveRequest = function (zip, phone) {
         });
         request_object.city = request_object.address.city;
         request_object.state = request_object.address.state;
-        request_object.zip_final = request_object.address.zip;
+        if (request_object.address.zip) {
+            request_object.zip_final = request_object.address.zip;
+        }
+        else {
+            request_object.zip_final = zip;
+        }
         request_object.assigned_rc_region = region_code;
         return save_utils.countRequestsPerRegion(region_code);
     }).then( function(numRequests) {
@@ -174,7 +180,7 @@ exports.respond = function(req, res) {
     if (counter == 1) {
         // need to abstract this so that we can add locales without
         // adding another block here.
-        if (req.query.Body == 'ES'){
+        if (req.query.Body.toUpperCase() == 'ES'){
             // start sending spanish texts
             // set i18n to spanish
             req.cookies.locale = 'es';
@@ -182,7 +188,7 @@ exports.respond = function(req, res) {
             // reset counter so they get the intro text in their language
             counter = 0;
         }
-        else if (req.query.Body == 'EN') {
+        else if (req.query.Body.toUpperCase() == 'EN') {
             req.cookies.locale = 'en';
             i18n_inst.setLocale(req.cookies.locale);
             // reset counter so they get the intro text in their language
@@ -221,7 +227,11 @@ exports.respond = function(req, res) {
         if (phone_check) {
             phone_check = phone_check.toLowerCase();
         }
-        if (phone_check == "yes") {
+        // if their text does not include ten digits, then we use the
+        // "from" number
+        digit_array = phone_check.match(/\d/g);
+        // I assume 10 digits for US phone numbers
+        if ( digit_array.length < 10) {
             request_object.phone = req.query.From;
         }
         else {
@@ -229,7 +239,7 @@ exports.respond = function(req, res) {
         }
     }
     else if (counter == 5) {
-        // this is their email address, or none.
+        // this is their email address, or none.  We save it regardless.
         request_object.email = req.query.Body;
         if (request_object.address) {
             // send final text to the number the user has been texting from
