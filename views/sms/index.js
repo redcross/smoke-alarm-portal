@@ -55,7 +55,7 @@ var constructFinalText = function (outcome, request, contact) {
         }
     }
         client.sendMessage({
-            to: req.query.From,
+            to: request.query.From,
             from: config.twilio_phone,
             body: msg
         }, function(err, responseData) {
@@ -147,7 +147,7 @@ exports.respond = function(req, res) {
         req.cookies.locale = 'en';
     }
     i18n_inst.setLocale(req.cookies.locale);
-    var responses_array = [__('Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto "ES"\).') + " " + __('We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?'), __('What is your address, including the unit number, city, state, and zipcode?'), __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.'), __('Thank you for your smoke alarm request! Your request number is %s.', serial_num), __('To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.', rc_local)];
+    var responses_array = [__('Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto "ES"\).') + " " + __('We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?'), __('What is your address, including the unit number, city, state, and zipcode?'), __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.'), __('Thank you for your smoke alarm request! Your request number is %s.', serial_num) + __('To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.', rc_local)];
     var counter = parseInt(req.cookies.counter) || 0;
 
     // Increment or initialize views, up to the length of our array.  If
