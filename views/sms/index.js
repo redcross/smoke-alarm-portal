@@ -79,6 +79,13 @@ var constructFinalText = function (outcome, request, contact, phone) {
         });
 };
 
+var finishRequest = function (res, counter) {
+    res.cookie('counter', counter);
+    res.cookie('locale', i18n_inst.getLocale());
+    res.writeHead(200, {'Content-Type': 'text/xml'});
+    res.end();
+};
+
 
 /* Generally to find the county and region we use the zipcode, so this
  * takes the entered zip and the phone number to send the final message to.
@@ -226,9 +233,11 @@ exports.respond = function(req, res) {
             }
             counter = counter + 1;
             var response_elements = saveRequest(request_object.address.zip, to_phone);
+            finishRequest(res, counter);
         }
         else {
             console.log("DEBUG: no address");
+            finishRequest(res, counter);
         }
     }
 
@@ -244,15 +253,13 @@ exports.respond = function(req, res) {
             if (!err) {
                 console.log("DEBUG: message sent successfully");
                 counter = counter + 1;
-                res.cookie('counter', counter);
-                res.cookie('locale', i18n_inst.getLocale());
-                res.writeHead(200, {'Content-Type': 'text/xml'});
-                res.end(responses_array[counter].toString());
+                finishRequest(res, counter);
             }
             else {
                 console.log("DEBUG: error sending message");
                 console.log(err);
-                // don't increment counter and maybe resend the message
+                // don't increment counter
+                finishRequest(res, counter);
             }
         });
     }
