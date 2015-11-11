@@ -1,6 +1,6 @@
 {
-  "Get a Smoke Alarm": "Solicite un Detector de Humo",
-  "American Red Cross": "La Cruz Roja Americana",
+	"Get a Smoke Alarm": "Solicite un Detector de Humo",
+	"American Red Cross": "La Cruz Roja Americana",
 	"Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.": "Los detectores de humo salvan vidas. La instalación de un detector de humo es el primer paso para mantener a su familia segura.",
 	"Thank you for your interest in having FREE smoke alarms installed in your home.": "Gracias por su interés en los detectores de humo, que se pueden instalar GRATIS en su casa.",
 	"To request a FREE installation, please complete all fields in the form below and click “Submit.”": "Para solicitar una instalación GRATIS, llene por favor todos los espacios en blanco en el formulario siguiente y haga clic en “Enviar”.",
@@ -36,5 +36,9 @@
 	"Thank you for your smoke alarm installation request.": "Gracias por su solicitud de que un detector de humo se instale en su casa.",
 	"If you need to contact the Red Cross about this request, use ID number %s.": "Si necesita contactar la Cruz Roja sobre esta solicitud, utilice el número de ID %s.",
 	"Your information has been sent to the Red Cross representative for %s.": "Su información se ha enviado al representante de la Cruz Roja para %s.",
-	"A representative will contact you with information on installation availability in your area.  Please allow two to four weeks for a response.": "Un representante se pondrá en contacto con usted para informarle sobre la disponibilidad de instalaciones en su área. Por favor espere entre dos y cuatro semanas para una respuesta."
+	"A representative will contact you with information on installation availability in your area.  Please allow two to four weeks for a response.": "Un representante se pondrá en contacto con usted para informarle sobre la disponibilidad de instalaciones en su área. Por favor espere entre dos y cuatro semanas para una respuesta.",
+	"For more information about the importance of smoke alarms, see ": "For more information about the importance of smoke alarms, see ",
+	"the Smoke Signals project.": "the Smoke Signals project.",
+	"Visit the Red Cross": "Visit the Red Cross",
+	" to learn how to prepare for and prevent home fires.": " to learn how to prepare for and prevent home fires."
 }
