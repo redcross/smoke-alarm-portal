@@ -47,7 +47,29 @@ For admins, there are some basic reports that can be generated:
 
 Node.js, Express, Jade, PostgreSQL, Sequelize, and the usual suspects.
 
-# Installation and Deployment
+# Installation
 
 Please see [INSTALL.md](INSTALL.md) for detailed installation
 instructions and dependency information.
+
+# Deployment Tags
+
+We use tags to mark code versions that have been deployed to the live
+site, [getasmokealarm.org](https://getasmokealarm.org).  The tags are named
+`deployed-<date of deployment>`.  To each new tag, we attach an
+annotation saying what the main new features and/or bugfixes are in this
+tag, relative to the previous one.  We name the previous tag explicitly
+in the new tag's message.  It looks like something like this:
+
+```
+deployed-exampledate
+
+This deployed version fixes the issue remaining from tag-previousdate in
+which the site displayed red text instead of white.
+
+```
+
+We also recommend keeping a separate file, outside this tree, with
+specific deployment details like why this commit was deployed to
+production and any other commands that were run on the server
+(e.g. database changes, new users).
