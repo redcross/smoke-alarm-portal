@@ -36,9 +36,9 @@
 	"Thank you for your smoke alarm installation request.": "Gracias por su solicitud de que un detector de humo se instale en su casa.",
 	"If you need to contact the Red Cross about this request, use ID number %s.": "Si necesita contactar la Cruz Roja sobre esta solicitud, utilice el número de ID %s.",
 	"Your information has been sent to the Red Cross representative for %s.": "Su información se ha enviado al representante de la Cruz Roja para %s.",
-	"A representative will contact you with information on installation availability in your area.  Please allow two to four weeks for a response.": "Un representante se pondrá en contacto con usted para informarle sobre la disponibilidad de instalaciones en su área. Por favor espere entre dos y cuatro semanas para una respuesta.",
-	"For more information about the importance of smoke alarms, see ": "For more information about the importance of smoke alarms, see ",
-	"the Smoke Signals project.": "the Smoke Signals project.",
-	"Visit the Red Cross": "Visit the Red Cross",
-	" to learn how to prepare for and prevent home fires.": " to learn how to prepare for and prevent home fires."
+	"A representative will contact you with information on installation availability in your area.  Please allow two to four weeks for a response.": "Un representante se pondrá en contacto con Ud. para informarle sobre la disponibilidad de instalaciones en su área. Por favor espere entre dos y cuatro semanas para una respuesta.",
+	"For more information about the importance of smoke alarms, see ": "Para más información sobre la importancia de los detectores de humo, vease ",
+	"the Smoke Signals project.": "el proyecto \"Smoke Signals\".",
+	"Visit the Red Cross": "Visite el sitio web de la Cruz Roja",
+	" to learn how to prepare for and prevent home fires.": " para aprender cómo prepararse para incendios en el hogar y cómo prevenirlos."
 }
