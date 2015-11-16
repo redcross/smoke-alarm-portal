@@ -17,6 +17,14 @@ A list of tests to be included in future unit tests:
 - "Thank you" or "Sorry" page shows up as expected
 - Email is sent to correct person/people
 
+## Language:
+
+- language switcher is visible
+- changing the language works on the front page
+- the language remains consistent from the home page to the sorry and
+  thank you pages.
+- tooltips and default text show up in the correct language
+
 ## Admin report(s):
 
 - all requests show up (nonexistent zip, existent zip, inactive zip,

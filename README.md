@@ -55,11 +55,17 @@ instructions and dependency information.
 # Deployment Tags
 
 We use tags to mark code versions that have been deployed to the live
-site, [getasmokealarm.org](https://getasmokealarm.org).  The tags are named
-`deployed-<date of deployment>`.  To each new tag, we attach an
-annotation saying what the main new features and/or bugfixes are in this
-tag, relative to the previous one.  We name the previous tag explicitly
-in the new tag's message.  It looks like something like this:
+site, [getasmokealarm.org](https://getasmokealarm.org).  The tags are
+named `deployed-<date of deployment>`.  To create and share an annotated
+tag, run:
+
+    $ git tag -a <tagname> -m <tag message>
+    $ git push origin <tagname>
+    
+To each new tag, we attach an annotation saying what the main new
+features and/or bugfixes are in this tag, relative to the previous one.
+We name the previous tag explicitly in the new tag's message.  It looks
+something like this:
 
 ```
 deployed-exampledate
