@@ -46,9 +46,10 @@
 	"One last question: is there an email address we can use to contact you?": "Por último: ¿Tiene una dirección de correo electronico a la que podemos escibirle?",
 	"If not, text NONE. If yes, please text us the email address.": "Si es así, por favor mandelanos por mensaje de texto. Si no, mande la palabra 'NO'.",
 	"Thank you for your smoke alarm request! Your request number is %s.": "Gracias por su solicitud, que tiene el número de ID %s.",
-    "To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.": "Para contactar la Cruz Roja sobre esta solicitud, llame al %s. Estaremos en contacto con Ud. para programar una instalación.",
+	"To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.": "Para contactar la Cruz Roja sobre esta solicitud, llame al %s. Estaremos en contacto con Ud. para programar una instalación.",
 	"For more information about the importance of smoke alarms, see ": "Para más información sobre la importancia de los detectores de humo, vease ",
 	"the Smoke Signals project.": "el proyecto \"Smoke Signals\".",
 	"Visit the Red Cross": "Visite el sitio web de la Cruz Roja",
-	" to learn how to prepare for and prevent home fires.": " para aprender cómo prepararse para incendios en el hogar y cómo prevenirlos."
+	" to learn how to prepare for and prevent home fires.": " para aprender cómo prepararse para incendios en el hogar y cómo prevenirlos.",
+	"Welcome to the smoke alarm request system (para continuar en espanol, mande el texto \"ES\").": "Bienvenidos al sistema de solicitud de detectores de humo (for English, text 'EN')."
 }

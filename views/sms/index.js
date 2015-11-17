@@ -7,8 +7,16 @@ var http = require('http'),
     express = require('express'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser');
-
 var i18n = require('i18n-2');
+
+var i18n_inst = new (i18n)({
+    // setup some locales - other locales default to en silently
+    locales: ['en', 'es'],
+    // change the cookie name from 'lang' to 'locale'
+    cookieName: 'locale'
+});
+var __ = function(s) { return i18n_inst.__(s); }
+
 
 var app = express();
 app.use(bodyParser.urlencoded({ extended: true })); 
@@ -42,15 +50,21 @@ var save_utils = require('../utilities');
 var constructFinalText = function (outcome, request, contact) {
     var twiml = new twilio.TwimlResponse();
     if (outcome) {
-        var msg = "Thank you for your smoke alarm installation request. If you need to contact the Red Cross about this request, use ID number " + request.serial +  " and call your local group at " + contact + ". Your information has been sent to the Red Cross representative for " + request.county +  ". A representative will contact you with information on installation availability in your area. Please allow two to four weeks for a response.";
+        msg = __("Thank you for your smoke alarm request! Your request number is %s.");
+        msg = msg.replace('%s', request.serial);
+        msg += __(" To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.", contact);
+        msg = msg.replace('%s', contact);
     }
     else {
         if (request.county) {
-            var msg = "Sorry, the Red Cross Region serving " + request.county +  " does not yet offer smoke alarm installation service. However, we will remember your request with ID number " + request.serial + " and contact you when smoke alarm installation service is available in your region. Thank you for contacting the Red Cross.";
+            msg = __("Sorry, the Red Cross Region serving %s County, %s does not yet offer smoke alarm installation service.");
+            msg = msg.replace('%s', request.county);
+            msg = msg.replace('%s', request.state);
         }
         else {
             // invalid zip
-            var msg = "Sorry, we couldn't find a county for zip code " + request.zip_final + ".  However, we will remember your request with ID number " + request.serial + ".  Thank you for contacting the Red Cross.";
+            msg = __("Sorry, we don't recognize any U.S. location for Zip Code \"%s\".  Are you sure you entered an accurate Zip Code?");
+            msg = msg.replace('%s', request.zip);
         }
     }
     twiml.message(msg);
@@ -64,6 +78,7 @@ var constructFinalText = function (outcome, request, contact) {
 var saveRequest = function (zip) {
     save_utils.findAddressFromZip(zip).then(function(address) {
         request_object.county = address['county'];
+        request_object.state = address['state'];
         return save_utils.findCountyFromAddress(address, zip);
     }).then( function(county_id){
         if (county_id){
@@ -82,7 +97,12 @@ var saveRequest = function (zip) {
         });
         request_object.city = request_object.address.city;
         request_object.state = request_object.address.state;
-        request_object.zip_final = request_object.address.zip;
+        if (request_object.address.zip) {
+            request_object.zip_final = request_object.address.zip;
+        }
+        else {
+            request_object.zip_final = zip;
+        }
         request_object.assigned_rc_region = region_code;
         return save_utils.countRequestsPerRegion(region_code);
     }).then( function(numRequests) {
@@ -113,16 +133,15 @@ var saveRequest = function (zip) {
  
 exports.respond = function(req, res) {
     
-    var i18n_inst = new (i18n)({
-        // setup some locales - other locales default to en silently
-        locales: ['en', 'es'],
-        // change the cookie name from 'lang' to 'locale'
-        cookieName: 'locale'
-    });
-    var __ = function(s) { return i18n_inst.__(s); }
-    req.cookies.locale = req.cookies.locale.toLowerCase();
+    if (req.cookies.locale) {
+        req.cookies.locale = req.cookies.locale.toLowerCase();
+    }
+    else {
+        // English by default
+        req.cookies.locale = "en";
+    }
     i18n_inst.setLocale(req.cookies.locale);
-    var responses_array = [__('Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto "ES"\).') + " " + __('We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?'), __('What is your address, including the unit number, city, state, and zipcode?'), __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.'), __('Thank you for your smoke alarm request! Your request number is %s.', serial_num) + __('To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.', rc_local)];
+    var responses_array = [__('Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto "ES"\).') + " " + __('We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?'), __('What is your address, including the unit number, city, state, and zipcode?'), __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.'), __('Thank you for your smoke alarm request! Your request number is %s.', serial_num) + " " + __('To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.', rc_local)];
     var twiml = new twilio.TwimlResponse();
     var counter = parseInt(req.cookies.counter) || 0;
 
@@ -140,7 +159,7 @@ exports.respond = function(req, res) {
     if (counter == 1) {
         // need to abstract this so that we can add locales without
         // adding another block here.
-        if (req.query.Body == 'ES'){
+        if (req.query.Body.toUpperCase() == 'ES'){
             // start sending spanish texts
             // set i18n to spanish
             req.cookies.locale = 'es';
@@ -148,7 +167,7 @@ exports.respond = function(req, res) {
             // reset counter so they get the intro text in their language
             counter = 0;
         }
-        else if (req.query.Body == 'EN') {
+        else if (req.query.Body.toUpperCase() == 'EN') {
             req.cookies.locale = 'en';
             i18n_inst.setLocale(req.cookies.locale);
             // reset counter so they get the intro text in their language
@@ -184,7 +203,11 @@ exports.respond = function(req, res) {
     else if (counter == 4) {
         var phone_check = req.query.Body;
         // handle any capitalization
-        if (phone_check) {
+        // if their text does not include ten digits, then we use the
+        // "from" number
+        digit_array = phone_check.match(/\d/g);
+        // I assume 10 digits for US phone numbers
+        if ( digit_array.length < 10) {
             phone_check = phone_check.toLowerCase();
         }
         if (phone_check == "yes") {
@@ -200,6 +223,9 @@ exports.respond = function(req, res) {
         if (request_object.address) {
             var response_elements = saveRequest(request_object.address.zip);
         }
+        else {
+            console.log("DEBUG: no address");
+         }
     }
 
     // construct a request object and insert it into the db

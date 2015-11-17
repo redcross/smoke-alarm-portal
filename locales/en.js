@@ -47,10 +47,11 @@
 	"One last question: is there an email address we can use to contact you?": "One last question: is there an email address we can use to contact you?",
 	"If not, text NONE. If yes, please text us the email address.": "If not, text NONE. If yes, please text us the email address.",
 	"Thank you for your smoke alarm request! Your request number is %s.": "Thank you for your smoke alarm request! Your request number is %s.",
-    "To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.": "To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.",
+	"To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.": "To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.",
 	"For more information about the importance of smoke alarms, see ": "For more information about the importance of smoke alarms, see ",
 	"the Smoke Signals project.": "the Smoke Signals project.",
 	"Visit the Red Cross": "Visit the Red Cross",
-	" to learn how to prepare for and prevent home fires.": " to learn how to prepare for and prevent home fires."
+	" to learn how to prepare for and prevent home fires.": " to learn how to prepare for and prevent home fires.",
+	"Welcome to the smoke alarm request system (para continuar en espanol, mande el texto \"ES\").": "Welcome to the smoke alarm request system (para continuar en espanol, mande el texto \"ES\").",
+	" To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.": " To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation."
 }
-
