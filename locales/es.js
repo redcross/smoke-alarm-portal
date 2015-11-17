@@ -2,10 +2,10 @@
 	"Get a Smoke Alarm": "Solicite un Detector de Humo",
 	"American Red Cross": "La Cruz Roja Americana",
 	"Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.": "Los detectores de humo salvan vidas. La instalación de un detector de humo es el primer paso para mantener a su familia segura.",
-	"Thank you for your interest in having FREE smoke alarms installed in your home.": "Gracias por su interés en detectores de humo, que se pueden instalar GRATIS en su casa.",
-	"To request a FREE installation, please complete all fields in the form below and click “Submit.”": "Para solicitar una instalación GRATIS, llene por favor todos los campos en el formulario siguiente y haga clic en “Enviar”.",
+	"Thank you for your interest in having FREE smoke alarms installed in your home.": "Gracias por su interés en los detectores de humo, que se pueden instalar GRATIS en su casa.",
+	"To request a FREE installation, please complete all fields in the form below and click “Submit.”": "Para solicitar una instalación GRATIS, llene por favor todos los espacios en blanco en el formulario siguiente y haga clic en “Enviar”.",
 	"After submitting your request, you will be contacted by an American Red Cross representative with information on installation availability in your area.": "Después de enviar su solicitud, un representante de la Cruz Roja Americana se pondrá en contacto con Ud. con información sobre la disponibilidad de instalaciones en su área.",
-	"The American Red Cross and its partners have launched the Home Fire Campaign to reduce deaths and injuries caused by home fires by 25 percent over five years.": "La Cruz Roja Americana y sus socios han iniciado la Campaña Contra Incendios en el Hogar para reducir las muertes y lesiones causadas por incendios en el hogar en un 25 por ciento durante los los próximos cinco años.",
+	"The American Red Cross and its partners have launched the Home Fire Campaign to reduce deaths and injuries caused by home fires by 25 percent over five years.": "La Cruz Roja Americana y sus socios han iniciado la Campaña Contra Incendios en el Hogar para reducir las muertes y lesiones causadas por incendios en el hogar en un 25 por ciento durante los próximos cinco años.",
 	"The Red Cross asks every household in America to take two simple steps to help save lives: check or install smoke alarms and practice fire drills at home.": "La Cruz Roja pide que todos los propietarios de viviendas tomen dos pasos simples para ayudar a salvar vidas: revisar o instalar detectores de humo y practicar simulacros de incendios en el hogar.",
 	"This form can accept requests from the following States and Counties: IA (except Harrison, Mills and Pottawattamie Counties), IL, MN, MO, MT, ND, SD, WI, Dakota County, NE as well as all counties in ID (except Benewah, Bonner, Boundary, Kootenal and Shoshone Counties) and Malheur County, OR and Garfield and Asotin Counties in WA.": "Esta forma puede aceptar solicitudes de los siguientes estados y condados: IA (excepto condados de Harrison, Mills y Pottawattamie), IL, MN, MO, MT, ND, SD, WI, Dakota County, NE, así como todos los condados de Indiana (excepto los condados de Benewah, Bonner, Límite, Kootenal y Shoshone) y el condado de Malheur, OR y los condados de Garfield y Asotin en WA.",
 	"Submit": "Enviar",
@@ -46,5 +46,9 @@
 	"One last question: is there an email address we can use to contact you?": "Por último: ¿Tiene una dirección de correo electronico a la que podemos escibirle?",
 	"If not, text NONE. If yes, please text us the email address.": "Si es así, por favor mandelanos por mensaje de texto. Si no, mande la palabra 'NO'.",
 	"Thank you for your smoke alarm request! Your request number is %s.": "Gracias por su solicitud, que tiene el número de ID %s.",
-	"To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.": "Para contactar la Cruz Roja sobre esta solicitud, llame al %s. Estaremos en contacto con Ud. para programar una instalación."
+    "To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.": "Para contactar la Cruz Roja sobre esta solicitud, llame al %s. Estaremos en contacto con Ud. para programar una instalación.",
+	"For more information about the importance of smoke alarms, see ": "Para más información sobre la importancia de los detectores de humo, vease ",
+	"the Smoke Signals project.": "el proyecto \"Smoke Signals\".",
+	"Visit the Red Cross": "Visite el sitio web de la Cruz Roja",
+	" to learn how to prepare for and prevent home fires.": " para aprender cómo prepararse para incendios en el hogar y cómo prevenirlos."
 }
