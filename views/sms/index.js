@@ -47,91 +47,95 @@ var save_utils = require('../utilities');
  * phone for successful outcomes and a "sorry" message with a generic RC
  * phone number for out-of-area zip codes (just like the website).
 */
-var constructFinalText = function (outcome, request, contact) {
-    var twiml = new twilio.TwimlResponse();
-    if (outcome) {
-        msg = __("Thank you for your smoke alarm request! Your request number is %s.");
-        msg = msg.replace('%s', request.serial);
-        msg += __(" To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.", contact);
-        msg = msg.replace('%s', contact);
-    }
-    else {
-        if (request.county) {
-            msg = __("Sorry, the Red Cross Region serving %s County, %s does not yet offer smoke alarm installation service.");
-            msg = msg.replace('%s', request.county);
-            msg = msg.replace('%s', request.state);
-        }
-        else {
-            // invalid zip
-            msg = __("Sorry, we don't recognize any U.S. location for Zip Code \"%s\".  Are you sure you entered an accurate Zip Code?");
-            msg = msg.replace('%s', request.zip);
-        }
-    }
-    twiml.message(msg);
-};
-
-
-/* Generally to find the county and region we use the zipcode, so this
- * takes the entered zip.
- * Returns nothing, but saves the request to the database.
-*/
-var saveRequest = function (zip) {
-    save_utils.findAddressFromZip(zip).then(function(address) {
-        request_object.county = address['county'];
-        request_object.state = address['state'];
-        return save_utils.findCountyFromAddress(address, zip);
-    }).then( function(county_id){
-        if (county_id){
-            region_code = county_id.region;
-        }
-        else {
-            region_code = null
-        }
-        // add pieces of the street address as they exist
-        request_object.street_address = "";
-        var street_address_arr = [request_object.address.number, request_object.address.street, request_object.address.type, request_object.address.sec_unit_type, request_object.address.sec_unit_num];
-        street_address_arr.forEach( function (element) {
-            if (element) {
-                request_object.street_address = request_object.street_address + " " + element;
-            }
-        });
-        request_object.city = request_object.address.city;
-        request_object.state = request_object.address.state;
-        if (request_object.address.zip) {
-            request_object.zip_final = request_object.address.zip;
-        }
-        else {
-            request_object.zip_final = zip;
-        }
-        request_object.assigned_rc_region = region_code;
-        return save_utils.countRequestsPerRegion(region_code);
-    }).then( function(numRequests) {
-        requestData = save_utils.createSerial(numRequests, request_object, region_code);
-        requestData.is_sms = 'sms';
-        return save_utils.saveRequestData(requestData);
-    }).then(function(request) {
-        savedRequest = request;
-        return save_utils.isActiveRegion(savedRequest);
-    }).then( function(activeRegion){
-        var is_valid = null;
-        var contact_num = null;
-        if (activeRegion) {
-            save_utils.sendEmail(savedRequest, activeRegion);
-            is_valid = true;
-            contact_num = activeRegion.contact_phone;
-        }
-        else{
-            is_valid = false;
-        }
-        constructFinalText(is_valid, request_object, contact_num); 
-
-    }).catch(function(error) {
-        // send sorry
-        constructFinalText(false, request_object, null);
-    });
-};
  
 exports.respond = function(req, res) {
+    var constructFinalText = function (outcome, request, contact) {
+        var twiml = new twilio.TwimlResponse();
+        if (outcome) {
+            msg = __("Thank you for your smoke alarm request! Your request number is %s.");
+            msg = msg.replace('%s', request.serial);
+            msg += __(" To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.", contact);
+            msg = msg.replace('%s', contact);
+        }
+        else {
+            if (request.county) {
+                msg = __("Sorry, the Red Cross Region serving %s County, %s does not yet offer smoke alarm installation service.");
+                msg = msg.replace('%s', request.county);
+                msg = msg.replace('%s', request.state);
+            }
+            else {
+                // invalid zip
+                msg = __("Sorry, we don't recognize any U.S. location for Zip Code \"%s\".  Are you sure you entered an accurate Zip Code?");
+                msg = msg.replace('%s', request.zip);
+            }
+        }
+        twiml.message(msg);
+        // need to send the xml here
+        res.writeHead(200, {'Content-Type': 'text/xml'});
+        res.end(twiml.toString());
+    };
+
+
+    /* Generally to find the county and region we use the zipcode, so this
+     * takes the entered zip.
+     * Returns nothing, but saves the request to the database.
+     */
+    var saveRequest = function (zip) {
+        save_utils.findAddressFromZip(zip).then(function(address) {
+            request_object.county = address['county'];
+            request_object.state = address['state'];
+            return save_utils.findCountyFromAddress(address, zip);
+        }).then( function(county_id){
+            if (county_id){
+                region_code = county_id.region;
+            }
+            else {
+                region_code = null
+            }
+            // add pieces of the street address as they exist
+            request_object.street_address = "";
+            var street_address_arr = [request_object.address.number, request_object.address.street, request_object.address.type, request_object.address.sec_unit_type, request_object.address.sec_unit_num];
+            street_address_arr.forEach( function (element) {
+                if (element) {
+                    request_object.street_address = request_object.street_address + " " + element;
+                }
+            });
+            request_object.city = request_object.address.city;
+            request_object.state = request_object.address.state;
+            if (request_object.address.zip) {
+                request_object.zip_final = request_object.address.zip;
+            }
+            else {
+                request_object.zip_final = zip;
+            }
+            request_object.assigned_rc_region = region_code;
+            return save_utils.countRequestsPerRegion(region_code);
+        }).then( function(numRequests) {
+            requestData = save_utils.createSerial(numRequests, request_object, region_code);
+            requestData.is_sms = 'sms';
+            return save_utils.saveRequestData(requestData);
+        }).then(function(request) {
+            savedRequest = request;
+            return save_utils.isActiveRegion(savedRequest);
+        }).then( function(activeRegion){
+            var is_valid = null;
+            var contact_num = null;
+            if (activeRegion) {
+                save_utils.sendEmail(savedRequest, activeRegion);
+                is_valid = true;
+                contact_num = activeRegion.contact_phone;
+            }
+            else{
+                is_valid = false;
+            }
+            constructFinalText(is_valid, request_object, contact_num); 
+
+        }).catch(function(error) {
+            // send sorry
+            constructFinalText(false, request_object, null);
+        });
+    };
+
     
     if (req.cookies.locale) {
         req.cookies.locale = req.cookies.locale.toLowerCase();
@@ -206,11 +210,12 @@ exports.respond = function(req, res) {
         // if their text does not include ten digits, then we use the
         // "from" number
         digit_array = phone_check.match(/\d/g);
-        // I assume 10 digits for US phone numbers
-        if ( digit_array.length < 10) {
-            phone_check = phone_check.toLowerCase();
+        var num_digits = 0;
+        if (digit_array) {
+            num_digits = digit_array.length;
         }
-        if (phone_check == "yes") {
+        // I assume 10 digits for US phone numbers
+        if ( num_digits < 10) {
             request_object.phone = req.query.From;
         }
         else {
@@ -239,9 +244,10 @@ exports.respond = function(req, res) {
     counter = counter + 1;
     res.cookie('counter', counter);
     res.cookie('locale', i18n_inst.getLocale());
-    res.writeHead(200, {'Content-Type': 'text/xml'});
-    res.end(twiml.toString());
-
+    if (counter < 6) {
+        res.writeHead(200, {'Content-Type': 'text/xml'});
+        res.end(twiml.toString());
+    }
 };
 
 
