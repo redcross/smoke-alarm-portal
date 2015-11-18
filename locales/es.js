@@ -51,5 +51,9 @@
 	"the Smoke Signals project.": "el proyecto \"Smoke Signals\".",
 	"Visit the Red Cross": "Visite el sitio web de la Cruz Roja",
 	" to learn how to prepare for and prevent home fires.": " para aprender cómo prepararse para incendios en el hogar y cómo prevenirlos.",
-	"Welcome to the smoke alarm request system (para continuar en espanol, mande el texto \"ES\").": "Bienvenidos al sistema de solicitud de detectores de humo (for English, text 'EN')."
+	"Welcome to the smoke alarm request system (para continuar en espanol, mande el texto \"ES\").": "Bienvenidos al sistema de solicitud de detectores de humo (for English, text 'EN').",
+    "Welcome to the smoke alarm request system (para continuar en espanol, mande el texto \"ES\"). We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?": "Bienvenidos al sistema de solicitud de detectores de humo (for English, text 'EN'). Para procesar su solicitud, se necesitan respuestas a cuatro preguntas. Por favor mande cada respuesta por mensajes de texto, y luego espere la siguiente pregunta. En primer lugar, ¿cuál es su nombre completo?",
+    "What is your address, including the unit number, city, state, and zipcode?": "¿Cuál es su dirección? Asegúrese de incluir su número de unidad, ciudad, estado y código postal",
+    "Is the number you're texting from the best way to get in touch with you? If so, text YES. Otherwise, please text a phone number where we can reach you.": "¿Es el número de teléfono que está usando ahora la mejor forma de ponernos en contacto con Ud.? Si es así, mande 'SI' por mensaje de texto. Si no, mande un número de teléfono al que podemos llamarle.",
+    "One last question: is there an email address we can use to contact you? If not, text NONE. If yes, please text us the email address.": "Por último: ¿Tiene una dirección de correo electronico a la que podemos escibirle? Si es así, por favor mandelanos por mensaje de texto. Si no, mande la palabra 'NO'."
 }

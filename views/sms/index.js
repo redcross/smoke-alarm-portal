@@ -59,7 +59,7 @@ exports.respond = function(req, res) {
         }
         else {
             if (request.county) {
-                msg = __("Sorry, the Red Cross Region serving %s County, %s does not yet offer smoke alarm installation service.");
+                msg = __("Sorry, the Red Cross Region serving %s, %s does not yet offer smoke alarm installation service.");
                 msg = msg.replace('%s', request.county);
                 msg = msg.replace('%s', request.state);
             }
@@ -101,7 +101,6 @@ exports.respond = function(req, res) {
                 }
             });
             request_object.city = request_object.address.city;
-            request_object.state = request_object.address.state;
             if (request_object.address.zip) {
                 request_object.zip_final = request_object.address.zip;
             }
@@ -223,6 +222,7 @@ exports.respond = function(req, res) {
         }
     }
     else if (counter == 5) {
+        var has_address = true;
         // this is their email address, or none.
         request_object.email = req.query.Body;
         if (request_object.address) {
@@ -230,21 +230,23 @@ exports.respond = function(req, res) {
         }
         else {
             console.log("DEBUG: no address");
+            has_address = false;
          }
     }
 
     // construct a request object and insert it into the db
 
-    // may need to change this to account for varying scripts with i18n.
-    if (counter < (responses_array.length -1 )){
-        twiml.message(responses_array[counter]);
+    if (counter < (responses_array.length - 1 )){
+        // translate again here, so that we're using the most recently
+        // selected language
+        twiml.message(__(responses_array[counter]));
     }
     // else the message will be sent from "construct final text"
 
     counter = counter + 1;
     res.cookie('counter', counter);
     res.cookie('locale', i18n_inst.getLocale());
-    if (counter < 6) {
+    if (counter < 6 || ! has_address) {
         res.writeHead(200, {'Content-Type': 'text/xml'});
         res.end(twiml.toString());
     }
