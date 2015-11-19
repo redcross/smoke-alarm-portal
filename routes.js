@@ -78,6 +78,8 @@ exports = module.exports = function(app, passport) {
 
     // sms
     app.get('/sms/', require('./views/sms/index').respond);
+    app.post('/sms/response/', require('./views/sms/response/index').status);
+
     
   //login/out
   app.get('/login/', require('./views/login/index').init);

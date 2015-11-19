@@ -35,20 +35,20 @@ var request_object = {};
 // include the functions from views/index.js
 var save_utils = require('../utilities');
 
-/*
- * Takes: the "outcome" (a boolean that is true iff the entered zip code
- * is valid and in an active region),
- * If the outcome was successful:
- * serial: the serial number assigned to the request
- * county: the county found based on the entered zipcode
- * contact: the phone number for this RC region
- *
- * Returns: a message with "thank you," the serial number, and a contact
- * phone for successful outcomes and a "sorry" message with a generic RC
- * phone number for out-of-area zip codes (just like the website).
-*/
- 
 exports.respond = function(req, res) {
+
+    /*
+     * Takes: the "outcome" (a boolean that is true iff the entered zip code
+     * is valid and in an active region),
+     * If the outcome was successful:
+     * serial: the serial number assigned to the request
+     * county: the county found based on the entered zipcode
+     * contact: the phone number for this RC region
+     *
+     * Returns: a message with "thank you," the serial number, and a contact
+     * phone for successful outcomes and a "sorry" message with a generic RC
+     * phone number for out-of-area zip codes (just like the website).
+     */
     var constructFinalText = function (outcome, request, contact) {
         var twiml = new twilio.TwimlResponse();
         if (outcome) {
@@ -69,7 +69,7 @@ exports.respond = function(req, res) {
                 msg = msg.replace('%s', request.zip);
             }
         }
-        twiml.message(msg);
+        twiml.message(msg, {statusCallback: "./response/"});
         // clear request_object
         request_object = {};
         // need to send the xml here
@@ -242,7 +242,7 @@ exports.respond = function(req, res) {
     if (counter < (responses_array.length - 1 )){
         // translate again here, so that we're using the most recently
         // selected language
-        twiml.message(__(responses_array[counter]));
+        twiml.message(__(responses_array[counter]), {statusCallback: "./response/"});
     }
     // else the message will be sent from "construct final text"
 
