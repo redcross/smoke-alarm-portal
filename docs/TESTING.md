@@ -38,3 +38,17 @@ A list of tests to be included in future unit tests:
 - search by a region
 - change pagination
 
+## SMS:
+
+- can switch language from english to spanish and vice versa
+- all SMS's send, in correct order, in any language
+- save the provided phone number or the "from" number, as directed
+- the correct information is saved in the database
+- requester receives correct final response (sorry, or thank you with serial)
+- suggested texts:
+  - active region in english
+  - active region in spanish
+  - inactive region in english
+  - inactive region in spanish
+  - nonexistent zipcode in english
+  - nonexistent zipcode in Spanish
