@@ -70,6 +70,8 @@ exports.respond = function(req, res) {
             }
         }
         twiml.message(msg);
+        // clear request_object
+        request_object = {};
         // need to send the xml here
         res.writeHead(200, {'Content-Type': 'text/xml'});
         res.end(twiml.toString());
@@ -130,6 +132,7 @@ exports.respond = function(req, res) {
             constructFinalText(is_valid, request_object, contact_num); 
 
         }).catch(function(error) {
+            console.log("DEBUG: caught error " + error);
             // send sorry
             constructFinalText(false, request_object, null);
         });
