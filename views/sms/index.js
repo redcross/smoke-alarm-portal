@@ -28,8 +28,13 @@ app.use(function(req, res, next) {
     // req.i18n.setLocale('es');
     next();
 });
-var serial_num = "example serial";
-var rc_local = "(555)-not-real";
+var serial_num = "";
+var rc_local = "";
+
+
+// create an object with those empty values for those elements
+var request_row = {name: "", address: "", zip: "", phone: "", email: ""};
+// we'll save that object in a cookie
 
 var request_object = {};
 // include the functions from views/index.js
@@ -69,8 +74,8 @@ exports.respond = function(req, res) {
                 msg = msg.replace('%s', request.zip);
             }
         }
-        twiml.message(msg, {statusCallback: "./response/"});
-        // clear request_object
+        twiml.message(msg);
+        // clear priority_list cookie
         request_object = {};
         // need to send the xml here
         res.writeHead(200, {'Content-Type': 'text/xml'});
@@ -138,121 +143,133 @@ exports.respond = function(req, res) {
         });
     };
 
+
+    console.log("starting cookies");
+    console.log(req.cookies);
     
-    if (req.cookies.locale) {
-        req.cookies.locale = req.cookies.locale.toLowerCase();
+    // find highest priority empty element
+    var i = 0;
+    var current_priority = 0;
+    var text_name = "";
+    // so each element in the priority list needs a name, a value, and a priority
+    // we know the names, the values will be filled by the sms's, and we
+    // assign the priorities
+    var twiml = new twilio.TwimlResponse();
+    if ( ! req.cookies.priorities) {
+        // this is a new request
+        req.cookies.priorities = {
+            name: {value: "", priority: 5},
+            address: {value: "", priority: 4},
+            zipcode: {value: "", priority: 3},
+            phone: {value: "", priority: 2},
+            email: {value: "", priority: 1}
+        };
+        //send first text
+        text_name = "name";
     }
     else {
-        // English by default
-        req.cookies.locale = "en";
-    }
-    i18n_inst.setLocale(req.cookies.locale);
-    var responses_array = [__('Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto "ES"\).') + " " + __('We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?'), __('What is your address, including the unit number, city, state, and zipcode?'), __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.'), __('Thank you for your smoke alarm request! Your request number is %s.', serial_num) + " " + __('To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.', rc_local)];
-    var twiml = new twilio.TwimlResponse();
-    var counter = parseInt(req.cookies.counter) || 0;
+        
+        for (var i in req.cookies.priorities) {
+            if ( req.cookies.priorities[i].value == "" && req.cookies.priorities[i].priority > current_priority ) {
+                current_priority = req.cookies.priorities[i].priority;
+                text_name = i;
+            }
+            i++;
+        }
+        if (current_priority == 0) {
+            // start over
+            text_name = "name";
+            // clear cookie, since we're starting over (maybe do this in SaveRequest?)
+            /* req.cookies.priorities = {
+                name: {value: "", priority: 5},
+                address: {value: "", priority: 4},
+                zipcode: {value: "", priority: 3},
+                phone: {value: "", priority: 2},
+                email: {value: "", priority: 1}
+            };*/
+        }
+        
 
-    // Increment or initialize views, up to the length of our array.  If
-    // we're at the end of the array, start over.
-    if (counter >= responses_array.length) {
-        counter = 0;
-    }
+        // Question: make sure we're continuing in the same request by
+        // checking the token?  Who's keeping track of these cookies getting
+        // passed back and forth?
+        
+        if (req.cookies.locale) {
+            req.cookies.locale = req.cookies.locale.toLowerCase();
+        }
+        else {
+            // English by default
+            req.cookies.locale = "en";
+        }
+        i18n_inst.setLocale(req.cookies.locale);
 
-    // Not thrilled about the magic numbers here.  What's a better way
-    // to do this?
-
-    // Use the counter to find out what information is arriving:
-
-    if (counter == 1) {
-        // need to abstract this so that we can add locales without
-        // adding another block here.
-        if (req.query.Body.toUpperCase() == 'ES'){
-            // start sending spanish texts
-            // set i18n to spanish
-            req.cookies.locale = 'es';
+        // get a list of locales
+        var available_locales = Object.keys(i18n_inst.locales);
+        var language_check = available_locales.indexOf(req.query.Body.toLowerCase());
+        if (language_check >= 0) {
+            req.cookies.locale = available_locales[language_check];
             i18n_inst.setLocale(req.cookies.locale);
-            // reset counter so they get the intro text in their language
-            counter = 0;
         }
-        else if (req.query.Body.toUpperCase() == 'EN') {
-            req.cookies.locale = 'en';
-            i18n_inst.setLocale(req.cookies.locale);
-            // reset counter so they get the intro text in their language
-            counter = 0;
+        if (text_name == "name") {
+            req.cookies.priorities.name.value = req.query.Body;
         }
-        else{
-            request_object.name = req.query.Body;
+        if (text_name == "address") {
+            req.cookies.priorities.address.value = req.query.Body;
+            req.cookies.priorities.address.value = parser.parseLocation(request_object.address);
+            if (req.cookies.priorities.address.value.zip) {
+                req.cookies.priorities.zipcode.value = req.cookies.priorities.address.value.zip;
+            }
         }
-    }
-    else if (counter == 2) {
-        // then it is their address
-        request_object.address = req.query.Body;
-        request_object.address = parser.parseLocation(request_object.address);
-        if (request_object.address.zip) {
-            // if they've included their zip, skip the extra "please
-            // send your zip" text.
-            counter = counter + 1;
+        if (text_name == "zipcode") {
+            // should only be here if we had to send the zipcode text
+            // process it slightly
+            var zipset = save_utils.findZipForLookup(req);
+            req.cookies.priorities.zipcode.value = zipset.zip_final;
         }
-    }
-    else if (counter == 3) {
-        // should only be here if we had to send the zipcode text
-        // process it slightly
-        req.query.Body;
-        var zipset = save_utils.findZipForLookup(req);
-        if (request_object.address) {
-            request_object.address.zip = zipset.zip_final;
+        if (text_name == "phone") {
+            var phone_check = req.query.Body;
+            // handle any capitalization
+            // if their text does not include ten digits, then we use the
+            // "from" number
+            digit_array = phone_check.match(/\d/g);
+            var num_digits = 0;
+            if (digit_array) {
+                num_digits = digit_array.length;
+            }
+            // I assume 10 digits for US phone numbers
+            if ( num_digits < 10) {
+                req.cookies.priorities.phone.value = req.query.From;
+            }
+            else {
+                req.cookies.priorities.phone.value = req.query.Body;
+            }
         }
-        else {
-            request_object.address = "";
-            request_object.address.zip =  zipset.zip_final;
+        if (text_name == "email") {
+            var has_address = true;
+            // this is their email address, or none.
+            req.cookies.priorities.email.value = req.query.Body;
         }
-    }
-    else if (counter == 4) {
-        var phone_check = req.query.Body;
-        // handle any capitalization
-        // if their text does not include ten digits, then we use the
-        // "from" number
-        digit_array = phone_check.match(/\d/g);
-        var num_digits = 0;
-        if (digit_array) {
-            num_digits = digit_array.length;
+
+        // insert the info into the db (but only if we just asked about the
+        // least important piece of information)
+
+        if (text_name == "email") {
+            var response_elements = saveRequest(req.cookies.priorities.zipcode.value);
         }
-        // I assume 10 digits for US phone numbers
-        if ( num_digits < 10) {
-            request_object.phone = req.query.From;
-        }
-        else {
-            request_object.phone = req.query.Body;
-        }
-    }
-    else if (counter == 5) {
-        var has_address = true;
-        // this is their email address, or none.
-        request_object.email = req.query.Body;
-        if (request_object.address) {
-            var response_elements = saveRequest(request_object.address.zip);
-        }
-        else {
-            console.log("DEBUG: no address");
-            has_address = false;
-         }
     }
 
-    // construct a request object and insert it into the db
-
-    if (counter < (responses_array.length - 1 )){
-        // translate again here, so that we're using the most recently
-        // selected language
-        twiml.message(__(responses_array[counter]), {statusCallback: "./response/"});
-    }
-    // else the message will be sent from "construct final text"
-
-    counter = counter + 1;
-    res.cookie('counter', counter);
+    // now we have the element with current highest priority
+    // send the text associated with that element
+    var texts = { name: "Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto \"ES\"\)." + " " + "We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?", address: __('What is your address, including the unit number, city, state, and zipcode?'), zipcode:  __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), phone: __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), email:  __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.')};
+    var text_body = texts[text_name];
+    twiml.message( __(text_body));
+    
+    res.cookie('priorities', req.cookies.priorities);
     res.cookie('locale', i18n_inst.getLocale());
-    if (counter < 6 || ! has_address) {
-        res.writeHead(200, {'Content-Type': 'text/xml'});
-        res.end(twiml.toString());
-    }
+    console.log("debug: all cookies here");
+    console.log(req.cookies);
+    res.writeHead(200, {'Content-Type': 'text/xml'});
+    res.end(twiml.toString());
 };
 
 
