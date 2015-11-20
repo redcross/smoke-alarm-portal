@@ -9,7 +9,7 @@
 	"The Red Cross asks every household in America to take two simple steps to help save lives: check or install smoke alarms and practice fire drills at home.": "La Cruz Roja pide que todos los propietarios de viviendas tomen dos pasos simples para ayudar a salvar vidas: revisar o instalar detectores de humo y practicar simulacros de incendios en el hogar.",
 	"This form can accept requests from the following States and Counties: IA (except Harrison, Mills and Pottawattamie Counties), IL, MN, MO, MT, ND, SD, WI, Dakota County, NE as well as all counties in ID (except Benewah, Bonner, Boundary, Kootenal and Shoshone Counties) and Malheur County, OR and Garfield and Asotin Counties in WA.": "Esta forma puede aceptar solicitudes de los siguientes estados y condados: IA (excepto condados de Harrison, Mills y Pottawattamie), IL, MN, MO, MT, ND, SD, WI, Dakota County, NE, así como todos los condados de Indiana (excepto los condados de Benewah, Bonner, Límite, Kootenal y Shoshone) y el condado de Malheur, OR y los condados de Garfield y Asotin en WA.",
 	"Submit": "Enviar",
-	"If your location is not listed, please call 800-RED-CROSS to be connected to ": " Si no aparece su ubicación, por favor llame al 800-RED-CROSS para hablar con un representante de ",
+	"  If your location is not listed, please call 800-RED-CROSS to be connected to ": " Si no aparece su ubicación, por favor llame al 800-RED-CROSS para hablar con un representante de ",
 	"your": "su",
 	" local Red Cross Chapter.": " oficina local de la Cruz Roja.",
 	"Your Name": "Su Nombre",
