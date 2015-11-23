@@ -214,9 +214,16 @@ var getRequestData = function(req, numberOfRequests, region) {
     // We might as well start with 1.
     numberOfRequests = numberOfRequests + 1;
     var sequenceNumber = padWithZeroes(numberOfRequests.toString(), 5);
-    var displayDate = today.getFullYear().toString()+padWithZeroes((today.getMonth() +1).toString(), 2) + padWithZeroes(today.getDate().toString(), 2);
+    // find fiscal year
+    var fiscalYear = today.getFullYear();
+    //account for zero-indexing
+    var thisMonth = today.getMonth() + 1;
+    if (thisMonth > 6) {
+        fiscalYear = fiscalYear + 1;
+    }
+    var displayedYear = fiscalYear - 2000;
     if (region) {
-        var serial = region + "-" + displayDate + "-" + sequenceNumber;
+        var serial = region + "-" + displayedYear + "-" + sequenceNumber;
     }
     else {
         // construct code from state
@@ -228,7 +235,7 @@ var getRequestData = function(req, numberOfRequests, region) {
         else {
             state_code = "XXXX";
         }
-        var serial = state_code + "-" + displayDate + "-" + sequenceNumber;
+        var serial = state_code + "-" + displayedYear + "-" + sequenceNumber;
     }
 
     requestData.serial = serial;
