@@ -57,10 +57,9 @@ img.bg {
 img.fourpanel {
     width: 30%;
     position: fixed;
-    border-top: 8px solid white;
-    border-left: 8px solid white;
-    border-right: 8px solid white;
-    border-bottom: 8px solid white;    
+    border-top: 4px solid #555;
+    border-left: 4px solid #555;
+    border-right: 4px solid #555;
     bottom: 0;
     left: 35%;
     z-index: -2;
