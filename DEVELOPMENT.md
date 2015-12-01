@@ -1,7 +1,11 @@
 #Red Cross Smoke Alarm Portal Development
 
-This file contains information on development ideas as well as HOWTOs
-for specific tasks
+This file contains an overview of how to do development on this
+application, as well as HOWTOs for specific tasks.
+
+## Architecture Overview
+
+TBD: Explain the various locations in the code tree that we most commonly find ourselves editing to accomplish tasks.
 
 ## HOWTOs:
 
