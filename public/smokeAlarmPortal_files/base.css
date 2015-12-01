@@ -324,3 +324,9 @@ p.bigger-centered {
   }
 }
 
+a.contrast-link {
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.3);
+    -moz-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px; /* standards-compliant: (IE) */
+}
