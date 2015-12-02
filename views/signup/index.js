@@ -43,11 +43,8 @@ exports.signup = function(req, res) {
     });
 
     workflow.on('duplicateUsernameCheck', function() {
-        req.app.db.User.findOne({
-                username: req.body.username
-            })
+        req.app.db.User.findOne( {where: {username: req.body.username}} )
             .then(function(user) {
-                console.log('DEBUG: User ' + user);
                 if (user) {
                     workflow.outcome.errfor.username = 'username already taken';
                     return workflow.emit('response');
@@ -62,9 +59,7 @@ exports.signup = function(req, res) {
 
     workflow.on('duplicateEmailCheck', function() {
         console.log('DEBUG: Duplicate email');
-        req.app.db.User.findOne({
-                email: req.body.email.toLowerCase()
-            })
+        req.app.db.User.findOne({ where: { email: req.body.email.toLowerCase() } })
             .then(function(user) {
                 if (user) {
                     workflow.outcome.errfor.email = 'email already registered';
@@ -157,9 +152,8 @@ exports.signupTwitter = function(req, res, next) {
             return res.redirect('/signup/');
         }
 
-        req.app.db.User.findOne({
-            'twitter.id': info.profile.id
-        }, function(err, user) {
+        req.app.db.User.findOne({ where: { 'twitter.id': info.profile.id }
+                                }, function(err, user) {
             if (err) {
                 return next(err);
             }
@@ -341,8 +335,7 @@ exports.signupSocial = function(req, res) {
             workflow.username = workflow.username.replace(/[^a-zA-Z0-9\-\_]/g, '');
         }
 
-        req.app.db.User.findOne({
-            username: workflow.username
+        req.app.db.User.findOne({ where: {username: workflow.username}
         }, function(err, user) {
             if (err) {
                 return workflow.emit('exception', err);
@@ -359,8 +352,7 @@ exports.signupSocial = function(req, res) {
     });
 
     workflow.on('duplicateEmailCheck', function() {
-        req.app.db.User.findOne({
-            email: req.body.email.toLowerCase()
+        req.app.db.User.findOne({ where: {email: req.body.email.toLowerCase()}
         }, function(err, user) {
             if (err) {
                 return workflow.emit('exception', err);
