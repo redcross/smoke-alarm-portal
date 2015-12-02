@@ -177,7 +177,7 @@
           el.val(this.model.attributes[key]);
           if (key === "startDate" || key === "endDate") {
             if (this.model.attributes[key] != "") {
-              var date = moment(this.model.attributes[key]);
+              var date = moment.utc(this.model.attributes[key]);
               if (date > this.endpointDates.earliest && date <= this.endpointDates.latest) {
                 el.val(date.format("YYYY-MM-DD"));
                 el.siblings(".pickedDate").text(date.format("YYYY-MM-DD"));
