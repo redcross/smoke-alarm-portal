@@ -31,6 +31,7 @@ exports.find = function(req, res, next) {
             callback(null, 'done counting');
         });
     };
+
     var queryRegionPresentableName = function(request) {
         var selectedRegion = request.assigned_rc_region;
         return req.app.db.activeRegion.findOne({
@@ -42,6 +43,23 @@ exports.find = function(req, res, next) {
     var queryAllRegions = function() {
         return req.app.db.activeRegion.findAll({
             attributes: ['rc_region', 'region_name'],
+            where: {rc_region: {ne: 'rc_test_region'} },
+            order: 'region_name'
+        });
+    };
+
+    /* Return the list of regions that the logged-in user has access to.
+
+       In SQL:
+       SELECT * FROM "activeRegions" INNER JOIN "regionPermissions" ON
+       "activeRegions"."rc_region" = "regionPermissions"."rc_region"
+       WHERE "regionPermissions"."user_id" = logged_in_user_id;
+    */
+    var queryUsableRegions = function() {
+        var loggedin_id = String(req.user.id);
+        return req.app.db.activeRegion.findAll({
+            attributes: ['rc_region', 'region_name'],
+            include: [{ model: req.app.db.regionPermission, where: {user_id: loggedin_id } }],
             where: {rc_region: {ne: 'rc_test_region'} },
             order: 'region_name'
         });
@@ -74,7 +92,6 @@ exports.find = function(req, res, next) {
         var sortOrder = (req.query.sort[0] === '-')? 'DESC' : 'ASC';
 
         // Determine whether to filter by date
-
         req.app.db.Request.findAll({
             limit:req.query.limit,
             offset:req.query.offset,
@@ -126,7 +143,7 @@ exports.find = function(req, res, next) {
             outcome.filters = req.query;
             res.send(outcome);
         } else {
-            return queryAllRegions().then( function (regions) {
+            return queryUsableRegions().then( function (regions) {
                 outcome.results.filters = req.query;
                 if (req.query.format !== "csv") {
                     res.render('admin/requests/index', {
