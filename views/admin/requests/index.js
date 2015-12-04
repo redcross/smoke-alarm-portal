@@ -65,7 +65,7 @@ exports.find = function(req, res, next) {
         });
     };
 
-    var getResults = function(callback) {
+    var getFilters = function() {
         var filters = {};
         req.query.search = req.query.search ? req.query.search : '';
         req.query.limit = req.query.limit ? parseInt(req.query.limit, null) : 500;
@@ -88,10 +88,54 @@ exports.find = function(req, res, next) {
         if (req.query.region) {
             filters.assigned_rc_region = req.query.region
         }
+        return filters;
+    }
+
+    var getResults = function(callback) {
+        var filters = getFilters();
+        return queryUsableRegions().then( function (usableRegions) {
+            // find intersection of allowed and filtered regions and set
+            // that as our filter
+            var entered_regions = filters.assigned_rc_region;
+            filters.assigned_rc_region = [];
+            var allowed_regions = [];
+            usableRegions.forEach( function (region) {
+                allowed_regions.push(region.rc_region);
+            });
+            // if they are allowed to see any regions and have filtered on a region
+            if (allowed_regions.length > 0 && entered_regions) {
+                // check if they're allowed to filter on that region
+                var i = 0;
+                entered_regions.forEach( function (filteredRegion) {
+                    if (allowed_regions.indexOf(filteredRegion) < 0) {
+                        // pop the disallowed region from the filter
+                        entered_regions.splice(i, 1);
+                    }
+                    i++;
+                });
+                // what if they tried to filter on all regions that they don't have access to?
+                // get no results.
+                filters.assigned_rc_region = entered_regions;
+            }
+            // if they are allowed to see some regions and haven't
+            // filtered, show them all the results they're allowed to
+            // see
+            else if (allowed_regions.length > 0 && ! entered_regions) {
+                filters.assigned_rc_region = allowed_regions;
+            }
+            else {
+                // TODO: then they don't have access to any regions and
+                // should not get any results.
+                //
+                // how do I do that?
+                filters.assigned_rc_region = [];
+            }
+            // TODO: how do I show requests that aren't linked to a
+            // region (for full-powered admins)?
+
         // Determine direction for order
         var sortOrder = (req.query.sort[0] === '-')? 'DESC' : 'ASC';
-
-        // Determine whether to filter by date
+            // Determine whether to filter by date
         req.app.db.Request.findAll({
             limit:req.query.limit,
             offset:req.query.offset,
@@ -131,6 +175,7 @@ exports.find = function(req, res, next) {
             console.log("ERROR calling callback: " + err);
             return callback(err, null);
         });
+                });
     };
 
     var asyncFinally = function(err, results) {

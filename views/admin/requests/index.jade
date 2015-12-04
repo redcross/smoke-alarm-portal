@@ -61,10 +61,11 @@ block body
             .pickedDate
         div.col-sm-3
           label Region
-          select.form-control(name='region')
-            option(value="") All Regions
-            each item in data.region
-                 option(value="#{item.rc_region}") #{item.region_name}
+          br
+          each item in data.region
+               input(type="checkbox" name="region[]" value="#{item.rc_region}") 
+               | &nbsp #{item.region_name}
+               br
       div.row
         div.col-sm-12
           input#applyFilters(type='button', value='apply filters')
