@@ -164,7 +164,11 @@
       this.initializeFormElements();
     },
     initializeFormElements: function() {
-      $("#filters form")[0].reset();
+        $("#filters form")[0].reset();
+        // by default check all the regions they have access to
+        $(".allowed_region input[type=checkbox]").each( function (index) {
+            $(this).prop("checked", "true");
+        });
       // Form elements of type="hidden" don't get cleared by "reset", so
       // clear them manually.
       $(".datepickerWrapper input[type='hidden']").val('');
@@ -187,6 +191,17 @@
             el.val("");
             el.siblings(".pickedDate").text("no date selected");
           }
+            if (key === "region") {
+                var values = String(this.model.attributes[key]);
+                var value_array = values.split(',')
+                value_array.forEach( function (region_value) {
+                    $("input[type=checkbox]").each( function (index) {
+                        if ($(this).val() == region_value) {
+                            $(this).prop("checked", "true");
+                        }
+                    });
+                });
+            }
         }
       }
       $(".datepickerTrigger").datepicker({
