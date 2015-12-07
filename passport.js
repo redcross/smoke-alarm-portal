@@ -127,8 +127,7 @@ exports = module.exports = function(app, passport) {
     });
 
     passport.deserializeUser(function(id, done) {
-        app.db.User.findOne({
-                id: id
+        app.db.User.findOne({ where: { id: id }
             })
             .then(function(user) {
                 done(null, user);
