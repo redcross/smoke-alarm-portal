@@ -62,10 +62,15 @@ block body
         div.col-sm-3
           label Region
           br
-          each item in data.region
+          each item in data.usable_regions
                input(type="checkbox" name="region[]" value="#{item.rc_region}") 
                | &nbsp #{item.region_name}
                br
+          .disabled_region               
+               each item in data.disabled_regions
+                   input(type="checkbox" disabled="true" name="region[]" value="#{item}")
+                   | &nbsp #{item}
+                   br  
       div.row
         div.col-sm-12
           input#applyFilters(type='button', value='apply filters')

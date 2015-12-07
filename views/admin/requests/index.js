@@ -65,6 +65,21 @@ exports.find = function(req, res, next) {
         });
     };
 
+    var getForbiddenRegions = function(usableRegions, allRegions) {
+        var disabledRegions = {};
+        allRegions.forEach( function (region) {
+            disabledRegions[region.rc_region] = region.region_name;
+        });
+        usableRegions.forEach( function (allowed_region) {
+            // TODO: does indexOf work in all browsers?
+            if (disabledRegions.hasOwnProperty(allowed_region.rc_region)) {
+                delete disabledRegions[allowed_region.rc_region];
+            }
+        });
+        // turn array into set of objects with code and name (string)
+        return disabledRegions;
+    }
+
     var getFilters = function() {
         var filters = {};
         req.query.search = req.query.search ? req.query.search : '';
@@ -89,7 +104,7 @@ exports.find = function(req, res, next) {
             filters.assigned_rc_region = req.query.region
         }
         return filters;
-    }
+    };
 
     var getResults = function(callback) {
         var filters = getFilters();
@@ -107,6 +122,7 @@ exports.find = function(req, res, next) {
                 // check if they're allowed to filter on that region
                 var i = 0;
                 entered_regions.forEach( function (filteredRegion) {
+                    // TODO: does indexOf work in all browsers?
                     if (allowed_regions.indexOf(filteredRegion) < 0) {
                         // pop the disallowed region from the filter
                         entered_regions.splice(i, 1);
@@ -189,24 +205,29 @@ exports.find = function(req, res, next) {
             res.send(outcome);
         } else {
             return queryUsableRegions().then( function (regions) {
-                outcome.results.filters = req.query;
-                if (req.query.format !== "csv") {
-                    res.render('admin/requests/index', {
-                        data: {
-                            results: escape(JSON.stringify(outcome)),
-                            region: regions
-                        }
-                    });
-                } else {
-                    var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created','region'];
-                    var requestFields = ['id','name','address','city','state','zip','phone','email','createdAt','assigned_rc_region'];
-                    json2csv({ data: outcome.results, fields: requestFields, fieldNames: requestFieldNames }, function(err, csv) {
-                        if (err) console.log("ERROR: error converting to CSV" + err);
-                        res.setHeader('Content-Type','application/csv');
-                        res.setHeader('Content-Disposition','attachment; filename=smoke-alarm-requests-' + moment().format() + '.csv;');
-                        res.send(csv);
-                    });
-                }
+                //get list of all regions
+                return queryAllRegions().then( function (allRegions) {
+                    var disabledRegions = getForbiddenRegions(regions, allRegions);
+                    outcome.results.filters = req.query;
+                    if (req.query.format !== "csv") {
+                        res.render('admin/requests/index', {
+                            data: {
+                                results: escape(JSON.stringify(outcome)),
+                                usable_regions: regions,
+                                disabled_regions: disabledRegions
+                            }
+                        });
+                    } else {
+                        var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created','region'];
+                        var requestFields = ['id','name','address','city','state','zip','phone','email','createdAt','assigned_rc_region'];
+                        json2csv({ data: outcome.results, fields: requestFields, fieldNames: requestFieldNames }, function(err, csv) {
+                            if (err) console.log("ERROR: error converting to CSV" + err);
+                            res.setHeader('Content-Type','application/csv');
+                            res.setHeader('Content-Disposition','attachment; filename=smoke-alarm-requests-' + moment().format() + '.csv;');
+                            res.send(csv);
+                        });
+                    }
+                });
             });
         }
     };
