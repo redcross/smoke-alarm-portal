@@ -222,7 +222,7 @@ var getRequestData = function(req, numberOfRequests, region) {
         fiscalYear = fiscalYear + 1;
     }
     var displayedYear = fiscalYear - 2000;
-    if (region) {
+    if (region && region != 'XXXX') {
         var serial = region + "-" + displayedYear + "-" + sequenceNumber;
     }
     else {
@@ -409,7 +409,7 @@ exports.saveRequest = function(req, res) {
             region_code = county_id.region;
         }
         else {
-            region_code = null
+            region_code = 'XXXX';
         }
         return countRequestsPerRegion(region_code);
     }).then( function(numRequests) {
