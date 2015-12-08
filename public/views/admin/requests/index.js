@@ -224,10 +224,14 @@
       if (event.keyCode !== 13) { return; }
       this.filter();
     },
-    filter: function() {
-      var query = $('#filters form').serialize();
-      Backbone.history.navigate('q/'+ query, { trigger: true });
-    },
+      filter: function() {
+          var query = $('#filters form').serialize();
+          // if no checkboxes are checked, then add "no regions" to the query
+          if (query.indexOf("region") < 0 ) {
+              query = query + "&region%5B%5D=[]";
+          }
+          Backbone.history.navigate('q/'+ query, { trigger: true });
+      },
       clearFilter: function () {
           $("#filters form")[0].reset();
           $(".datepickerWrapper input[type='hidden']").val('');

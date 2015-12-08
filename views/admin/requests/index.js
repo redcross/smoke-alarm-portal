@@ -26,7 +26,10 @@ exports.find = function(req, res, next) {
         }
     };
     var countResults = function(callback) {
-        req.app.db.Request.count().then(function(results) {
+        console.log("counting");
+        var filters = getFilters();
+        console.log("filters are: " + JSON.stringify(filters));
+        req.app.db.Request.count( { where: filters }).then(function(results) {
             outcome.items.total = results;
             callback(null, 'done counting');
         });
@@ -151,7 +154,7 @@ exports.find = function(req, res, next) {
 
         // Determine direction for order
         var sortOrder = (req.query.sort[0] === '-')? 'DESC' : 'ASC';
-            // Determine whether to filter by date
+        // Determine whether to filter by date
         req.app.db.Request.findAll({
             limit:req.query.limit,
             offset:req.query.offset,
@@ -191,7 +194,7 @@ exports.find = function(req, res, next) {
             console.log("ERROR calling callback: " + err);
             return callback(err, null);
         });
-                });
+        });
     };
 
     var asyncFinally = function(err, results) {
