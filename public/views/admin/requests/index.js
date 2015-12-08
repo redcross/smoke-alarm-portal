@@ -228,8 +228,13 @@
       var query = $('#filters form').serialize();
       Backbone.history.navigate('q/'+ query, { trigger: true });
     },
-    clearFilter: function () {
-      Backbone.history.navigate('', { trigger: true });
+      clearFilter: function () {
+          $("#filters form")[0].reset();
+          $(".datepickerWrapper input[type='hidden']").val('');
+          $(".allowed_region input[type=checkbox]").each( function (index) {
+              $(this).prop("checked", "true");
+          });
+          this.filter();
     },
     onSelect: function(dateText) {
       // $(this) is the (hidden) input field to which the datepicker is attached.
