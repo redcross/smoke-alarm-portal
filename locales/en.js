@@ -41,5 +41,8 @@
 	"For more information about the importance of smoke alarms, see ": "For more information about the importance of smoke alarms, see ",
 	"the Smoke Signals project": "the Smoke Signals project",
 	"Visit the Red Cross": "Visit the Red Cross",
-	" to learn how to prepare for and prevent home fires.": " to learn how to prepare for and prevent home fires."
+	" to learn how to prepare for and prevent home fires.": " to learn how to prepare for and prevent home fires.",
+	"This web site is open source ": "This web site is open source ",
+	" volunteers welcome ": " volunteers welcome ",
+	" at GitHub": " at GitHub"
 }
