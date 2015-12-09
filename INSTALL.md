@@ -135,6 +135,19 @@ much difficulty to most other Unix-like operating systems.
       create a user account with administrative privileges, which would
       obviously be bad.)
 
+   5. Grant your new admin user permission to view requests from all
+      regions, using this file:
+      [migrations/20151208-admin-access.sql.tmpl](migrations/20151208-admin-access.sql.tmpl).
+      Following the instructions in the file, copy it to
+      `migrations/20151208-admin-access.sql` and replace the
+      `__USER_ID__` with the id of your new admin user (if the admin
+      user was the first user you created, then this will probably be
+      `1`).  Once you've done that, run the following commands:
+      
+      $ psql smokealarm_development
+      smokealarm_development=# \i migrations/20151208-admin-access.sql
+
+
    Now you can visit http://localhost:3000/login/ at any time, log in
    as `admin`, and from there click on "Smoke Alarm Installation Requests"
    to get to http://localhost:3000/admin/requests/, which is the
