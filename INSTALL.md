@@ -143,10 +143,11 @@ much difficulty to most other Unix-like operating systems.
       `__USER_ID__` with the id of your new admin user (if the admin
       user was the first user you created, then this will probably be
       `1`).  Once you've done that, run the following commands:
-      
-      $ psql smokealarm_development
-      smokealarm_development=# \i migrations/20151208-admin-access.sql
 
+      ```
+      $ psql smokealarm_development  
+      smokealarm_development=# \i migrations/20151208-admin-access.sql
+      ```
 
    Now you can visit http://localhost:3000/login/ at any time, log in
    as `admin`, and from there click on "Smoke Alarm Installation Requests"
