@@ -7,7 +7,7 @@ exports.find = function(req, res, next) {
         req.query.page = 1;
     }
     if (_.isUndefined(req.query.limit)) {
-        req.query.limit  = 500;
+        req.query.limit  = 20;
     }
     var outcome = {
         data: null,
@@ -50,17 +50,32 @@ exports.find = function(req, res, next) {
     var getResults = function(callback) {
         var filters = {};
         req.query.search = req.query.search ? req.query.search : '';
-        req.query.limit = req.query.limit ? parseInt(req.query.limit, null) : 500;
+        req.query.limit = req.query.limit ? parseInt(req.query.limit, null) : 20;
         req.query.page = req.query.page ? parseInt(req.query.page, null) : 1;
-        req.query.sort = req.query.sort ? req.query.sort : 'id';
+        req.query.sort = req.query.sort ? req.query.sort : '-createdAt';
         req.query.offset = (req.query.page - 1) * req.query.limit;
-        req.query.startDate = (req.query.startDate) ? moment(req.query.startDate): moment('01-01-1980');
-        req.query.endDate = (req.query.endDate) ? moment(req.query.endDate) : moment('01-01-2040');
+        req.query.startDate = (req.query.startDate) ? moment(req.query.startDate): '';
+        req.query.endDate = (req.query.endDate) ? moment(req.query.endDate) : '';
         req.query.format = (req.query.format) ? req.query.format : 'json';
 
-        filters.createdAt = {
-            $between:[req.query.startDate.format(), req.query.endDate.format()]
-        };
+        if (req.query.startDate != '' && req.query.endDate != '') {
+            filters.createdAt = {
+                $between:[req.query.startDate.format(), req.query.endDate.format()]
+            };
+        }
+        else {
+            if (req.query.startDate != '') {
+                filters.createdAt = {
+                    gte:req.query.startDate.format()
+                };
+            }
+            else if (req.query.endDate != '') {
+                filters.createdAt = {
+                    lte:req.query.endDate.format()
+                };
+            }
+            
+        }
         if (req.query.search) {
             filters.name = {
                 $ilike: '%' + req.query.search + '%'
@@ -74,7 +89,6 @@ exports.find = function(req, res, next) {
         var sortOrder = (req.query.sort[0] === '-')? 'DESC' : 'ASC';
 
         // Determine whether to filter by date
-
         req.app.db.Request.findAll({
             limit:req.query.limit,
             offset:req.query.offset,
