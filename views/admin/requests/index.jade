@@ -63,9 +63,6 @@ block body
           label Region
           br
           .allowed_region
-                input(type="checkbox" id="select_regions" value="")
-                b| &nbsp Select / Deselect all
-                br
                 each item in data.usable_regions
                      input(type="checkbox" name="region[]" value="#{item.rc_region}")
                      | &nbsp #{item.region_name}
