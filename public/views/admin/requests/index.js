@@ -149,7 +149,8 @@
       'submit form': 'preventSubmit',
       'click input#applyFilters': 'filter',
       'click input#clearFilters': 'clearFilter',
-      'change input#select_regions': 'selectRegionCheckboxes'
+      'change input#select_regions': 'selectRegionCheckboxes',
+      'change input[type=checkbox]': 'handleSelectAll'
     },
     endpointDates: {
       'earliest': new Date(2000, 1, 1),
@@ -237,13 +238,34 @@
             });
         }
       },
+      handleSelectAll: function () {
+          // loop through checkboxes.  if any are unchecked, then
+          // uncheck "select all."  else, check "select all."
+          var uncheck = false;
+          $(".allowed_region input[type=checkbox]").each( function (index) {
+              // but ignore the select all checkbox itself!
+              var id = $(this)[0].id;
+              if ( id == "" && $(this).prop("checked") !== true ) {
+                  uncheck = true;
+              }
+          });
+          if (uncheck) {
+              $("#select_regions").prop("checked", false);
+          }
+          else {
+              $("#select_regions").prop("checked", "true");
+          }
+      },
       filter: function() {
           var query = $('#filters form').serialize();
           // if no checkboxes are checked, then add "no regions" to the query
           if (query.indexOf("region") < 0 ) {
               query = query + "&region%5B%5D=[]";
           }
+          // get value of "select_regions.checked" here and use it again...?
+          var is_checked = $("#select_regions").prop("checked");
           Backbone.history.navigate('q/'+ query, { trigger: true });
+          $("#select_regions").prop("checked", is_checked);
       },
       clearFilter: function () {
           $("#filters form")[0].reset();
