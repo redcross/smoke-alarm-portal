@@ -26,7 +26,6 @@ module.exports = function(sequelize, DataTypes) {
 	zip: DataTypes.TEXT,
 	phone: DataTypes.TEXT,
 	email: DataTypes.TEXT,
-        permission_to_text: DataTypes.BOOLEAN,
         serial: { type: DataTypes.TEXT, unique: true }
     })
 }
