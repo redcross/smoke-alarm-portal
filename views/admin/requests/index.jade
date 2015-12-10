@@ -4,11 +4,15 @@ block head
   title Smoke Alarm Installation Requests
 
 block neck
-  link(rel='stylesheet', href='/views/admin/requests/index.min.css?#{cacheBreaker}')
+  link(rel='stylesheet', href='/views/admin/requests/index.min.css')
 
 block feet
-  script(src='/views/admin/requests/index.min.js?#{cacheBreaker}')
-
+  script(type='text/javascript' src='/third-party/jquery.min.js')
+  script(type='text/javascript' src='/third-party/jquery-ui-1.11.4.custom/jquery-ui.min.js')
+  link(rel='stylesheet', href='/third-party/datepicker.css')
+  link(rel='stylesheet', href='/third-party/jquery-ui-1.11.4.custom/jquery-ui.min.css')
+  script(src='/views/admin/requests/index.js')
+    
 block body
   div.row
     div.col-xs-12
@@ -30,12 +34,10 @@ block body
         div.col-sm-3
           label Sort By
           select.form-control(name='sort')
-            option(value='id') id &#9650;
-            option(value='-id') id &#9660;
             option(value='name') name &#9650;
             option(value='-name') name &#9660;
             option(value='createdAt') date created &#9650;
-            option(value='-createdAt') date created &#9660;
+            option(value='-createdAt', selected='selected') date created &#9660;
         div.col-sm-3
           label Results Per Page
           select.form-control(name='limit')
@@ -49,50 +51,24 @@ block body
       div.row
         div.col-sm-3
           label Start Date
-          input.form-control(name='startDate', type='text')
+          .datepickerWrapper
+            input.form-control(name='startDate', type='hidden').datepickerTrigger
+            .pickedDate
         div.col-sm-3
           label End Date
-          input.form-control(name='endDate', type='text')
+          .datepickerWrapper
+            input.form-control(name='endDate', type='hidden').datepickerTrigger
+            .pickedDate
         div.col-sm-3
           label Region
           select.form-control(name='region')
-            //- TODO: Ideally, these choices would be derived from a
-            //-       config file, instead of hard-coded here.
             option(value="") All Regions
-            //- TODO: The value attributes below sometimes say "and"
-            //-       where the original was "&".  The problem is
-            //-       that "&" is turned into "&amp;" when it
-            //-       appears as the right side of an attribute,
-            //-       thus making the dropdown behave weirdly when
-            //-       that region is chosen (see issue #92).  From
-            //-       looking at these tickets on the interwebs...
-            //-       
-            //-         https://github.com/jadejs/jade/issues/198
-            //-         https://github.com/jadejs/jade/issues/1087
-            //-       
-            //-       ...it seems that if we were interpolating the
-            //-       attribute values then we might be able to use
-            //-       mustache-style escapers ("<% ... %>"), but as
-            //-       we're not interpolating here, I'm not sure what
-            //-       to do.  For the moment, I've just replaced all
-            //-       the "&" with "and" in the attributes.  One way
-            //-       to solve the problem would be to have canonical
-            //-       identifiers for Red Cross Regions -- identifiers
-            //-       that, you know, look like identifiers, with no
-            //-       spaces in them, only letters and hyphens and such,
-            //-       e.g., "central-and-southern-illinois".  We could
-            //-       define those in the same config file where we
-            //-       define regions, ../../../config/recipients.json.
-            option(value="rc_southern_illinois") Central & Southern Illinois
-            option(value="rc_chicago_northern_illinois") Chicago & Northern Illinois
-            option(value="rc_dakotas") Dakotas
-            option(value="rc_eastern_missouri") Eastern Missouri
-            option(value="rc_iowa") Iowa
-            option(value="rc_idaho_montana") Idaho/Montana
-            option(value="rc_kansas_nebraska_sw_iowa") Kansas, Nebraska & SW Iowa
-            option(value="rc_minnesota") Minnesota
-            option(value="rc_western_missouri") Western Missouri
-            option(value="rc_wisconsin") Wisconsin
+            each item in data.region
+                 option(value="#{item.rc_region}") #{item.region_name}
+      div.row
+        div.col-sm-12
+          input#applyFilters(type='button', value='apply filters')
+          input#clearFilters(type='button', value='clear filters')
 
   script(type='text/template', id='tmpl-results-table')
     table.table.table-striped
@@ -113,7 +89,7 @@ block body
 
   script(type='text/template', id='tmpl-results-row')
     td
-    td.nowrap <%- id %>
+    td.nowrap <%- serial %>
     td.nowrap <%- name %>
     td.nowrap <%- address %>
     td.nowrap <%- city %>
@@ -122,7 +98,7 @@ block body
     td.nowrap <%- phone %>
     td.nowrap <%- email %>
     td.nowrap <%- moment(createdAt).format("YYYY-MM-DD HH:mm") %>
-    td.nowrap <%- (SelectedCounty) ? rc_region : '' %>
+    td.nowrap <%- assigned_rc_region %>
       div
       div
 
@@ -141,3 +117,4 @@ block body
       div.clearfix
 
   script(type='text/template', id='data-results') !{data.results}
+

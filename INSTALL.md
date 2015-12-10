@@ -47,7 +47,7 @@ much difficulty to most other Unix-like operating systems.
         or set up a whole new environment, e.g., "demo" (e.g., based
         on the "test" example).
 
-  * Do `cp config/recipients.json.tmpl config/recipients.json`, then edit the latter.
+  * Do `cp config/recipients.sql.tmpl config/recipients.sql`, then edit the latter.
 
         You'll need to fill in appropriate contact names and email
         addresses.
@@ -88,8 +88,15 @@ much difficulty to most other Unix-like operating systems.
         $ NODE_ENV="development" 
 
         ### This will spew a lot of information to the screen and may
-        ### take several minutes
+        ### take several minutes.  It creates the tables and loads data
+        ### into UsAddress and SelectedCounties.
         $ node data/import_into_postgres.js
+        
+        ### Load the active regions and recipients.  
+        $ psql smokealarm_development
+        ### Import the regions and recipients to the "activeRegions" table.
+        smokealarm_development=# \i config/recipients.sql
+
 
 8. Start the smoke-alarm-portal app
 
@@ -137,6 +144,8 @@ much difficulty to most other Unix-like operating systems.
    (Of course, you'd have to enter some test requests from the front
    page (http://localhost:3000/) before any requests would be listed
    on the /admin/requests page.)
+
+11. Manually perform tests listed in [TESTING.md](docs/TESTING.md).
 
 Appendix A: Setting up Apache->Node ProxyPass with https://
 -----------------------------------------------------------

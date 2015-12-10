@@ -2,18 +2,22 @@ extends layout
 
 block content
   #container.container-fluid
+    #language
+      a(onclick='setLocale("EN")') English
+      | &nbsp;|&nbsp;
+      a(onclick='setLocale("ES")') Español
     #top
       #logo.text-center
         img.logo(src='./smokeAlarmPortal_files/redcross-logo-white-letters.png', alt='American Red Cross')
       #safety-message.row.text-center(role='complementary')
         p.col-xs-12.bigger-centered
-          | Smoke alarms save lives.  Installing a smoke alarm is&nbsp;the&nbsp;first&nbsp;step&nbsp;to keeping&nbsp;your&nbsp;family&nbsp;safe.
+          | #{__('Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.')}
     #main.row(role='main')
       #left.col-md-3
         p
-          | Thank you for your interest in having smoke alarms installed in your home.  To request an installation, please complete all fields in the form below and click “Submit.”
+          | #{__('Thank you for your interest in having FREE smoke alarms installed in your home.')} #{__('To request a FREE installation, please complete all fields in the form below and click “Submit.”')}
         p
-          | After submitting your request, you will be contacted by an American Red Cross representative with information on installation availability in your area.
+          | #{__('After submitting your request, you will be contacted by an American Red Cross representative with information on installation availability in your area.')}
       #center.col-md-6
         .container-fluid(role='form')
           form(action="/", method="POST", class="form-horizontal")
@@ -22,24 +26,24 @@ block content
                 // Text input
                 .form-group
                   .col-xs-12
-                    label.screenreader(for='name') Your Name
-                    input#name.form-control.input-md(name='name', type='text', placeholder='Your Name', class='validate[required]', data-prompt-position='topLeft:0,5')
+                    label.screenreader(for='name') #{__('Your Name')}
+                    input#name.form-control.input-md(name='name', type='text', placeholder='#{__("Your Name")}', class='validate[required]', data-prompt-position='topLeft:0,5')
               .row
                   // Text input
                   .form-group
                     .col-xs-12
-                      label.screenreader(for='street_address') Street Address & Unit (e.g., 123 Main St., Unit Q)
-                      input#street_address.form-control.input-md(name='street_address', type='text', placeholder='Address & Unit', class='validate[required]', data-prompt-position='topLeft:50,5')
+                      label.screenreader(for='street_address') #{__('Street Address \& Unit (e.g., 123 Main St., Unit Q)')}
+                      input#street_address.form-control.input-md(name='street_address', type='text', placeholder='#{__("Address \& Unit")}', class='validate[required]', data-prompt-position='topLeft:50,5')
               .row
                   // Text input
                   .form-group
                     .col-xs-5
-                      label.screenreader(for='city') City
-                      input#city.form-control.input-md(name='city', type='text', placeholder='City' class='validate[required]', data-prompt-position='topLeft:0,5')
+                      label.screenreader(for='city') #{__('City')}
+                      input#city.form-control.input-md(name='city', type='text', placeholder='#{__("City")}' class='validate[required]', data-prompt-position='topLeft:0,5')
                     .col-xs-3
-                      label.screenreader(for='state') State
+                      label.screenreader(for='state') #{__('State')}
                       select#state.form-control(name='state', class='validate[required]', data-prompt-position='topRight:-40,5')
-                        option(value='' disabled selected) State
+                        option(value='' disabled selected) #{__("State")}
                         option(value='Alabama') AL
                         option(value='Alaska') AK
                         option(value='Arizona') AZ
@@ -92,36 +96,45 @@ block content
                         option(value='Wisconsin') WI
                         option(value='Wyoming') WY
                     .col-xs-4
-                      label.screenreader(for='zip') Zip Code
-                      input#zip.form-control.input-md(name='zip', type='text', placeholder='Zip Code', class='validate[required, custom[zip]]', data-prompt-position='topRight:-40,5')
+                      label.screenreader(for='zip') #{__('Zip Code')}
+                      input#zip.form-control.input-md(name='zip', type='text', placeholder='#{__("Zip Code")}', class='validate[required, custom[zip]]', data-prompt-position='topRight:-40,5')
               .row
                   .form-group
                     .col-xs-5
-                      label.screenreader(for='phone') Phone Number
-                      input#phone.form-control.input-md(name='phone', type='text', placeholder='Phone #', class='validate[groupRequired[contactPreference], custom[phone-10-digit-US]]', data-prompt-position='topRight:0,5')
+                      label.screenreader(for='phone') #{__('Phone Number')}
+                      input#phone.form-control.input-md(name='phone', type='text', placeholder='#{__("Phone #")}', class='validate[groupRequired[contactPreference], custom[phone-10-digit-US]]', data-prompt-position='topRight:0,5')
                     .col-xs-7
-                      label.screenreader(for='email') Email Address
-                      input#email.form-control.input-md(name='email', type='text', placeholder='Email', class='validate[groupRequired[contactPreference], custom[email]]', data-prompt-position='topRight:0,5')
+                      label.screenreader(for='email') #{__('Email Address')}
+                      input#email.form-control.input-md(name='email', type='text', placeholder='#{__("Email")}', class='validate[groupRequired[contactPreference], custom[email]]', data-prompt-position='topRight:0,5')
               .row
                 // http://www.sitepoint.com/understanding-bootstrap-grid-system/ helped
                 .form-group
                   .col-xs-12.text-center
                     input(type='hidden', name='_csrf', value='#{csrf}')
-                    button#singlebutton.btn.btn-primary(name='singlebutton') Submit
+                    button#singlebutton.btn.btn-primary(name='singlebutton') #{__("Submit")}
       #right.col-md-3
         p
-          | The American Red Cross and its partners have launched the Home Fire Campaign to reduce deaths and injuries caused by home fires by 25 percent over five years.  The Red Cross asks every household in America to take two simple steps to help save lives: check or install smoke alarms and practice fire drills at home.
+          | #{__('The American Red Cross and its partners have launched the Home Fire Campaign to reduce deaths and injuries caused by home fires by 25 percent over five years.')} #{__('The Red Cross asks every household in America to take two simple steps to help save lives: check or install smoke alarms and practice fire drills at home.')}
     #bottom.row
       p#availability.col-xs-12
-        | This form can accept requests from the following States and Counties: IA, IL, KS, MN, MO, MT, ND, NE, SD, WI, as well as all counties in ID (except Benewah, Bonner, Boundary, Kootenal and Shoshone Counties) and Malheur County, OR, Garfield and Asotin Counties in WA.&nbsp;
-        span.notabene If your location is not listed, please call 800-RED-CROSS to be connected to&nbsp;
-        span.notaoptime your
-        span.notabene &nbsp;local Red Cross Chapter.
+        | #{__('For more information about the importance of smoke alarms, see ')}
+        a(class="contrast-link" href="http://labs.enigma.io/smoke-signals/" target="_blank") #{__('the Smoke Signals project')}
+        |.
+      p#availability.col-xs-12
+        | #{__('This form can accept requests from the following States and Counties: IA (except Harrison, Mills and Pottawattamie Counties), IL, MN, MO, MT, ND, SD, WI, Dakota County, NE as well as all counties in ID (except Benewah, Bonner, Boundary, Kootenal and Shoshone Counties) and Malheur County, OR and Garfield and Asotin Counties in WA.')}
+        span.notabene #{__('  If your location is not listed, please call 800-RED-CROSS to be connected to ')}
+        span.notaoptime #{__('your')}
+        span.notabene #{__(' local Red Cross Chapter.')}
 
 
     script(type="text/javascript").
-      $("select").addClass('state-not-yet-selected');
-      $("select").bind("focus", function () {
+      function setLocale(locale) { document.cookie= "locale=" + locale; location.reload(); }
+      var locale = /locale=([^;]+)/.exec(document.cookie);
+      if (locale[1]) {
+        $("select#language-switcher").val(locale[1]);
+      }
+      $("select#state").addClass('state-not-yet-selected');
+      $("select#state").bind("focus", function () {
         $(this).children('option[value="state-not-yet-selected"]').remove();
         $(this).removeClass('state-not-yet-selected');
       });
@@ -130,29 +143,52 @@ block content
         'autoPositionUpdate': true,
         'maxErrorsPerField': 1,
         'custom_error_messages': {
+          '#name': {
+            'required': {
+              'message': "* " + "#{__('This field is required')}"
+            }
+          },
+          '#street_address': {
+            'required': {
+              'message': "* " + "#{__('This field is required')}"
+            }
+          },
+          '#city': {
+            'required': {
+              'message': "* " + "#{__('This field is required')}"
+            }
+          },
+          '#state': {
+            'required': {
+              'message': "* " + "#{__('This field is required')}"
+            }
+          },
           '#phone': {
             'groupRequired': {
-              'message': '* Please provide either a 10-digit phone number or an email address'
+              'message': "* " + "#{__('Please provide either a 10-digit phone number or an email address')}"
             },
             'custom[phone-10-digit-US]': {
-              'message': '* The phone number is invalid'
+              'message': "* " + "#{__('The phone number is invalid')}"
             }
           },
           '#zip': {
             'required': {
-              'message': '* A valid US zip code is required'
+              'message': "* " + "#{__('A valid US zip code is required')}"
             },
             'custom[zip]': {
-              'message': '* A valid US zip code is required'
+              'message': "* " + "#{__('A valid US zip code is required')}"
             }
           },
           '#email': {
             'groupRequired': {
-              'message': '* A Please provide either a phone number or an email address'
+              'message': "* " + "#{__('Please provide either a phone number or an email address')}"
             },
             'custom[email]': {
-              'message': '* The email address is invalid'
+              'message': "* " + "#{__('The email address is invalid')}"
             }
           }
         }
       });
+      // Fix Safari font-weight. The bizzare if-clause is feature-detection for Safari.
+      if (Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0) { $("body").css("font-weight", "400"); }
+

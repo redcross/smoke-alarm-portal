@@ -1,6 +1,5 @@
 'use strict';
 var _ = require('underscore');
-var recipients_table = require(__dirname + '/../../../config/recipients.json');
 var json2csv = require('json2csv');
 var moment = require('moment');
 exports.find = function(req, res, next) {
@@ -32,9 +31,22 @@ exports.find = function(req, res, next) {
             callback(null, 'done counting');
         });
     };
-    var includeClause = {
-        model: req.app.db.SelectedCounties
+    var queryRegionPresentableName = function(request) {
+        var selectedRegion = request.assigned_rc_region;
+        return req.app.db.activeRegion.findOne({
+            where: { rc_region: selectedRegion }
+        });
     };
+
+    /* Return the list of regions from the database, except our testing region. */
+    var queryAllRegions = function() {
+        return req.app.db.activeRegion.findAll({
+            attributes: ['rc_region', 'region_name'],
+            where: {rc_region: {ne: 'rc_test_region'} },
+            order: 'region_name'
+        });
+    };
+
     var getResults = function(callback) {
         var filters = {};
         req.query.search = req.query.search ? req.query.search : '';
@@ -56,9 +68,7 @@ exports.find = function(req, res, next) {
         }
 
         if (req.query.region) {
-            includeClause.where = {
-                region: req.query.region
-            };
+            filters.assigned_rc_region = req.query.region
         }
         // Determine direction for order
         var sortOrder = (req.query.sort[0] === '-')? 'DESC' : 'ASC';
@@ -69,22 +79,25 @@ exports.find = function(req, res, next) {
             limit:req.query.limit,
             offset:req.query.offset,
             where: filters,
-            include: [includeClause],
             order: [[req.query.sort.replace('-',''), sortOrder ]]
-        }).then(function(results) {
-            // TODO: Right now this puts the region name in the address_2 field
-            // which is not being used. Long term, this value should be in another
-            // parameter.
-            var findRegionPresentableName = function(request, index) {
-                if (request.SelectedCounty) {
-                    console.log("DEBUG: We are in here!: request = " + request + " & key = " + index);
-                    var selectedRegion = request.SelectedCounty.region;
-                    request.rc_region = recipients_table[selectedRegion]["region_display_name"];
-                }
-                return request;
-            };
-            var resultsWithRegionDisplayName = _.map(results, findRegionPresentableName); 
-            outcome.data = resultsWithRegionDisplayName;
+        }).reduce( function(previousValue, request, index, results) {
+            return queryRegionPresentableName(request).then(
+                function (displayName) {
+                    if (displayName) {
+                        request.assigned_rc_region = displayName.region_name;
+                    }
+                    if (previousValue[0]) {
+                        // if this is not the first call of this
+                        // anonymous function
+                        previousValue.push(request);
+                    }
+                    else {
+                        previousValue = [request];
+                    }
+                    return previousValue;
+                });
+        }, []).then( function (results_array) {
+            outcome.data = results_array;
             outcome.pages.total = Math.ceil(outcome.items.total / req.query.limit);
             outcome.pages.next = ((outcome.pages.current + 1) > outcome.pages.total ? 0 : outcome.pages.current + 1);
             outcome.pages.hasNext = (outcome.pages.next !== 0);
@@ -94,7 +107,7 @@ exports.find = function(req, res, next) {
                 outcome.items.end = outcome.items.total;
             }
 
-            outcome.results = resultsWithRegionDisplayName;
+            outcome.results = results_array;
             return callback(null, 'done');
         })
         .catch(function(err) {
@@ -132,25 +145,26 @@ exports.find = function(req, res, next) {
                 });
             }
         } else {
-            outcome.results.filters = req.query;
-            if (req.query.format !== "csv") {
-                res.render('admin/requests/index', {
-                    data: {
-                        results: escape(JSON.stringify(outcome))
-                    }
-                });
-            } else {
-                var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created','region'];
-                var requestFields = ['id','name','address','city','state','zip','phone','email','createdAt','rc_region'];
-                json2csv({ data: outcome.results, fields: requestFields, fieldNames: requestFieldNames }, function(err, csv) {
-                    if (err) console.log("ERROR: error converting to CSV" + err);
-                    console.log("DEBUG: outcome: " + JSON.stringify(outcome.results));
-                    console.log("DEBUG: csv: " + JSON.stringify(csv));
-                    res.setHeader('Content-Type','application/csv');
-                    res.setHeader('Content-Disposition','attachment; filename=smoke-alarm-requests-' + moment().format() + '.csv;');
-                    res.send(csv);
-                });
-            }
+            return queryAllRegions().then( function (regions) {
+                outcome.results.filters = req.query;
+                if (req.query.format !== "csv") {
+                    res.render('admin/requests/index', {
+                        data: {
+                            results: escape(JSON.stringify(outcome)),
+                            region: regions
+                        }
+                    });
+                } else {
+                    var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created','region'];
+                    var requestFields = ['id','name','address','city','state','zip','phone','email','createdAt','assigned_rc_region'];
+                    json2csv({ data: outcome.results, fields: requestFields, fieldNames: requestFieldNames }, function(err, csv) {
+                        if (err) console.log("ERROR: error converting to CSV" + err);
+                        res.setHeader('Content-Type','application/csv');
+                        res.setHeader('Content-Disposition','attachment; filename=smoke-alarm-requests-' + moment().format() + '.csv;');
+                        res.send(csv);
+                    });
+                }
+            });
         }
     };
     require('async').parallel([countResults, getResults], asyncFinally);
