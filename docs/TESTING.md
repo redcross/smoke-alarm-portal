@@ -48,4 +48,6 @@ A list of tests to be included in future unit tests:
 - when "clear filters" is clicked, all accessible regions are checked
   and all accessible requests are returned
 - if no regions are selected, no requests are returned
-- 
+- "select / deselect all" checks and unchecks active region checkboxes
+- "select / deselect all" is checked after "clear filters" is clicked
+- "select / deselect all" is checked or unchecked as appropriate after "apply filters" is clicked

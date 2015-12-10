@@ -147,10 +147,9 @@
     template: _.template( $('#tmpl-filters').html() ),
     events: {
       'submit form': 'preventSubmit',
-      // 'keypress input[type="text"]': 'filterOnEnter',
-      // 'change select': 'filter',
       'click input#applyFilters': 'filter',
-      'click input#clearFilters': 'clearFilter'
+      'click input#clearFilters': 'clearFilter',
+      'change input#select_regions': 'selectRegionCheckboxes'
     },
     endpointDates: {
       'earliest': new Date(2000, 1, 1),
@@ -224,6 +223,20 @@
       if (event.keyCode !== 13) { return; }
       this.filter();
     },
+      selectRegionCheckboxes: function () {
+        // on check/uncheck of "select all," check or uncheck the the
+        // enabled regions
+        if ( $("#select_regions").prop("checked") === true ) {
+            $(".allowed_region input[type=checkbox]").each( function (index) {
+                $(this).prop("checked", "true");
+            });
+        }
+        else {
+            $(".allowed_region input[type=checkbox]").each( function (index) {
+                $(this).prop("checked", false);
+            });
+        }
+      },
       filter: function() {
           var query = $('#filters form').serialize();
           // if no checkboxes are checked, then add "no regions" to the query

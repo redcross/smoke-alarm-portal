@@ -26,9 +26,7 @@ exports.find = function(req, res, next) {
         }
     };
     var countResults = function(callback) {
-        console.log("counting");
         var filters = getFilters();
-        console.log("filters are: " + JSON.stringify(filters));
         req.app.db.Request.count( { where: filters }).then(function(results) {
             outcome.items.total = results;
             callback(null, 'done counting');
@@ -68,20 +66,33 @@ exports.find = function(req, res, next) {
         });
     };
 
+    /*
+     * This function finds the difference of the array of all regions
+     * and the array of regions that the user has access to.
+     *
+     * Takes:
+     * usableRegions: array of regions that the logged-in user has
+     * permission to access
+     * allRegions: array of all regions in the "activeRegions" db table.
+     *
+     * Returns:
+     * disabledRegions: array of the regions that the logged-in user is
+     * forbidden to access (purely for UI display)
+     */
     var getForbiddenRegions = function(usableRegions, allRegions) {
         var disabledRegions = {};
+        // first disable all regions
         allRegions.forEach( function (region) {
             disabledRegions[region.rc_region] = region.region_name;
         });
         usableRegions.forEach( function (allowed_region) {
-            // TODO: does indexOf work in all browsers?
+            // Re-enable the regions that the user is allowed to access
             if (disabledRegions.hasOwnProperty(allowed_region.rc_region)) {
                 delete disabledRegions[allowed_region.rc_region];
             }
         });
-        // turn array into set of objects with code and name (string)
         return disabledRegions;
-    }
+    };
 
     var getFilters = function() {
         var filters = {};
@@ -211,13 +222,35 @@ exports.find = function(req, res, next) {
                 //get list of all regions
                 return queryAllRegions().then( function (allRegions) {
                     var disabledRegions = getForbiddenRegions(regions, allRegions);
+                    // if nonregion is in disabled regions then set
+                    // disabled to true and pop it off the
+                    // disabledRegions array
+                    var non_region_code = 'XXXX';
+                    var non_region_disabled = null;
+                    if (disabledRegions.hasOwnProperty(non_region_code)) {
+                        non_region_disabled = true;
+                        delete disabledRegions[non_region_code];
+                    }
+                    // else, set disabled to false and pop it off the
+                    // regions array
+                    else {
+                        non_region_disabled = false;
+                        var index = 0;
+                        regions.forEach( function (region) {
+                            if (region.rc_region == non_region_code) {
+                                regions.splice(index, 1);
+                            }
+                            index++;
+                        });
+                    }
                     outcome.results.filters = req.query;
                     if (req.query.format !== "csv") {
                         res.render('admin/requests/index', {
                             data: {
                                 results: escape(JSON.stringify(outcome)),
                                 usable_regions: regions,
-                                disabled_regions: disabledRegions
+                                disabled_regions: disabledRegions,
+                                non_region: {disabled: non_region_disabled}
                             }
                         });
                     } else {
