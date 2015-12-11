@@ -104,7 +104,7 @@
   app.ResultsView = Backbone.View.extend({
     el: '#results-table',
     template: _.template( $('#tmpl-results-table').html() ),
-    initialize: function() {
+      initialize: function() {
       this.collection = new app.RecordCollection( app.mainView.results.data );
       this.listenTo(this.collection, 'reset', this.render);
       this.render();
@@ -150,14 +150,15 @@
       // 'keypress input[type="text"]': 'filterOnEnter',
       // 'change select': 'filter',
       'click input#applyFilters': 'filter',
-      'click input#clearFilters': 'clearFilter'
+        'click input#clearFilters': 'clearFilter',
+        'click input#exportCSV': 'makeCSV'
     },
     endpointDates: {
       'earliest': new Date(2000, 1, 1),
       'latest': moment().toDate(),
       'yearRange': '2000:nnnn'
     },
-    initialize: function() {
+      initialize: function() {
       this.model = new app.Filter( app.mainView.results.filters);
       this.listenTo(this.model, 'change', this.render);
       this.render();
@@ -213,6 +214,14 @@
       var query = $('#filters form').serialize();
       Backbone.history.navigate('q/'+ query, { trigger: true });
     },
+      makeCSV: function() {
+          var query = $('#filters form').serialize();
+          // add format to the query
+          query = "?format=csv&" + query;
+          // using Backbone.history.navigate does not download the file,
+          // perhaps because it doesn't reload the page?
+          window.location.assign('/admin/requests/' + query);
+      },
     clearFilter: function () {
       Backbone.history.navigate('', { trigger: true });
     },
@@ -287,10 +296,11 @@
 
   app.Router = Backbone.Router.extend({
     routes: {
-      '': 'default',
-      'q/:params': 'query'
+      '/': 'default',
+        'q/:params': 'query'
     },
-    initialize: function() {
+      initialize: function() {
+          console.log("loading the page initially uses the mainView");
       app.mainView = new app.MainView();
     },
     default: function() {
@@ -309,6 +319,6 @@
   $(document).ready(function() {
     app.firstLoad = true;
     app.router = new app.Router();
-    Backbone.history.start();
+      Backbone.history.start( {pushState: true, root: '/admin/requests/'});
   });
 }());
