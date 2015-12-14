@@ -72,12 +72,22 @@ exports.find = function(req, res, next) {
         }
         // Determine direction for order
         var sortOrder = (req.query.sort[0] === '-')? 'DESC' : 'ASC';
+        var limit;
+        var offset;
+        if (req.query.format == 'csv') {
+            limit = null;
+            offset = null;
+        }
+        else {
+            limit = req.query.limit;
+            offset = req.query.offset;
+        }
 
         // Determine whether to filter by date
 
         req.app.db.Request.findAll({
-            limit:req.query.limit,
-            offset:req.query.offset,
+            limit: limit,
+            offset: offset,
             where: filters,
             order: [[req.query.sort.replace('-',''), sortOrder ]]
         }).reduce( function(previousValue, request, index, results) {
