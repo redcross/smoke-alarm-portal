@@ -165,10 +165,21 @@ exports.find = function(req, res, next) {
 
         // Determine direction for order
         var sortOrder = (req.query.sort[0] === '-')? 'DESC' : 'ASC';
+        var limit;
+        var offset;
+        if (req.query.format == 'csv') {
+            limit = null;
+            offset = null;
+        }
+        else {
+            limit = req.query.limit;
+            offset = req.query.offset;
+        }
+
         // Determine whether to filter by date
         req.app.db.Request.findAll({
-            limit:req.query.limit,
-            offset:req.query.offset,
+            limit: limit,
+            offset: offset,
             where: filters,
             order: [[req.query.sort.replace('-',''), sortOrder ]]
         }).reduce( function(previousValue, request, index, results) {
@@ -208,15 +219,34 @@ exports.find = function(req, res, next) {
         });
     };
 
+    var createCSV = function() {
+        var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created','region'];
+        var requestFields = ['serial','name','address','city','state','zip','phone','email','createdAt','assigned_rc_region'];
+        json2csv({ data: outcome.results, fields: requestFields, fieldNames: requestFieldNames }, function(err, csv) {
+            if (err) console.log("ERROR: error converting to CSV" + err);
+            res.setHeader('Content-Type','application/csv');
+            res.setHeader('Content-Disposition','attachment; filename=smoke-alarm-requests-' + moment().format() + '.csv;');
+            res.send(csv);
+        });
+    }
+
     var asyncFinally = function(err, results) {
         if (err) {
             return next(err);
         }
 
+        // TODO: This section has duplicated logic which can be removed
+        // For some reason, after using a filter, Backbone treats all links 
+        // as XHR requests, even if they're not. This works around the 
+        // issue for now, but should be fixed moving forward
+        outcome.filters = req.query;
         if (req.xhr) {
-            res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-            outcome.filters = req.query;
-            res.send(outcome);
+            if (req.query.format !== "csv") {
+                res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+                res.send(outcome);
+            } else {
+                createCSV();
+            }
         } else {
             return queryUsableRegions().then( function (regions) {
                 //get list of all regions
@@ -254,14 +284,7 @@ exports.find = function(req, res, next) {
                             }
                         });
                     } else {
-                        var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created','region'];
-                        var requestFields = ['id','name','address','city','state','zip','phone','email','createdAt','assigned_rc_region'];
-                        json2csv({ data: outcome.results, fields: requestFields, fieldNames: requestFieldNames }, function(err, csv) {
-                            if (err) console.log("ERROR: error converting to CSV" + err);
-                            res.setHeader('Content-Type','application/csv');
-                            res.setHeader('Content-Disposition','attachment; filename=smoke-alarm-requests-' + moment().format() + '.csv;');
-                            res.send(csv);
-                        });
+                        createCSV();
                     }
                 });
             });
@@ -269,6 +292,8 @@ exports.find = function(req, res, next) {
     };
     require('async').parallel([countResults, getResults], asyncFinally);
 };
+
+
 
 exports.read = function(req, res, next) {
     var outcome = {};
@@ -664,4 +689,3 @@ exports.delete = function(req, res, next) {
 
     workflow.emit('validate');
 };
-

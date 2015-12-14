@@ -12,5 +12,12 @@ form.filters input[type=button] {
   margin: 10px 10px 10px 0px;
 }
 .disabled_region {
-  color: #909090;
+    color: #909090;
+}
+#exportCSV {
+  background: none;
+  border: none;
+  color: #337AB7;
+  text-decoration: underline;
+  cursor: pointer;
 }

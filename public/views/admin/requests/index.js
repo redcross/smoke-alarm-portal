@@ -148,7 +148,8 @@
     events: {
       'submit form': 'preventSubmit',
       'click input#applyFilters': 'filter',
-      'click input#clearFilters': 'clearFilter'
+      'click input#clearFilters': 'clearFilter',
+      'click input#exportCSV': 'makeCSV'
     },
     endpointDates: {
       'earliest': new Date(2000, 1, 1),
@@ -237,7 +238,15 @@
               $(this).prop("checked", "true");
           });
           this.filter();
-    },
+      },
+      makeCSV: function() {
+          var query = $('#filters form').serialize();
+          // add format to the query
+          query = "?format=csv&" + query;
+          // using Backbone.history.navigate does not download the file,
+          // perhaps because it doesn't reload the page?
+          window.location.assign('/admin/requests/' + query);
+      },
     onSelect: function(dateText) {
       // $(this) is the (hidden) input field to which the datepicker is attached.
       if ($(this).prop("name") == "startDate") {
