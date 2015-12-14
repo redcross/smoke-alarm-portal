@@ -296,11 +296,10 @@
 
   app.Router = Backbone.Router.extend({
     routes: {
-      '/': 'default',
-        'q/:params': 'query'
+      '': 'default',
+      'q/:params': 'query'
     },
       initialize: function() {
-          console.log("loading the page initially uses the mainView");
       app.mainView = new app.MainView();
     },
     default: function() {
@@ -319,6 +318,6 @@
   $(document).ready(function() {
     app.firstLoad = true;
     app.router = new app.Router();
-      Backbone.history.start( {pushState: true, root: '/admin/requests/'});
+    Backbone.history.start();
   });
 }());

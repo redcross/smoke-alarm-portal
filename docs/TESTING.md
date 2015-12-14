@@ -38,3 +38,8 @@ A list of tests to be included in future unit tests:
 - search by a region
 - change pagination
 
+## CSV export:
+
+- selected filters are maintained in exported file
+- all results are exported (not just the first page)
+- after export, new filters/sorting can be applied without error
