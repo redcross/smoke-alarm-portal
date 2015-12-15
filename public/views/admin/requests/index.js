@@ -129,11 +129,24 @@
     tagName: 'tr',
     template: _.template( $('#tmpl-results-row').html() ),
     events: {
-      'click .btn-details': 'viewDetails'
+        'click .btn-details': 'viewDetails',
+        'change select.status_updater': 'postNewStatus'
     },
     viewDetails: function() {
       location.href = this.model.url();
     },
+      postNewStatus: function (ev) {
+          // need to post the new status away to the db
+          this.model.save({status: $(ev.currentTarget).val()}, {
+              success: function (model, response, options) {
+                  console.log("DEBUG: saved status successfully");
+              },
+              error: function (model, xhr, options) {
+                  console.log("DEBUG: error saving status");
+                  console.log(xhr.responseText);
+              }
+          });
+          },
     render: function() {
       this.$el.html(this.template( this.model.attributes ));
       this.$el.find('.name').each(function(index, indexValue) {

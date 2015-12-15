@@ -71,10 +71,10 @@ block body
           input#clearFilters(type='button', value='clear filters')
 
   script(type='text/template', id='tmpl-results-table')
-    table.table.table-striped
+    table.table.table-striped#request_results
       thead
         tr
-          th
+          th status
           th id
           th name
           th address
@@ -88,17 +88,21 @@ block body
       tbody#results-rows
 
   script(type='text/template', id='tmpl-results-row')
-    td
-    td.nowrap <%- serial %>
-    td.nowrap <%- name %>
-    td.nowrap <%- address %>
-    td.nowrap <%- city %>
-    td.nowrap <%- state %>
-    td.nowrap <%- zip %>
-    td.nowrap <%- phone %>
-    td.nowrap <%- email %>
-    td.nowrap <%- moment(createdAt).format("YYYY-MM-DD HH:mm") %>
-    td.nowrap <%- assigned_rc_region %>
+    td.nowrap(width="100px") <%- status %>
+        select.form-control.status_updater(name='status')
+               option(value=null)
+               option(value='new' selected=status) new 
+               option(value='installed' selected=status) installed
+    td <%- serial %>
+    td <%- name %>
+    td <%- address %>
+    td <%- city %>
+    td <%- state %>
+    td <%- zip %>
+    td <%- phone %>
+    td <%- email %>
+    td <%- moment(createdAt).format("YYYY-MM-DD HH:mm") %>
+    td <%- assigned_rc_region %>
       div
       div
 

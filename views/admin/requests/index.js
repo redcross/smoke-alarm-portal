@@ -235,18 +235,10 @@ exports.update = function(req, res, next) {
     var workflow = req.app.utility.workflow(req, res);
 
     workflow.on('validate', function() {
-        if (!req.body.name) {
-            workflow.outcome.errfor.name = 'required';
-        }
-
-        if (!req.body.last) {
-            workflow.outcome.errfor.last = 'required';
-        }
-
         if (workflow.hasErrors()) {
             return workflow.emit('response');
         }
-
+        
         workflow.emit('patchRequest');
     });
 
@@ -271,13 +263,15 @@ exports.update = function(req, res, next) {
             ]
         };
 
-        req.app.db.models.Request.findByIdAndUpdate(req.params.id, fieldsToSet, function(err, Request) {
-            if (err) {
-                return workflow.emit('exception', err);
+        req.app.db.Request.findOne({ where: {id: req.params.id} }).then( function(Request) {
+            if (Request) { // if the record exists in the db
+                Request.updateAttributes({
+                    status: req.body.status
+                }).then(function() {
+                    workflow.outcome.Request = Request;
+                    return workflow.emit('response');
+                });
             }
-
-            workflow.outcome.Request = Request;
-            return workflow.emit('response');
         });
     });
 
