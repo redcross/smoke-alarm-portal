@@ -57,7 +57,9 @@ exports.find = function(req, res, next) {
         req.query.startDate = (req.query.startDate) ? moment(req.query.startDate): moment('01-01-1980');
         req.query.endDate = (req.query.endDate) ? moment(req.query.endDate) : moment('01-01-2040');
         req.query.format = (req.query.format) ? req.query.format : 'json';
-
+        if (req.query.status && req.query.status != 'all') {
+            filters.status = req.query.status;
+        }
         filters.createdAt = {
             $between:[req.query.startDate.format(), req.query.endDate.format()]
         };

@@ -66,6 +66,15 @@ block body
             each item in data.region
                  option(value="#{item.rc_region}") #{item.region_name}
       div.row
+        div.col-sm-3
+          label Status
+          select.form-control(name='status')
+               option(value='all')
+               option(value='new') new 
+               option(value='inprogress') in-progress
+               option(value='installed') installed
+               option(value='canceled') canceled
+      div.row
         div.col-sm-12
           input#applyFilters(type='button', value='apply filters')
           input#clearFilters(type='button', value='clear filters')
