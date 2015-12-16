@@ -89,8 +89,13 @@ block body
       tbody#results-rows
 
   script(type='text/template', id='tmpl-results-row')
-    td.nowrap(width="100px")
-        input.status_updater(type="checkbox" name='status')
+    td.nowrap &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+        select.form-control.status_updater(name='status')
+               option(value=null)
+               option(value='new') new 
+               option(value='inprogress') in-progress
+               option(value='installed') installed
+               option(value='canceled') canceled
     td <%- serial %>
     td <%- name %>
     td <%- address %>
