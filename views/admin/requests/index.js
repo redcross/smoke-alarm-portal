@@ -131,6 +131,7 @@ exports.find = function(req, res, next) {
                 if (req.query.format !== "csv") {
                     res.render('admin/requests/index', {
                         data: {
+                            csrfToken: res.locals.csrfToken,
                             results: escape(JSON.stringify(outcome)),
                             region: regions
                         }

@@ -137,7 +137,9 @@
     },
       postNewStatus: function (ev) {
           // need to post the new status away to the db
-          this.model.save({status: $(ev.currentTarget).val()}, {
+          this.model.save({status: $(ev.currentTarget).val(),
+                           _csrf: $('#csrf_token').val()
+                          }, {
               success: function (model, response, options) {
                   console.log("DEBUG: saved status successfully");
               },

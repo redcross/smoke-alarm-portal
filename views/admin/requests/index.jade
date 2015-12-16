@@ -71,6 +71,7 @@ block body
           input#clearFilters(type='button', value='clear filters')
 
   script(type='text/template', id='tmpl-results-table')
+    input(type="hidden" name="_csrf" id="csrf_token" value="#{csrfToken}")
     table.table.table-striped#request_results
       thead
         tr
