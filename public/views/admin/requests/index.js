@@ -130,14 +130,21 @@
     template: _.template( $('#tmpl-results-row').html() ),
     events: {
         'click .btn-details': 'viewDetails',
-        'change select.status_updater': 'postNewStatus'
+        'change input.status_updater': 'postNewStatus'
     },
     viewDetails: function() {
       location.href = this.model.url();
     },
       postNewStatus: function (ev) {
           // need to post the new status away to the db
-          this.model.save({status: $(ev.currentTarget).val(),
+          var status = null;
+          if ($(ev.currentTarget).prop("checked") == true) {
+              status = 'installed';
+          }
+          else {
+              status = 'new';
+          }
+          this.model.save({status: status,
                            _csrf: $('#csrf_token').val()
                           }, {
               success: function (model, response, options) {
@@ -149,11 +156,16 @@
               }
           });
           },
-    render: function() {
-      this.$el.html(this.template( this.model.attributes ));
-      this.$el.find('.name').each(function(index, indexValue) {
-      });
-      return this;
+      render: function() {
+          this.$el.html(this.template( this.model.attributes ));
+          var row = this.$el.html(this.template( this.model.attributes));
+          // check the checkboxes of the ones that have been installed
+          if (this.model.attributes.status == 'installed') {
+              $(row).find("input[type=checkbox]").prop("checked", true);
+          }
+          this.$el.find('.name').each(function(index, indexValue) {
+          });
+          return this;
     }
   });
 

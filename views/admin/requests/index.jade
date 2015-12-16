@@ -89,11 +89,8 @@ block body
       tbody#results-rows
 
   script(type='text/template', id='tmpl-results-row')
-    td.nowrap(width="100px") <%- status %>
-        select.form-control.status_updater(name='status')
-               option(value=null)
-               option(value='new' selected=status) new 
-               option(value='installed' selected=status) installed
+    td.nowrap(width="100px")
+        input.status_updater(type="checkbox" name='status')
     td <%- serial %>
     td <%- name %>
     td <%- address %>
