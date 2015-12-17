@@ -47,7 +47,7 @@ block body
             option(value='100') 100 items
             option(value='500') 500 items
         div.col-sm-3
-          a(href='/admin/requests/?format=csv') CSV Export
+          input#exportCSV(type='button', value='CSV Export')
       div.row
         div.col-sm-3
           label Start Date
@@ -61,10 +61,29 @@ block body
             .pickedDate
         div.col-sm-3
           label Region
-          select.form-control(name='region')
-            option(value="") All Regions
-            each item in data.region
-                 option(value="#{item.rc_region}") #{item.region_name}
+          br
+          .allowed_region
+                each item in data.usable_regions
+                     input(type="checkbox" name="region[]" value="#{item.rc_region}")
+                     | &nbsp #{item.region_name}
+                     br
+          br
+          if (data.non_region.disabled === true)
+             .disabled_region
+                input(type="checkbox" name="region[]" value="XXXX" disabled)
+                | &nbsp No Region Found
+          else
+             .allowed_region
+                input(type="checkbox" name="region[]" value="XXXX")
+                | &nbsp No Region Found
+
+        div.col-sm-3
+          label
+          .disabled_region 
+               each item in data.disabled_regions
+                   input(type="checkbox" disabled="true" name="region[]" value="#{item}")
+                   | &nbsp #{item}
+                   br
       div.row
         div.col-sm-3
           label Status

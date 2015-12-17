@@ -167,10 +167,9 @@
     template: _.template( $('#tmpl-filters').html() ),
     events: {
       'submit form': 'preventSubmit',
-      // 'keypress input[type="text"]': 'filterOnEnter',
-      // 'change select': 'filter',
       'click input#applyFilters': 'filter',
-      'click input#clearFilters': 'clearFilter'
+      'click input#clearFilters': 'clearFilter',
+      'click input#exportCSV': 'makeCSV'
     },
     endpointDates: {
       'earliest': new Date(2000, 1, 1),
@@ -184,7 +183,11 @@
       this.initializeFormElements();
     },
     initializeFormElements: function() {
-      $("#filters form")[0].reset();
+        $("#filters form")[0].reset();
+        // by default check all the regions they have access to
+        $(".allowed_region input[type=checkbox]").each( function (index) {
+            $(this).prop("checked", "true");
+        });
       // Form elements of type="hidden" don't get cleared by "reset", so
       // clear them manually.
       $(".datepickerWrapper input[type='hidden']").val('');
@@ -207,6 +210,17 @@
             el.val("");
             el.siblings(".pickedDate").text("no date selected");
           }
+            if (key === "region") {
+                var values = String(this.model.attributes[key]);
+                var value_array = values.split(',')
+                value_array.forEach( function (region_value) {
+                    $("input[type=checkbox]").each( function (index) {
+                        if ($(this).val() == region_value) {
+                            $(this).prop("checked", "true");
+                        }
+                    });
+                });
+            }
         }
       }
       $(".datepickerTrigger").datepicker({
@@ -229,13 +243,30 @@
       if (event.keyCode !== 13) { return; }
       this.filter();
     },
-    filter: function() {
-      var query = $('#filters form').serialize();
-      Backbone.history.navigate('q/'+ query, { trigger: true });
-    },
-    clearFilter: function () {
-      Backbone.history.navigate('', { trigger: true });
-    },
+      filter: function() {
+          var query = $('#filters form').serialize();
+          // if no checkboxes are checked, then add "no regions" to the query
+          if (query.indexOf("region") < 0 ) {
+              query = query + "&region%5B%5D=[]";
+          }
+          Backbone.history.navigate('q/'+ query, { trigger: true });
+      },
+      clearFilter: function () {
+          $("#filters form")[0].reset();
+          $(".datepickerWrapper input[type='hidden']").val('');
+          $(".allowed_region input[type=checkbox]").each( function (index) {
+              $(this).prop("checked", "true");
+          });
+          this.filter();
+      },
+      makeCSV: function() {
+          var query = $('#filters form').serialize();
+          // add format to the query
+          query = "?format=csv&" + query;
+          // using Backbone.history.navigate does not download the file,
+          // perhaps because it doesn't reload the page?
+          window.location.assign('/admin/requests/' + query);
+      },
     onSelect: function(dateText) {
       // $(this) is the (hidden) input field to which the datepicker is attached.
       if ($(this).prop("name") == "startDate") {

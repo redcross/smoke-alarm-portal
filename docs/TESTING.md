@@ -38,3 +38,22 @@ A list of tests to be included in future unit tests:
 - search by a region
 - change pagination
 
+### admin region checkboxes:
+
+- on initial page load, all requests in regions that the user has access
+  to are returned.
+- if some regions are checked, then they remain checked after "apply
+  filters" is clicked
+- requests are returned only in the checked regions
+- when "clear filters" is clicked, all accessible regions are checked
+  and all accessible requests are returned
+- if no regions are selected, no requests are returned
+- "select / deselect all" checks and unchecks active region checkboxes
+- "select / deselect all" is checked after "clear filters" is clicked
+- "select / deselect all" is checked or unchecked as appropriate after "apply filters" is clicked
+
+### CSV export:
+
+- selected filters are maintained in exported file
+- all results are exported (not just the first page)
+- after export, new filters/sorting can be applied without error
