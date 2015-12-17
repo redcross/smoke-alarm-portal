@@ -60,6 +60,14 @@ block body
             input.form-control(name='endDate', type='hidden').datepickerTrigger
             .pickedDate
         div.col-sm-3
+          label Status
+          select.form-control(name='status')
+               option(value='all')
+               option(value='new') new 
+               option(value='inprogress') in-progress
+               option(value='installed') installed
+               option(value='canceled') canceled
+        div.col-sm-3
           label Region
           br
           .allowed_region
@@ -77,22 +85,12 @@ block body
                 input(type="checkbox" name="region[]" value="XXXX")
                 | &nbsp No Region Found
 
-        div.col-sm-3
           label
           .disabled_region 
                each item in data.disabled_regions
                    input(type="checkbox" disabled="true" name="region[]" value="#{item}")
                    | &nbsp #{item}
                    br
-      div.row
-        div.col-sm-3
-          label Status
-          select.form-control(name='status')
-               option(value='all')
-               option(value='new') new 
-               option(value='inprogress') in-progress
-               option(value='installed') installed
-               option(value='canceled') canceled
       div.row
         div.col-sm-12
           input#applyFilters(type='button', value='apply filters')

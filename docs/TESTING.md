@@ -36,6 +36,7 @@ A list of tests to be included in future unit tests:
 - search by start and end date
 - search by all regions
 - search by a region
+- search by status
 - change pagination
 
 ### admin region checkboxes:
@@ -48,12 +49,10 @@ A list of tests to be included in future unit tests:
 - when "clear filters" is clicked, all accessible regions are checked
   and all accessible requests are returned
 - if no regions are selected, no requests are returned
-- "select / deselect all" checks and unchecks active region checkboxes
-- "select / deselect all" is checked after "clear filters" is clicked
-- "select / deselect all" is checked or unchecked as appropriate after "apply filters" is clicked
 
 ### CSV export:
 
 - selected filters are maintained in exported file
 - all results are exported (not just the first page)
 - after export, new filters/sorting can be applied without error
+- CSV includes correct serial number and region
