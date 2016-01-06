@@ -100,16 +100,18 @@ exports.respond = function(req, res) {
                 region_code = null
             }
             // add pieces of the street address as they exist
+            console.log("DEBUG: request object is " + JSON.stringify(request_object));
+            console.log("DEBUG: address value is " + JSON.stringify(req.cookies.priorities.address.value));
+            var street_address_arr = [req.cookies.priorities.address.value.number, req.cookies.priorities.address.value.street, req.cookies.priorities.address.value.type, req.cookies.priorities.address.value.sec_unit_type, req.cookies.priorities.address.value.sec_unit_num];
             request_object.street_address = "";
-            var street_address_arr = [request_object.address.number, request_object.address.street, request_object.address.type, request_object.address.sec_unit_type, request_object.address.sec_unit_num];
             street_address_arr.forEach( function (element) {
                 if (element) {
                     request_object.street_address = request_object.street_address + " " + element;
                 }
             });
-            request_object.city = request_object.address.city;
-            if (request_object.address.zip) {
-                request_object.zip_final = request_object.address.zip;
+            request_object.city = req.cookies.priorities.address.value.city;
+            if (req.cookies.priorities.address.value.zip) {
+                request_object.zip_final = req.cookies.priorities.address.value.zip;
             }
             else {
                 request_object.zip_final = zip;
@@ -143,9 +145,76 @@ exports.respond = function(req, res) {
         });
     };
 
+    /*
+     * Takes the current text priority and the most recently received
+     * value
+     *
+     * Inspects the value and determines whether it matches the expected
+     * type of information (e.g. does it look like a phone number?),
+     * then saves it in the appropriate part of a cookie.
+     * 
+     * Returns true if updating the cookie worked, false otherwise.
+     * 
+     */
+    var storeValues = function (priority, incoming_text) {
+        console.log("DEBUG: inside storing values");
+        console.log("DEBUG: priority is: " + priority);
+        console.log("DEBUG: incoming text is: " + incoming_text);
+        // this is where the off-by-one happens, because it's trying to
+        // save the initiating text instead of the response to the name
+        // text.
 
-    console.log("starting cookies");
-    console.log(req.cookies);
+        // so, really we need to be testing against what we think the
+        // piece of information we just received is, instead of the text
+        // we're about to send.
+
+        if (current_priority == 5) {
+            // we think we've just received a name
+            req.cookies.priorities.name.value = req.query.Body;
+        }
+        else if (current_priority == 4) {
+            // maybe test to make sure this looks like an address
+            req.cookies.priorities.address.value = parser.parseLocation(req.query.Body);
+            if (req.cookies.priorities.address.value.zip) {
+                req.cookies.priorities.zipcode.value = req.cookies.priorities.address.value.zip;
+            }
+        }
+        else if (current_priority == 3) {
+            // should only be here if we had to send the zipcode text
+            // process it slightly
+            var zipset = save_utils.findZipForLookup(req);
+            req.cookies.priorities.zipcode.value = zipset.zip_final;
+        }
+        else if (current_priority == 2) {
+            // check whether we have access to req.query here
+            var phone_check = req.query.Body;
+            // handle any capitalization
+            // if their text does not include ten digits, then we use the
+            // "from" number
+            digit_array = phone_check.match(/\d/g);
+            var num_digits = 0;
+            if (digit_array) {
+                num_digits = digit_array.length;
+            }
+            // I assume 10 digits for US phone numbers
+            if ( num_digits < 10) {
+                req.cookies.priorities.phone.value = req.query.From;
+            }
+            else {
+                req.cookies.priorities.phone.value = req.query.Body;
+            }
+        }
+        else if (current_priority == 1) {
+            // check whether this looks like an email address?
+            var has_address = true;
+            // this is their email address, or none.
+            req.cookies.priorities.email.value = req.query.Body;
+
+            // insert the info into the db
+            var response_elements = saveRequest(req.cookies.priorities.zipcode.value);
+        }
+
+    };
     
     // find highest priority empty element
     var i = 0;
@@ -170,23 +239,28 @@ exports.respond = function(req, res) {
     else {
         
         for (var i in req.cookies.priorities) {
+            console.log("DEBUG: current priority is " + current_priority);
+            console.log("DEBUG: i is " + i + " and the priority of this one is " + req.cookies.priorities[i].priority);
             if ( req.cookies.priorities[i].value == "" && req.cookies.priorities[i].priority > current_priority ) {
                 current_priority = req.cookies.priorities[i].priority;
                 text_name = i;
             }
             i++;
         }
+        //current_priority = 0;
         if (current_priority == 0) {
             // start over
+            console.log("DEBUG: current priority is zero");
             text_name = "name";
+            //current_priority = 5;
             // clear cookie, since we're starting over (maybe do this in SaveRequest?)
-            /* req.cookies.priorities = {
+             req.cookies.priorities = {
                 name: {value: "", priority: 5},
                 address: {value: "", priority: 4},
                 zipcode: {value: "", priority: 3},
                 phone: {value: "", priority: 2},
                 email: {value: "", priority: 1}
-            };*/
+            };
         }
         
 
@@ -210,52 +284,9 @@ exports.respond = function(req, res) {
             req.cookies.locale = available_locales[language_check];
             i18n_inst.setLocale(req.cookies.locale);
         }
-        if (text_name == "name") {
-            req.cookies.priorities.name.value = req.query.Body;
-        }
-        if (text_name == "address") {
-            req.cookies.priorities.address.value = req.query.Body;
-            req.cookies.priorities.address.value = parser.parseLocation(request_object.address);
-            if (req.cookies.priorities.address.value.zip) {
-                req.cookies.priorities.zipcode.value = req.cookies.priorities.address.value.zip;
-            }
-        }
-        if (text_name == "zipcode") {
-            // should only be here if we had to send the zipcode text
-            // process it slightly
-            var zipset = save_utils.findZipForLookup(req);
-            req.cookies.priorities.zipcode.value = zipset.zip_final;
-        }
-        if (text_name == "phone") {
-            var phone_check = req.query.Body;
-            // handle any capitalization
-            // if their text does not include ten digits, then we use the
-            // "from" number
-            digit_array = phone_check.match(/\d/g);
-            var num_digits = 0;
-            if (digit_array) {
-                num_digits = digit_array.length;
-            }
-            // I assume 10 digits for US phone numbers
-            if ( num_digits < 10) {
-                req.cookies.priorities.phone.value = req.query.From;
-            }
-            else {
-                req.cookies.priorities.phone.value = req.query.Body;
-            }
-        }
-        if (text_name == "email") {
-            var has_address = true;
-            // this is their email address, or none.
-            req.cookies.priorities.email.value = req.query.Body;
-        }
 
-        // insert the info into the db (but only if we just asked about the
-        // least important piece of information)
+        storeValues(current_priority, req.query.Body);
 
-        if (text_name == "email") {
-            var response_elements = saveRequest(req.cookies.priorities.zipcode.value);
-        }
     }
 
     // now we have the element with current highest priority
