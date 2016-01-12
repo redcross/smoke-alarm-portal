@@ -41,6 +41,20 @@ var request_object = {};
 var save_utils = require('../utilities');
 
 exports.respond = function(req, res) {
+    
+    /* Takes: "twiml," an xml object including the message to be texted
+     * to the requester.  
+     *
+     * No return value, but sends the twiml message.
+     * "res.end" is required by the node server to complete any
+     * transmission to the client.
+     */
+    var completeMsg = function (twiml) {
+        res.cookie('locale', i18n_inst.getLocale());
+        console.log(req.cookies);
+        res.writeHead(200, {'Content-Type': 'text/xml'});
+        res.end(twiml.toString());
+    };
 
     /*
      * Takes: the "outcome" (a boolean that is true iff the entered zip code
@@ -75,11 +89,8 @@ exports.respond = function(req, res) {
             }
         }
         twiml.message(msg);
-        // clear priority_list cookie
-        request_object = {};
-        // need to send the xml here
-        res.writeHead(200, {'Content-Type': 'text/xml'});
-        res.end(twiml.toString());
+        res.clearCookie('priorities');
+        completeMsg(twiml);
     };
 
 
@@ -296,12 +307,10 @@ exports.respond = function(req, res) {
     var texts = { name: "Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto \"ES\"\)." + " " + "We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?", address: __('What is your address, including the unit number, city, state, and zipcode?'), zipcode:  __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), phone: __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), email:  __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.')};
     var text_body = texts[text_name];
     twiml.message( __(text_body));
-    
-    res.cookie('priorities', req.cookies.priorities);
-    res.cookie('locale', i18n_inst.getLocale());
-    console.log(req.cookies);
-    res.writeHead(200, {'Content-Type': 'text/xml'});
-    res.end(twiml.toString());
+    if (req.cookies.priorities.email.value == "") {
+        res.cookie('priorities', req.cookies.priorities);
+        completeMsg(twiml);
+    }
 };
 
 
