@@ -32,11 +32,6 @@ var serial_num = "";
 var rc_local = "";
 
 
-// create an object with those empty values for those elements
-var request_row = {name: "", address: "", zip: "", phone: "", email: ""};
-// we'll save that object in a cookie
-
-var request_object = {};
 // include the functions from views/index.js
 var save_utils = require('../utilities');
 
@@ -100,8 +95,9 @@ exports.respond = function(req, res) {
      */
     var saveRequest = function (zip) {
         save_utils.findAddressFromZip(zip).then(function(address) {
-            request_object.county = address['county'];
-            request_object.state = address['state'];
+            req.cookies.request_object = {};
+            req.cookies.request_object.county = address['county'];
+            req.cookies.request_object.state = address['state'];
             return save_utils.findCountyFromAddress(address, zip);
         }).then( function(county_id){
             if (county_id){
@@ -112,25 +108,27 @@ exports.respond = function(req, res) {
             }
             // add pieces of the street address as they exist
             var street_address_arr = [req.cookies.priorities.address.value.number, req.cookies.priorities.address.value.street, req.cookies.priorities.address.value.type, req.cookies.priorities.address.value.sec_unit_type, req.cookies.priorities.address.value.sec_unit_num];
-            request_object.street_address = "";
+            req.cookies.request_object.street_address = "";
             street_address_arr.forEach( function (element) {
                 if (element) {
-                    request_object.street_address = request_object.street_address + " " + element;
+                    req.cookies.request_object.street_address = req.cookies.request_object.street_address + " " + element;
                 }
             });
-            request_object.city = req.cookies.priorities.address.value.city;
+            req.cookies.request_object.city = req.cookies.priorities.address.value.city;
             if (req.cookies.priorities.address.value.zip) {
-                request_object.zip_final = req.cookies.priorities.address.value.zip;
+                req.cookies.request_object.zip_final = req.cookies.priorities.address.value.zip;
             }
             else {
-                request_object.zip_final = zip;
+                req.cookies.request_object.zip_final = zip;
             }
-            request_object.assigned_rc_region = region_code;
+            req.cookies.request_object.assigned_rc_region = region_code;
             return save_utils.countRequestsPerRegion(region_code);
         }).then( function(numRequests) {
-            requestData = save_utils.createSerial(numRequests, request_object, region_code);
+            requestData = save_utils.createSerial(numRequests, req.cookies.request_object, region_code);
             requestData.is_sms = 'sms';
             requestData.name = req.cookies.priorities.name.value;
+            requestData.phone = req.cookies.priorities.phone.value;
+            requestData.email = req.cookies.priorities.email.value;
             return save_utils.saveRequestData(requestData);
         }).then(function(request) {
             savedRequest = request;
@@ -146,12 +144,12 @@ exports.respond = function(req, res) {
             else{
                 is_valid = false;
             }
-            constructFinalText(is_valid, request_object, contact_num); 
+            constructFinalText(is_valid, req.cookies.request_object, contact_num); 
 
         }).catch(function(error) {
             console.log("DEBUG: caught error " + error);
             // send sorry
-            constructFinalText(false, request_object, null);
+            constructFinalText(false, req.cookies.request_object, null);
         });
     };
 
@@ -163,7 +161,8 @@ exports.respond = function(req, res) {
      * type of information (e.g. does it look like a phone number?),
      * then saves it in the appropriate part of a cookie.
      * 
-     * Returns true if updating the cookie worked, false otherwise.
+     * No return value, though it would be a good idea to return an
+     * error if updating the cookie didn't work.
      * 
      */
     var storeValues = function (priority, incoming_text) {
