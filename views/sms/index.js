@@ -100,8 +100,6 @@ exports.respond = function(req, res) {
                 region_code = null
             }
             // add pieces of the street address as they exist
-            console.log("DEBUG: request object is " + JSON.stringify(request_object));
-            console.log("DEBUG: address value is " + JSON.stringify(req.cookies.priorities.address.value));
             var street_address_arr = [req.cookies.priorities.address.value.number, req.cookies.priorities.address.value.street, req.cookies.priorities.address.value.type, req.cookies.priorities.address.value.sec_unit_type, req.cookies.priorities.address.value.sec_unit_num];
             request_object.street_address = "";
             street_address_arr.forEach( function (element) {
@@ -121,6 +119,7 @@ exports.respond = function(req, res) {
         }).then( function(numRequests) {
             requestData = save_utils.createSerial(numRequests, request_object, region_code);
             requestData.is_sms = 'sms';
+            requestData.name = req.cookies.priorities.name.value;
             return save_utils.saveRequestData(requestData);
         }).then(function(request) {
             savedRequest = request;
@@ -157,9 +156,6 @@ exports.respond = function(req, res) {
      * 
      */
     var storeValues = function (priority, incoming_text) {
-        console.log("DEBUG: inside storing values");
-        console.log("DEBUG: priority is: " + priority);
-        console.log("DEBUG: incoming text is: " + incoming_text);
         // this is where the off-by-one happens, because it's trying to
         // save the initiating text instead of the response to the name
         // text.
@@ -239,18 +235,15 @@ exports.respond = function(req, res) {
     else {
         
         for (var i in req.cookies.priorities) {
-            console.log("DEBUG: current priority is " + current_priority);
-            console.log("DEBUG: i is " + i + " and the priority of this one is " + req.cookies.priorities[i].priority);
             if ( req.cookies.priorities[i].value == "" && req.cookies.priorities[i].priority > current_priority ) {
                 current_priority = req.cookies.priorities[i].priority;
                 text_name = i;
             }
             i++;
         }
-        //current_priority = 0;
+
         if (current_priority == 0) {
             // start over
-            console.log("DEBUG: current priority is zero");
             text_name = "name";
             //current_priority = 5;
             // clear cookie, since we're starting over (maybe do this in SaveRequest?)
@@ -287,6 +280,15 @@ exports.respond = function(req, res) {
 
         storeValues(current_priority, req.query.Body);
 
+        // send the next text.
+        current_priority = 0;
+        for (var i in req.cookies.priorities) {
+            if ( req.cookies.priorities[i].value == "" && req.cookies.priorities[i].priority > current_priority ) {
+                current_priority = req.cookies.priorities[i].priority;
+                text_name = i;
+            }
+            i++;
+        }
     }
 
     // now we have the element with current highest priority
@@ -297,7 +299,6 @@ exports.respond = function(req, res) {
     
     res.cookie('priorities', req.cookies.priorities);
     res.cookie('locale', i18n_inst.getLocale());
-    console.log("debug: all cookies here");
     console.log(req.cookies);
     res.writeHead(200, {'Content-Type': 'text/xml'});
     res.end(twiml.toString());
