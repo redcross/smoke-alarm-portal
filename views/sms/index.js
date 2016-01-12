@@ -37,7 +37,14 @@ var save_utils = require('../utilities');
 
 exports.respond = function(req, res) {
 
-    var updateLocale = function () {
+    /* Change the SMS language to either English or Spanish, based on
+     * incoming request from the user.
+     *
+     * Return true if language changed from previous value and false if
+     * it did not.
+     */
+    var changeLanguage = function () {
+        var lang_changed = false;
         if (req.cookies.locale) {
             req.cookies.locale = req.cookies.locale.toLowerCase();
         }
@@ -50,10 +57,13 @@ exports.respond = function(req, res) {
         // get a list of locales
         var available_locales = Object.keys(i18n_inst.locales);
         var language_check = available_locales.indexOf(req.query.Body.toLowerCase());
-        if (language_check >= 0) {
+        if (language_check >= 0 && req.cookies.locale != available_locales[language_check]) {
             req.cookies.locale = available_locales[language_check];
             i18n_inst.setLocale(req.cookies.locale);
+            lang_changed = true;
         }
+
+        return lang_changed;
     }
     
     /* Takes: "twiml," an xml object including the message to be texted
@@ -277,8 +287,14 @@ exports.respond = function(req, res) {
         current_priority = priority_array[0];
         text_name = priority_array[1];
         
-        updateLocale();
-        storeValues(current_priority, req.query.Body);
+        var lang_changed = changeLanguage();
+        
+        // if the language was changed, send the same text again in a
+        // different language.  If not, store the incoming value and
+        // move on to the next text.
+        if (! lang_changed) {
+            storeValues(current_priority, req.query.Body);
+        }
 
         current_priority = 0;
         priority_array = findPriority(current_priority, text_name);
