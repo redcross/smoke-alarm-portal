@@ -36,6 +36,25 @@ var rc_local = "";
 var save_utils = require('../utilities');
 
 exports.respond = function(req, res) {
+
+    var updateLocale = function () {
+        if (req.cookies.locale) {
+            req.cookies.locale = req.cookies.locale.toLowerCase();
+        }
+        else {
+            // English by default
+            req.cookies.locale = "en";
+        }
+        i18n_inst.setLocale(req.cookies.locale);
+
+        // get a list of locales
+        var available_locales = Object.keys(i18n_inst.locales);
+        var language_check = available_locales.indexOf(req.query.Body.toLowerCase());
+        if (language_check >= 0) {
+            req.cookies.locale = available_locales[language_check];
+            i18n_inst.setLocale(req.cookies.locale);
+        }
+    }
     
     /* Takes: "twiml," an xml object including the message to be texted
      * to the requester.  
@@ -221,9 +240,19 @@ exports.respond = function(req, res) {
         }
 
     };
+
+    var findPriority = function (current_priority, text_name) {
+        for (var i in req.cookies.priorities) {
+            if ( req.cookies.priorities[i].value == "" && req.cookies.priorities[i].priority > current_priority ) {
+                current_priority = req.cookies.priorities[i].priority;
+                text_name = i;
+            }
+            i++;
+        }
+        return [current_priority, text_name];
+    };
     
     // find highest priority empty element
-    var i = 0;
     var current_priority = 0;
     var text_name = "";
     // so each element in the priority list needs a name, a value, and a priority
@@ -244,61 +273,17 @@ exports.respond = function(req, res) {
     }
     else {
         
-        for (var i in req.cookies.priorities) {
-            if ( req.cookies.priorities[i].value == "" && req.cookies.priorities[i].priority > current_priority ) {
-                current_priority = req.cookies.priorities[i].priority;
-                text_name = i;
-            }
-            i++;
-        }
-
-        if (current_priority == 0) {
-            // start over
-            text_name = "name";
-            //current_priority = 5;
-            // clear cookie, since we're starting over (maybe do this in SaveRequest?)
-             req.cookies.priorities = {
-                name: {value: "", priority: 5},
-                address: {value: "", priority: 4},
-                zipcode: {value: "", priority: 3},
-                phone: {value: "", priority: 2},
-                email: {value: "", priority: 1}
-            };
-        }
+        var priority_array = findPriority(current_priority, text_name);
+        current_priority = priority_array[0];
+        text_name = priority_array[1];
         
-
-        // Question: make sure we're continuing in the same request by
-        // checking the token?  Who's keeping track of these cookies getting
-        // passed back and forth?
-        
-        if (req.cookies.locale) {
-            req.cookies.locale = req.cookies.locale.toLowerCase();
-        }
-        else {
-            // English by default
-            req.cookies.locale = "en";
-        }
-        i18n_inst.setLocale(req.cookies.locale);
-
-        // get a list of locales
-        var available_locales = Object.keys(i18n_inst.locales);
-        var language_check = available_locales.indexOf(req.query.Body.toLowerCase());
-        if (language_check >= 0) {
-            req.cookies.locale = available_locales[language_check];
-            i18n_inst.setLocale(req.cookies.locale);
-        }
-
+        updateLocale();
         storeValues(current_priority, req.query.Body);
 
-        // send the next text.
         current_priority = 0;
-        for (var i in req.cookies.priorities) {
-            if ( req.cookies.priorities[i].value == "" && req.cookies.priorities[i].priority > current_priority ) {
-                current_priority = req.cookies.priorities[i].priority;
-                text_name = i;
-            }
-            i++;
-        }
+        priority_array = findPriority(current_priority, text_name);
+        current_priority = priority_array[0];
+        text_name = priority_array[1];
     }
 
     // now we have the element with current highest priority
