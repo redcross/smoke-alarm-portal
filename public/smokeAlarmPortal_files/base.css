@@ -16,22 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@font-face {
-  font-family: smokeAlarmDefault;
-  src: url('/third-party/HelveticaNeue.ttf');
-}
-
-/* Override bootstrap's default widths */
-@media (min-width: 992px) {
-  .col-md-3 {
-    width: 30%;
-  }
-
-  .col-md-6 {
-    width: 40%;
-  }
-}
-
 /* Apply this class to text that is for screen readers only.  Copied
 from http://www.coolfields.co.uk/2009/12/text-for-screen-readers-only/
 */
@@ -61,13 +45,25 @@ body {
     font-size: 1.6em;
 }
 
-.bg {
+img.bg {
     width: 100%;
     position: fixed;
     top: 0;
     left: 0;
     overflow-y: hidden;
+    z-index: -3;
+}
+
+img.fourpanel {
+    width: 30%;
+    position: fixed;
+    border-top: 4px solid #555;
+    border-left: 4px solid #555;
+    border-right: 4px solid #555;
+    bottom: 0;
+    left: 35%;
     z-index: -2;
+    display: none;
 }
 
 .bg-screen {
@@ -232,7 +228,7 @@ body {
 }
 
 #main {
-  margin-top: 1.2em;
+    margin-top: 1.2em;
 }
 
 
@@ -300,4 +296,37 @@ p.bigger-centered {
 .notaoptime {
     font-weight: bold;
     text-decoration: underline;
+}
+
+@font-face {
+  font-family: smokeAlarmDefault;
+  src: url('/third-party/HelveticaNeue.ttf');
+}
+
+/* Override bootstrap's default widths */
+@media (min-width: 992px) {
+  .col-md-3 {
+    width: 30%;
+  }
+
+  .col-md-6 {
+    width: 40%;
+  }
+
+  #top, #main, #bottom {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  img.fourpanel {
+    display: block;
+  }
+}
+
+a.contrast-link {
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.3);
+    -moz-border-radius: 5px 5px 5px 5px;
+    border-radius: 5px 5px 5px 5px; /* standards-compliant: (IE) */
 }
