@@ -52,3 +52,9 @@ A list of tests to be included in future unit tests:
   - inactive region in spanish
   - nonexistent zipcode in english
   - nonexistent zipcode in Spanish
+- Respond to "help" or "info" texts appropriately
+  - as the first text received
+  - in the middle of a request
+  - at the end of a request
+- start a next request without error after completing one
+  - even after sending an "info" text

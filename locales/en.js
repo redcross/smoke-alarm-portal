@@ -59,5 +59,6 @@
 	"Is the number you're texting from the best way to get in touch with you? If so, text YES. Otherwise, please text a phone number where we can reach you.": "Is the number you're texting from the best way to get in touch with you? If so, text YES. Otherwise, please text a phone number where we can reach you.",
 	"One last question: is there an email address we can use to contact you? If not, text NONE. If yes, please text us the email address.": "One last question: is there an email address we can use to contact you? If not, text NONE. If yes, please text us the email address.",
 	"Sorry, the Red Cross Region serving %s, %s does not yet offer smoke alarm installation service.": "Sorry, the Red Cross Region serving %s, %s does not yet offer smoke alarm installation service.",
-	"Sorry, we've encountered an error.  Please try sending your message again, or call <number> for assistance.": "Sorry, we've encountered an error.  Please try sending your message again, or call <number> for assistance."
+	"Sorry, we've encountered an error.  Please try sending your message again, or call <number> for assistance.": "Sorry, we've encountered an error.  Please try sending your message again, or call <number> for assistance.",
+	"This is the smoke alarm request system from the Red Cross.  For more information, call 1-800-RED-CROSS or visit getasmokealarm.org.": "This is the smoke alarm request system from the Red Cross.  For more information, call 1-800-RED-CROSS or visit getasmokealarm.org."
 }

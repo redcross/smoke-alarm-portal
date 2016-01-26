@@ -43,7 +43,6 @@ exports.respond = function(req, res) {
      */
     var completeMsg = function (twiml) {
         res.cookie('locale', i18n_inst.getLocale());
-        console.log(req.cookies);
         res.writeHead(200, {'Content-Type': 'text/xml'});
         res.end(twiml.toString());
     };
@@ -63,6 +62,27 @@ exports.respond = function(req, res) {
         completeMsg(twiml);
     };
 
+    /* 
+     * Check if the incoming text is a request for help or info about
+     * the service.  Implicitly takes the body of the incoming request.
+     * Return true if it is and false if it is not.
+     */
+    
+    var helpCheck = function () {
+        var help_array = ['info', 'help', 'stop', 'exit'];
+        if (req.query.Body) {
+            var help_check = help_array.indexOf(req.query.Body.toLowerCase());
+        }
+        if (help_check >= 0) {
+            // then they sent some message asking for help/info.  Send
+            // an appropriate response.
+            var help = true;
+        }
+        else {
+            var help = false;
+        }
+        return help;
+    }
 
     /* Change the SMS language to either English or Spanish, based on
      * incoming request from the user.
@@ -97,7 +117,7 @@ exports.respond = function(req, res) {
         }
 
         return lang_changed;
-    }
+    };
     
 
     /*
@@ -339,46 +359,51 @@ exports.respond = function(req, res) {
     // we know the names, the values will be filled by the sms's, and we
     // assign the priorities
     var twiml = new twilio.TwimlResponse();
-    if ( ! req.cookies.priorities) {
-        // this is a new request
-        req.cookies.request_object = {};
-        req.cookies.priorities = {
-            name: {value: "", priority: 5},
-            address: {value: "", priority: 4},
-            zipcode: {value: "", priority: 3},
-            phone: {value: "", priority: 2},
-            email: {value: "", priority: 1}
-        };
-        //send first text
-        text_name = "name";
+    var help_check = helpCheck();
+    if (! help_check) {
+        if ( ! req.cookies.priorities || req.cookies.priorities == "undefined") {
+            // this is a new request
+            req.cookies.request_object = {};
+            req.cookies.priorities = {
+                name: {value: "", priority: 5},
+                address: {value: "", priority: 4},
+                zipcode: {value: "", priority: 3},
+                phone: {value: "", priority: 2},
+                email: {value: "", priority: 1}
+            };
+            //send first text
+            text_name = "name";
+        }
+        else {
+            
+            var priority_array = findPriority(current_priority, text_name);
+            current_priority = priority_array[0];
+            text_name = priority_array[1];
+            
+            var lang_changed = changeLanguage();
+            
+            // if the language was changed, send the same text again in a
+            // different language.  If not, store the incoming value and
+            // move on to the next text.
+            if (! lang_changed) {
+                storeValues(current_priority, req.query.Body);
+            }
+
+            current_priority = 0;
+            priority_array = findPriority(current_priority, text_name);
+            current_priority = priority_array[0];
+            text_name = priority_array[1];
+        }
     }
     else {
-        
-        var priority_array = findPriority(current_priority, text_name);
-        current_priority = priority_array[0];
-        text_name = priority_array[1];
-        
-        var lang_changed = changeLanguage();
-        
-        // if the language was changed, send the same text again in a
-        // different language.  If not, store the incoming value and
-        // move on to the next text.
-        if (! lang_changed) {
-            storeValues(current_priority, req.query.Body);
-        }
-
-        current_priority = 0;
-        priority_array = findPriority(current_priority, text_name);
-        current_priority = priority_array[0];
-        text_name = priority_array[1];
+        text_name = "help_response";
     }
-
     // now we have the element with current highest priority
     // send the text associated with that element
-    var texts = { name: "Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto \"ES\"\)." + " " + "We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?", address: __('What is your address, including the unit number, city, state, and zipcode?'), zipcode:  __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), phone: __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), email:  __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.')};
+    var texts = { name: "Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto \"ES\"\)." + " " + "We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?", address: __('What is your address, including the unit number, city, state, and zipcode?'), zipcode:  __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), phone: __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), email:  __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.'), help_response: __('This is the smoke alarm request system from the Red Cross.  For more information, call 1-800-RED-CROSS or visit getasmokealarm.org.')};
     var text_body = texts[text_name];
     twiml.message( __(text_body));
-    if (req.cookies.priorities.email.value == "") {
+    if ( help_check || (req.cookies.priorities.email && req.cookies.priorities.email.value == "") ) {
         res.cookie('priorities', req.cookies.priorities);
         res.cookie('request_object', req.cookies.request_object);
         completeMsg(twiml);
