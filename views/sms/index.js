@@ -28,14 +28,41 @@ app.use(function(req, res, next) {
     // req.i18n.setLocale('es');
     next();
 });
-var serial_num = "";
-var rc_local = "";
-
 
 // include the functions from views/index.js
 var save_utils = require('../utilities');
 
 exports.respond = function(req, res) {
+
+    /* Takes: "twiml," an xml object including the message to be texted
+     * to the requester.  
+     *
+     * No return value, but sends the twiml message.
+     * "res.end" is required by the node server to complete any
+     * transmission to the client.
+     */
+    var completeMsg = function (twiml) {
+        res.cookie('locale', i18n_inst.getLocale());
+        console.log(req.cookies);
+        res.writeHead(200, {'Content-Type': 'text/xml'});
+        res.end(twiml.toString());
+    };
+
+    /*
+     * Takes a Twiml object (in order to compose a response message). 
+     *
+     * Sends a text message indicating that there's been an error.
+     * 
+     */
+    
+    var sendError = function () {
+        var twiml = new twilio.TwimlResponse();
+        // add a help number here.
+        var error_text = "Sorry, we've encountered an error.  Please try sending your message again, or call <number> for assistance.";
+        twiml.message( __(error_text));
+        completeMsg(twiml);
+    };
+
 
     /* Change the SMS language to either English or Spanish, based on
      * incoming request from the user.
@@ -56,7 +83,13 @@ exports.respond = function(req, res) {
 
         // get a list of locales
         var available_locales = Object.keys(i18n_inst.locales);
-        var language_check = available_locales.indexOf(req.query.Body.toLowerCase());
+        if (req.query.Body) {
+            var language_check = available_locales.indexOf(req.query.Body.toLowerCase());
+        }
+        else {
+            var language_check = -1;
+            // sendError();
+        }
         if (language_check >= 0 && req.cookies.locale != available_locales[language_check]) {
             req.cookies.locale = available_locales[language_check];
             i18n_inst.setLocale(req.cookies.locale);
@@ -66,19 +99,6 @@ exports.respond = function(req, res) {
         return lang_changed;
     }
     
-    /* Takes: "twiml," an xml object including the message to be texted
-     * to the requester.  
-     *
-     * No return value, but sends the twiml message.
-     * "res.end" is required by the node server to complete any
-     * transmission to the client.
-     */
-    var completeMsg = function (twiml) {
-        res.cookie('locale', i18n_inst.getLocale());
-        console.log(req.cookies);
-        res.writeHead(200, {'Content-Type': 'text/xml'});
-        res.end(twiml.toString());
-    };
 
     /*
      * Takes: the "outcome" (a boolean that is true iff the entered zip code
@@ -210,9 +230,16 @@ exports.respond = function(req, res) {
         else if (current_priority == 4) {
             // maybe test to make sure this looks like an address
             req.cookies.priorities.address.value = parser.parseLocation(req.query.Body);
-            if (req.cookies.priorities.address.value.zip) {
-                req.cookies.priorities.zipcode.value = req.cookies.priorities.address.value.zip;
+            if (req.cookies.priorities.address.value) {
+                if (req.cookies.priorities.address.value.zip) {
+                    req.cookies.priorities.zipcode.value = req.cookies.priorities.address.value.zip;
+                }
             }
+            else {
+                console.log("DEBUG: should send an error for null address");
+                // sendError();
+            }
+            
         }
         else if (current_priority == 3) {
             // should only be here if we had to send the zipcode text
@@ -248,9 +275,29 @@ exports.respond = function(req, res) {
             // insert the info into the db
             var response_elements = saveRequest(req.cookies.priorities.zipcode.value);
         }
+        else {
+            // we shouldn't be here
+            console.log("DEBUG: send an error because we have current_priority of zero");
+            res.clearCookie('priorities');
+            // sendError();
+        }
+
 
     };
 
+ 
+    /*
+     * Takes the value of the current highest priority (determined from
+     * the priority cookie, but normally set to zero before calling this
+     * function) and the "text_name," which is also stored in that
+     * cookie.  (Note that I can probably set this up more cleanly so that
+     * we don't have to deal with both of these two values...).  
+     *
+     * Returns those same values (current_priority and text_name), in an
+     * array.  Caller expects priority to have shifted after calling
+     * this function.
+     *
+     */
     var findPriority = function (current_priority, text_name) {
         for (var i in req.cookies.priorities) {
             if ( req.cookies.priorities[i].value == "" && req.cookies.priorities[i].priority > current_priority ) {
