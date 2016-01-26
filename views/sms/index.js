@@ -148,8 +148,14 @@ exports.respond = function(req, res) {
             }
             else {
                 // invalid zip
+                if ( request.zip_final) {
+                    var msg_zip = request.zip_final;
+                }
+                else {
+                    var msg_zip = request.raw_zip;
+                }
                 msg = __("Sorry, we don't recognize any U.S. location for Zip Code \"%s\".  Are you sure you entered an accurate Zip Code?");
-                msg = msg.replace('%s', request.zip);
+                msg = msg.replace('%s', msg_zip);
             }
         }
         twiml.message(msg);
