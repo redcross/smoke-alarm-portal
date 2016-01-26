@@ -134,6 +134,7 @@ exports.respond = function(req, res) {
         }
         twiml.message(msg);
         res.clearCookie('priorities');
+        res.clearCookie('request_object');
         completeMsg(twiml);
     };
 
@@ -144,7 +145,9 @@ exports.respond = function(req, res) {
      */
     var saveRequest = function (zip) {
         save_utils.findAddressFromZip(zip).then(function(address) {
-            req.cookies.request_object = {};
+            if (! req.cookies.request_object) {
+                req.cookies.request_object = {};
+            }
             req.cookies.request_object.county = address['county'];
             req.cookies.request_object.state = address['state'];
             return save_utils.findCountyFromAddress(address, zip);
@@ -156,18 +159,25 @@ exports.respond = function(req, res) {
                 region_code = null
             }
             // add pieces of the street address as they exist
-            var street_address_arr = [req.cookies.priorities.address.value.number, req.cookies.priorities.address.value.street, req.cookies.priorities.address.value.type, req.cookies.priorities.address.value.sec_unit_type, req.cookies.priorities.address.value.sec_unit_num];
-            req.cookies.request_object.street_address = "";
-            street_address_arr.forEach( function (element) {
-                if (element) {
-                    req.cookies.request_object.street_address = req.cookies.request_object.street_address + " " + element;
+            if ( req.cookies.priorities.address.value ) {
+                var street_address_arr = [req.cookies.priorities.address.value.number, req.cookies.priorities.address.value.street, req.cookies.priorities.address.value.type, req.cookies.priorities.address.value.sec_unit_type, req.cookies.priorities.address.value.sec_unit_num];
+                req.cookies.request_object.street_address = "";
+                street_address_arr.forEach( function (element) {
+                    if (element) {
+                        req.cookies.request_object.street_address = req.cookies.request_object.street_address + " " + element;
+                    }
+                });
+                req.cookies.request_object.city = req.cookies.priorities.address.value.city;
+                if (req.cookies.priorities.address.value.zip) {
+                    req.cookies.request_object.zip_final = req.cookies.priorities.address.value.zip;
                 }
-            });
-            req.cookies.request_object.city = req.cookies.priorities.address.value.city;
-            if (req.cookies.priorities.address.value.zip) {
-                req.cookies.request_object.zip_final = req.cookies.priorities.address.value.zip;
+                else {
+                    req.cookies.request_object.zip_final = zip;
+                }
             }
             else {
+                req.cookies.request_object.street_address = null;
+                req.cookies.request_object.city = null;
                 req.cookies.request_object.zip_final = zip;
             }
             req.cookies.request_object.assigned_rc_region = region_code;
@@ -229,6 +239,10 @@ exports.respond = function(req, res) {
         }
         else if (current_priority == 4) {
             // maybe test to make sure this looks like an address
+            if (! req.cookies.request_object) {
+                req.cookies.request_object = {};
+            }
+            req.cookies.request_object.raw_address = req.query.Body;
             req.cookies.priorities.address.value = parser.parseLocation(req.query.Body);
             if (req.cookies.priorities.address.value) {
                 if (req.cookies.priorities.address.value.zip) {
@@ -244,10 +258,18 @@ exports.respond = function(req, res) {
         else if (current_priority == 3) {
             // should only be here if we had to send the zipcode text
             // process it slightly
+            if (! req.cookies.request_object) {
+                req.cookies.request_object = {};
+            }
+            req.cookies.request_object.raw_zip = req.query.Body;
             var zipset = save_utils.findZipForLookup(req);
             req.cookies.priorities.zipcode.value = zipset.zip_final;
         }
         else if (current_priority == 2) {
+            if (! req.cookies.request_object) {
+                req.cookies.request_object = {};
+            }
+            req.cookies.request_object.raw_phone = req.query.Body;
             // check whether we have access to req.query here
             var phone_check = req.query.Body;
             // handle any capitalization
@@ -279,6 +301,7 @@ exports.respond = function(req, res) {
             // we shouldn't be here
             console.log("DEBUG: send an error because we have current_priority of zero");
             res.clearCookie('priorities');
+            res.clearCookie('request_object');
             // sendError();
         }
 
@@ -318,6 +341,7 @@ exports.respond = function(req, res) {
     var twiml = new twilio.TwimlResponse();
     if ( ! req.cookies.priorities) {
         // this is a new request
+        req.cookies.request_object = {};
         req.cookies.priorities = {
             name: {value: "", priority: 5},
             address: {value: "", priority: 4},
@@ -356,6 +380,7 @@ exports.respond = function(req, res) {
     twiml.message( __(text_body));
     if (req.cookies.priorities.email.value == "") {
         res.cookie('priorities', req.cookies.priorities);
+        res.cookie('request_object', req.cookies.request_object);
         completeMsg(twiml);
     }
 };

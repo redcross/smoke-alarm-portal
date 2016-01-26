@@ -247,10 +247,13 @@ module.exports  = {
             name: requestData.name,
             source: requestData.is_sms,
             address: requestData.street_address,
+            sms_raw_address: requestData.raw_address,
             city: requestData.city,
             state: requestData.state,
             zip: requestData.zip_final,
+            sms_raw_zip: requestData.raw_zip,
             phone: requestData.phone,
+            sms_raw_phone: requestData.raw_phone,
             email: requestData.email,
             serial: requestData.serial,
             assigned_rc_region: requestData.assigned_rc_region
