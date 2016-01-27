@@ -41,5 +41,7 @@
 	"For more information about the importance of smoke alarms, see ": "For more information about the importance of smoke alarms, see ",
 	"the Smoke Signals project": "the Smoke Signals project",
 	"Visit the Red Cross": "Visit the Red Cross",
-	" to learn how to prepare for and prevent home fires.": " to learn how to prepare for and prevent home fires."
+	" to learn how to prepare for and prevent home fires.": " to learn how to prepare for and prevent home fires.",
+	"Sorry, the Red Cross Region serving %s County, %s does not utilize this website to accept smoke alarm installation requests.": "Sorry, the Red Cross Region serving %s County, %s does not utilize this website to accept smoke alarm installation requests.",
+	"Please call 800-REDCROSS (800-733-2767) to be connected to your servicing Region.": "Please call 800-REDCROSS (800-733-2767) to be connected to your servicing Region."
 }
