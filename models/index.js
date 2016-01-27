@@ -60,6 +60,9 @@ db.Account.belongsTo(db.User);
 db.Admin.belongsTo(db.AdminGroup);
 db.Request.belongsTo(db.activeRegion, {foreignKey:'assigned_rc_region'});
 db.Request.belongsTo(db.SelectedCounties, {foreignKey:'selected_county'});
+db.regionPermission.belongsTo(db.activeRegion, {foreignKey:'rc_region'});
+db.regionPermission.belongsTo(db.User, {foreignKey:'user_id'});
+db.activeRegion.hasMany(db.regionPermission, {foreignKey:'rc_region'});
 db.SelectedCounties.hasMany(db.Request, {foreignKey:'selected_county'});
 
 db.sequelize.sync(options);

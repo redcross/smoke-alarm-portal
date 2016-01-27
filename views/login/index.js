@@ -48,7 +48,7 @@ exports.login = function(req, res) {
             var conditions = {
                 ip: req.ip
             };
-            req.app.db.LoginAttempt.count(conditions)
+            req.app.db.LoginAttempt.count({where: { ip: req.ip } })
                 .then(function(count) {
                     console.log('Count ', count);
                     done(null, count);
@@ -63,7 +63,7 @@ exports.login = function(req, res) {
                 ip: req.ip,
                 user: req.body.username
             };
-            req.app.db.LoginAttempt.count(conditions)
+            req.app.db.LoginAttempt.count({ where: { ip: req.ip, user: req.body.username } })
                 .then(function(count) {
                     console.log('Count ', count);
                     done(null, count);

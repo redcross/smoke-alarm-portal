@@ -1,1 +1,28 @@
-.input-group{margin-bottom:20px}.input-group input{width:200px !important}.input-group .btn{border-bottom-left-radius:0;border-top-left-radius:0}form.filters input[type=button]{margin:10px 10px 10px 0}
+.input-group {
+  margin-bottom: 20px;
+}
+.input-group input {
+  width: 200px !important;
+}
+.input-group .btn {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+}
+form.filters input[type=button] {
+  margin: 10px 10px 10px 0px;
+}
+table#request_results {
+  overflow-x: auto;
+  overflow-y: auto;
+  width: 100%;
+}
+.disabled_region {
+    color: #909090;
+}
+#exportCSV {
+  background: none;
+  border: none;
+  color: #337AB7;
+  text-decoration: underline;
+  cursor: pointer;
+}

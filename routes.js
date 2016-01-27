@@ -105,7 +105,7 @@ exports = module.exports = function(app, passport) {
 
   //admin > requests
   app.get('/admin/requests/', require('./views/admin/requests/index').find);
-  app.post('/admin/requests/', require('./views/admin/requests/index').create);
+  app.put('/admin/requests/:id/', require('./views/admin/requests/index').update);
   app.get('/admin/requests/:id/', require('./views/admin/requests/index').read);
   app.delete('/admin/requests/:id/', require('./views/admin/requests/index').delete);
 
