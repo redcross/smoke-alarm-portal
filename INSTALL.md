@@ -15,9 +15,16 @@ much difficulty to most other Unix-like operating systems.
         $ sudo apt-get install nodejs
         $ sudo apt-get install npm
 
-   On Max OSX, use the Macintosh installer which can be downloaded from https://nodejs.org/download/. This will install both node and npm.
+   On Max OSX, use the Macintosh installer which can be downloaded
+   from https://nodejs.org/download/, to install both node and
+   npm.  In Terminal, run:
+
+        $ sudo npm install npm -g
+        $ sudo np
 
 3. Install PostgreSQL, at least version 9.2 (to support `JSON` column type).
+
+   On Debian:
 
         $ sudo apt-get install postgresql-9.4  # for example
 
@@ -25,6 +32,16 @@ much difficulty to most other Unix-like operating systems.
    installed, which in turn can lead to mysterious errors in the
    coming import step.  If you encounter such errors, see the
    appropriate part of the "Troubleshooting" section later on.)
+
+   On Mac OS X:
+
+   Install PostgreSQL via Brew (http://exponential.io/blog/2015/02/21/install-postgresql-on-mac-os-x-via-brew/)
+
+        $ brew update
+        $ brew install postgres
+        $ postgres -D /usr/local/var/postgres
+        $ created `whoami`   # (back ticks, not single quotes)
+        $ psql
 
 4. PostgreSQL probably created a `postgres` user, but if it didn't, add one:
 
@@ -46,6 +63,9 @@ much difficulty to most other Unix-like operating systems.
         of the existing top-level environments listed in `config.json`
         or set up a whole new environment, e.g., "demo" (e.g., based
         on the "test" example).
+
+        (Don't worry if you don't know how to set up a database
+        username / password; that will be explained in a later step.)
 
   * Do `cp config/recipients.sql.tmpl config/recipients.sql`, then edit the latter.
 

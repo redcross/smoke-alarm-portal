@@ -44,5 +44,7 @@
 	" to learn how to prepare for and prevent home fires.": " to learn how to prepare for and prevent home fires.",
 	"This web site is open source ": "This web site is open source ",
 	" volunteers welcome ": " volunteers welcome ",
-	" at GitHub": " at GitHub"
+        " at GitHub": " at GitHub",
+	"Sorry, the Red Cross Region serving %s County, %s does not utilize this website to accept smoke alarm installation requests.": "Sorry, the Red Cross Region serving %s County, %s does not utilize this website to accept smoke alarm installation requests.",
+	"Please call 800-REDCROSS (800-733-2767) to be connected to your servicing Region.": "Please call 800-REDCROSS (800-733-2767) to be connected to your servicing Region."
 }
