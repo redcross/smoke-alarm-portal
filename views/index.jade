@@ -19,6 +19,12 @@ block content
         p
           | #{__('After submitting your request, you will be contacted by an American Red Cross representative with information on installation availability in your area.')}
       #center.col-md-6
+
+        div
+          #user-values
+
+
+
         .container-fluid(role='form')
           form(action="/", method="POST", class="form-horizontal")
             fieldset
@@ -128,8 +134,13 @@ block content
 
 
     script(type="text/javascript").
-      function setLocale(locale) { document.cookie= "locale=" + locale; location.reload(); }
-      var locale = /locale=([^;]+)/.exec(document.cookie);
+      //- creating the locale cookie and assigning it a value
+      function setLocale(locale) {
+        document.cookie= "locale=" + locale;
+         location.reload();
+      }
+
+      var locale = /locale=([^;]+)/.exec(document.cookie); 
       if (locale[1]) {
         $("select#language-switcher").val(locale[1]);
       }
@@ -138,6 +149,26 @@ block content
         $(this).children('option[value="state-not-yet-selected"]').remove();
         $(this).removeClass('state-not-yet-selected');
       });
+      
+
+        $(".form-horizontal").submit(function(e){
+          e.preventDefault();
+          
+          $('#user-values').html('SUBMIT POSTED' + '<br/>')
+          
+          cityValue = $('#city').val();
+          stateValue = $('#state').val();
+          zipValue = $('#zip').val();
+
+          $('#user-values').append(cityValue + '<br/>' + stateValue + '<br/>' + zipValue)
+
+          if (cityValue && stateValue && zipValue) {
+            $('#user-values').append("form complete");
+          } else {
+            $('#user-values').append("the form is not complete"); 
+          }
+        });
+
       $(".form-horizontal").validationEngine({
         'scroll': false,
         'autoPositionUpdate': true,
@@ -191,4 +222,6 @@ block content
       });
       // Fix Safari font-weight. The bizzare if-clause is feature-detection for Safari.
       if (Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0) { $("body").css("font-weight", "400"); }
+
+
 
