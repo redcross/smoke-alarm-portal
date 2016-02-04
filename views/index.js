@@ -88,7 +88,6 @@ var countRequestsPerRegion = function (region) {
         });
     }
 };
-
 // takes a "value" that needs to be a certain "length" (in this file,
 // either a date or a sequence number) and pads it with leading zeroes
 // until it is "length" long.
@@ -396,7 +395,43 @@ var sendEmail = function(request, selectedRegion) {
     });
 };
 
+
+// checkZipMatch function takes 3 argument
+// returns the number of row that matches those 3 arguments in the database - usually 0 or 1
+var checkZipMatch = function (city, state, zip) {
+    return db.UsAddress.count({
+        where: {
+            primary_city: city,
+            state: state,
+            zip: zip
+        }
+    });
+};
+
+
 exports.saveRequest = function(req, res) {
+    console.log(req.body)
+    console.log("Req and Res = " + req.body.city + " " + req.body.state + " " + req.body.zip );
+
+    var city = req.body.city;
+    var state = req.body.state;
+    var zip = req.body.zip;
+
+    checkZipMatch(city, state, zip).then(function(count){
+        console.log("inside the callback after checkZipMatch")
+        console.log(count)
+        if (count == 1) {
+            console.log("case 1: everything matches")
+        } else {
+            if () {
+                console.log
+            }
+
+        // all the different cases belongs in here
+        //select * from "UsAddress" where "primary_city" = 'Chicago' and "state" = 'Illinois';
+        }
+    })
+    
     var savedRequest = {};
     var region_code = "";
     // get zip in a function, to clean this up
@@ -420,7 +455,7 @@ exports.saveRequest = function(req, res) {
         return isActiveRegion(savedRequest);
     }).then( function(activeRegion){
         if (activeRegion) {
-            sendEmail(savedRequest, activeRegion);
+            // sendEmail(savedRequest, activeRegion);
             res.render('thankyou.jade', {region: activeRegion.region_name, id: savedRequest.serial});
         }
         else{
