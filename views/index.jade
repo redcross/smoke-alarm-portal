@@ -12,6 +12,10 @@ block content
       #safety-message.row.text-center(role='complementary')
         p.col-xs-12.bigger-centered
           | #{__('Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.')}
+    
+    div
+      #user-values.text-center      
+
     #main.row(role='main')
       #left.col-md-3
         p
@@ -19,12 +23,6 @@ block content
         p
           | #{__('After submitting your request, you will be contacted by an American Red Cross representative with information on installation availability in your area.')}
       #center.col-md-6
-
-        div
-          #user-values
-
-
-
         .container-fluid(role='form')
           form(action="/", method="POST", class="form-horizontal")
             fieldset
@@ -151,23 +149,25 @@ block content
       });
       
 
-        $(".form-horizontal").submit(function(e){
-          e.preventDefault();
-          
-          $('#user-values').html('SUBMIT POSTED' + '<br/>')
-          
-          cityValue = $('#city').val();
-          stateValue = $('#state').val();
-          zipValue = $('#zip').val();
+      $(".form-horizontal").submit(function(e){
+        e.preventDefault();
+        
+        $('#user-values').html('SUBMIT POSTED' + '<br/>')
+        
+        var city = $('#city').val();
+        var state = $('#state').val();
+        var zip = $('#zip').val();
 
-          $('#user-values').append(cityValue + '<br/>' + stateValue + '<br/>' + zipValue)
+        //- console.log($('#city').attr('id'))
 
-          if (cityValue && stateValue && zipValue) {
-            $('#user-values').append("form complete");
-          } else {
-            $('#user-values').append("the form is not complete"); 
-          }
-        });
+        if (city && state && zip) {
+          $('#user-values').append(city + '<br/>' + state + '<br/>' + zip + '<br/>')
+          $('#user-values').append("form completed");
+        } else {
+          $('#user-values').append("the form is not complete"); 
+        }
+      });
+
 
       $(".form-horizontal").validationEngine({
         'scroll': false,
