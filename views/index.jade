@@ -147,25 +147,32 @@ block content
         $(this).children('option[value="state-not-yet-selected"]').remove();
         $(this).removeClass('state-not-yet-selected');
       });
-      
+
+
 
       $(".form-horizontal").submit(function(e){
         e.preventDefault();
-        
-        $('#user-values').html('SUBMIT POSTED' + '<br/>')
-        
+
         var city = $('#city').val();
         var state = $('#state').val();
         var zip = $('#zip').val();
 
-        //- console.log($('#city').attr('id'))
 
-        if (city && state && zip) {
-          $('#user-values').append(city + '<br/>' + state + '<br/>' + zip + '<br/>')
-          $('#user-values').append("form completed");
-        } else {
-          $('#user-values').append("the form is not complete"); 
-        }
+        var form = $(this)
+        
+        $.ajax({
+          'url' : form.attr('action'),
+          'type': form.attr('method'),
+          //- 'data': form.serialize(),
+          'data': {city: city, state: state, zip: zip},
+          'error': function(error){
+            console.log("ERRRRRRRROR")
+          },
+          'success': function(response){
+            console.log("AJAX RESPONSE SUCCESSSSS");
+            console.log(response);
+            }
+          })
       });
 
 
@@ -173,6 +180,7 @@ block content
         'scroll': false,
         'autoPositionUpdate': true,
         'maxErrorsPerField': 1,
+        'promptPosition': 'bottomRight',
         'custom_error_messages': {
           '#name': {
             'required': {
