@@ -37,14 +37,21 @@ var usAddressesJson = require('../data/us_addresses.json');
 var theseCounties = null;
 var docs = null;
 var db = require('./../models');
-db.SelectedCounties.sync().then(function () {
-	db.SelectedCounties.bulkCreate(selectedCountiesJson.docs).then(function() {
-		db.UsAddress.sync().then(function() {
-			db.UsAddress.bulkCreate(usAddressesJson.docs);
-		});
-	});
+
+console.log("sync SelectedCounties")
+db.SelectedCounties.sync()
+.then(function () {
+	console.log("bulkCreate selectedCountiesJson.docs")
+	return db.SelectedCounties.bulkCreate(selectedCountiesJson.docs)
+})
+.then(function() {
+	console.log("sync UsAddress");
+	return db.UsAddress.sync()
+})
+.then(function() {
+	console.log("bulkCreate useAddressJson.docs")
+	return db.UsAddress.bulkCreate(usAddressesJson.docs);
 })
 .catch(function(error) {
 	console.log("Error installing: " + error);
 });
-
