@@ -117,6 +117,19 @@ much difficulty to most other Unix-like operating systems.
         ### Import the regions and recipients to the "activeRegions" table.
         smokealarm_development=# \i config/recipients.sql
 
+        ### Run the migrations
+
+        # use the most recent region codes in all places
+        smokealarm_development=# \i migrations/20150916-update-regions.sql
+        # add internal codes to regions
+        smokealarm_development=# \i migrations/20150916-internal-regions.sql
+        # add a "no region found" region
+        smokealarm_development=# \i migrations/20151208-create-nonregion.sql
+        
+        # If you already have requests, update them.  Otherwise (e.g. if
+        # you're setting up an empty database) you can skip these migrations.
+        smokealarm_development=# \i migrations/20151208-add-nonregion-code.sql
+        smokealarm_development=# \i migrations/20151217-set-new-status.sql
 
 8. Start the smoke-alarm-portal app
 
