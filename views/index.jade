@@ -156,23 +156,24 @@ block content
         var city = $('#city').val();
         var state = $('#state').val();
         var zip = $('#zip').val();
-
-
         var form = $(this)
-        
+
         $.ajax({
           'url' : form.attr('action'),
           'type': form.attr('method'),
-          //- 'data': form.serialize(),
-          'data': {city: city, state: state, zip: zip},
-          'error': function(error){
-            console.log("ERRRRRRRROR")
-          },
+          'data': form.serialize(),
           'success': function(response){
-            console.log("AJAX RESPONSE SUCCESSSSS");
-            console.log(response);
+            console.log(response)
+            console.log(response.status)
+
+            if (response.status == true) {
+              $('#user-values').text(response.message);
+            } else {
+              $('form').attr('action');
+              $('form').unbind('submit').submit();
             }
-          })
+          }
+        })
       });
 
 

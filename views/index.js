@@ -396,8 +396,7 @@ var sendEmail = function(request, selectedRegion) {
 };
 
 
-// checkZipMatch function takes 3 argument
-// returns the number of row that matches those 3 arguments in the database - usually 0 or 1
+// Returns the number of row that matches those 3 arguments in the database - usually 0 or 1
 var cityStateZipMatch = function (city, state, zip) {
     return db.UsAddress.count({
         where: {
@@ -409,72 +408,52 @@ var cityStateZipMatch = function (city, state, zip) {
 };
 
 
-// var cityStateMatch = function (city, state)
-// db.UsAddress.query("select * from "UsAddress" where "primary_city" = '${city}' and "state" = 'Illinois' ");
-
-// var select * from "UsAddress" where "state" = 'California' and "primary_city" = 'Los Angeles';
-
-
 exports.saveRequest = function(req, res) {
-    // console.log(req.body)
-    console.log("Request Received")
-    // console.log("Req and Res = " + req.body.city + " " + req.body.state + " " + req.body.zip );
+    var city = req.body.city;
+    var state = req.body.state;
+    var zip = req.body.zip;
 
-    console.log('body: ' + JSON.stringify(req.body));
-    res.send(req.body);
+    cityStateZipMatch(city, state, zip).then(function(count){
+        if (count != 1) {
+            var test = {
+                status: true,
+                message: "Invalid Zip, City and State Combination. Please check your entry and try again."
+            };
+            res.send(test);     
+        } else {
+            var savedRequest = {};
+            var region_code = "";
+            // get zip in a function, to clean this up
+            var zip_set = findZipForLookup(req);
+            var zip_for_lookup = zip_set.zip_for_lookup;
+            findAddressFromZip(zip_for_lookup).then(function(address) {
+                return findCountyFromAddress(address, zip_for_lookup);
+            }).then( function(county_id){
+                if (county_id){
+                    region_code = county_id.region;
+                }
+                else {
+                    region_code = null
+                }
+                return countRequestsPerRegion(region_code);
+            }).then( function(numRequests) {
+                requestData = getRequestData(req, numRequests, region_code);
+                return saveRequestData(requestData);
+            }).then(function(request) {
+                savedRequest = request;
+                return isActiveRegion(savedRequest);
+            }).then( function(activeRegion){
+                if (activeRegion) {
+                    // sendEmail(savedRequest, activeRegion);
+                    res.render('thankyou.jade', {region: activeRegion.region_name, id: savedRequest.serial});
+                }
+                else{
+                    res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup});
+                }
+            }).catch(function(error) {
+                res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup});
+            });
+        }
+    });
 
-    // var city = req.body.city;
-    // var state = req.body.state;
-    // var zip = req.body.zip;
-
-    // cityStateZipMatch(city, state, zip).then(function(count){
-
-        // console.log("inside the callback after checkZipMatch");
-        // console.log(count)
-        // if (count == 1) {
-            // console.log("case 1: everything matches");
-        //     prompt("case 1: everything matches");
-        // } else {
-            // console.log("Invalid city, state, and zip code combination");
-        //     prompt("Invalid city, state, and zip code combination");
-
-        // }
-
-        // all the different cases belongs in here
-        //select * from "UsAddress" where "primary_city" = 'Chicago' and "state" = 'Illinois';
-    // });
-
-
-    // var savedRequest = {};
-    // var region_code = "";
-    // // get zip in a function, to clean this up
-    // var zip_set = findZipForLookup(req);
-    // var zip_for_lookup = zip_set.zip_for_lookup;
-    // findAddressFromZip(zip_for_lookup).then(function(address) {
-    //     return findCountyFromAddress(address, zip_for_lookup);
-    // }).then( function(county_id){
-    //     if (county_id){
-    //         region_code = county_id.region;
-    //     }
-    //     else {
-    //         region_code = null
-    //     }
-    //     return countRequestsPerRegion(region_code);
-    // }).then( function(numRequests) {
-    //     requestData = getRequestData(req, numRequests, region_code);
-    //     return saveRequestData(requestData);
-    // }).then(function(request) {
-    //     savedRequest = request;
-    //     return isActiveRegion(savedRequest);
-    // }).then( function(activeRegion){
-    //     if (activeRegion) {
-    //         // sendEmail(savedRequest, activeRegion);
-    //         res.render('thankyou.jade', {region: activeRegion.region_name, id: savedRequest.serial});
-    //     }
-    //     else{
-    //         res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup});
-    //     }
-    // }).catch(function(error) {
-    //     res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup});
-    // });
 };
