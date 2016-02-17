@@ -521,7 +521,7 @@ exports.password = function(req, res, next) {
     });
 
     workflow.on('patchUser', function() {
-        req.app.db.models.User.encryptPassword(req.body.newPassword, function(err, hash) {
+        req.app.db.User.encryptPassword(req.body.newPassword, function(err, hash) {
             if (err) {
                 return workflow.emit('exception', err);
             }
@@ -529,12 +529,23 @@ exports.password = function(req, res, next) {
             var fieldsToSet = {
                 password: hash
             };
-            req.app.db.models.User.findByIdAndUpdate(req.user.id, fieldsToSet, function(err, user) {
-                if (err) {
-                    return workflow.emit('exception', err);
-                }
-
-                user.populate('roles.admin roles.account', 'name.full', function(err, user) {
+            req.app.db.User.update( fieldsToSet, {where: {id: req.user.id} })
+                .then( function() {
+                    // add some error check here
+                    // get the user object
+                    return req.app.db.User.findOne({ where: {id: req.user.id} })
+                })
+                .then( function(user, err) {
+                    /*
+                     * Removing this line because it gave an error after
+                     * I removed the "findByIdAndUpdate()" call above.
+                     * 
+                     * user.populate('roles.admin roles.account', 'name.full', function(err, user) {
+                     * 
+                     * We aren't currently using roles, but I'm leaving
+                     * it here for future reference.  It won't work as
+                     * is.
+                    */
                     if (err) {
                         return workflow.emit('exception', err);
                     }
@@ -542,8 +553,10 @@ exports.password = function(req, res, next) {
                     workflow.outcome.newPassword = '';
                     workflow.outcome.confirm = '';
                     workflow.emit('response');
+                })
+                .catch( function (error) {
+                    return workflow.emit('exception', error);
                 });
-            });
         });
     });
 
