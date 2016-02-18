@@ -18,6 +18,11 @@
 
 'use strict';
 
+var cwd = process.cwd();
+var adminRequestsRouter = require(cwd + "/routers/admin/requests");
+
+
+
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
@@ -104,10 +109,10 @@ exports = module.exports = function(app, passport) {
   app.get('/admin/', require('./views/admin/index').init);
 
   //admin > requests
-  app.get('/admin/requests/', require('./views/admin/requests/index').find);
-  app.put('/admin/requests/:id/', require('./views/admin/requests/index').update);
-  app.get('/admin/requests/:id/', require('./views/admin/requests/index').read);
-  app.delete('/admin/requests/:id/', require('./views/admin/requests/index').delete);
+  app.use('/admin/requests', adminRequestsRouter);
+  
+  // app.get('/admin/requests/:id/', require('./views/admin/requests/index').read);
+  // app.delete('/admin/requests/:id/', require('./views/admin/requests/index').delete);
 
 
   //admin > users
