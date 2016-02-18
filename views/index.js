@@ -284,43 +284,7 @@ var findAddressFromZip = function(zip) {
     return db.UsAddress.findOne({where: {zip: zip}});
 };
 
-// This function gets the selected county if it exists from the requests
-var findCountyFromAddress = function(address, zip) {
-    if (!address) {
-        // Then no valid zipcode was found, so make sure that the
-        // "invalid zip" page is displayed
-        requestData.countyFromZip = null;
-        requestData.stateFromZip = null;
-        // make sure that the correct "zip_for_lookup" is specified here...
-        requestData.zip_for_lookup = zip;
-        return null;
-    } 
 
-
-    requestData.countyFromZip = address['county'].replace(" County", "");
-    requestData.stateFromZip = address['state'];
-
-    return db.SelectedCounties.findOne({
-        where: {
-            // Use the PostgreSQL "ILIKE" (case-insensitive LIKE)
-            // operator so that internal inconsistencies in the
-            // case-ness of our data don't cause problems.  For
-            // example, Lac qui Parle County, MN is "Lac qui
-            // Parle" (correct) in ../data/selected_counties.json
-            // but "Lac Qui Parle" (wrong) in us_addresses.json.
-            //
-            // Since us_addresses.json comes from an upstream data
-            // source, correcting all the cases there could be a
-            // maintenance problem.  It's easier just to do our
-            // matching case-insensitively.
-            //
-            // http://docs.sequelizejs.com/en/latest/docs/querying/
-            // has more about the use of operators like $ilike.
-            county: { $ilike: requestData.countyFromZip },
-            state: { $ilike: requestData.stateFromZip }
-        }
-    });
-};
 
 // find out whether a region is active or not
 var isActiveRegion = function(request) {
