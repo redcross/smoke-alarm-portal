@@ -69,17 +69,17 @@ exports = module.exports = function(app, passport) {
   app.post('/signup/', require('./views/signup/index').signup);
 
   //social sign up
-  app.post('/signup/social/', require('./views/signup/index').signupSocial);
-  app.get('/signup/twitter/', passport.authenticate('twitter', { callbackURL: '/signup/twitter/callback/' }));
-  app.get('/signup/twitter/callback/', require('./views/signup/index').signupTwitter);
-  app.get('/signup/github/', passport.authenticate('github', { callbackURL: '/signup/github/callback/', scope: ['user:email'] }));
-  app.get('/signup/github/callback/', require('./views/signup/index').signupGitHub);
-  app.get('/signup/facebook/', passport.authenticate('facebook', { callbackURL: '/signup/facebook/callback/', scope: ['email'] }));
-  app.get('/signup/facebook/callback/', require('./views/signup/index').signupFacebook);
-  app.get('/signup/google/', passport.authenticate('google', { callbackURL: '/signup/google/callback/', scope: ['profile email'] }));
-  app.get('/signup/google/callback/', require('./views/signup/index').signupGoogle);
-  app.get('/signup/tumblr/', passport.authenticate('tumblr', { callbackURL: '/signup/tumblr/callback/' }));
-  app.get('/signup/tumblr/callback/', require('./views/signup/index').signupTumblr);
+  // app.post('/signup/social/', require('./views/signup/index').signupSocial);
+  // app.get('/signup/twitter/', passport.authenticate('twitter', { callbackURL: '/signup/twitter/callback/' }));
+  // app.get('/signup/twitter/callback/', require('./views/signup/index').signupTwitter);
+  // app.get('/signup/github/', passport.authenticate('github', { callbackURL: '/signup/github/callback/', scope: ['user:email'] }));
+  // app.get('/signup/github/callback/', require('./views/signup/index').signupGitHub);
+  // app.get('/signup/facebook/', passport.authenticate('facebook', { callbackURL: '/signup/facebook/callback/', scope: ['email'] }));
+  // app.get('/signup/facebook/callback/', require('./views/signup/index').signupFacebook);
+  // app.get('/signup/google/', passport.authenticate('google', { callbackURL: '/signup/google/callback/', scope: ['profile email'] }));
+  // app.get('/signup/google/callback/', require('./views/signup/index').signupGoogle);
+  // app.get('/signup/tumblr/', passport.authenticate('tumblr', { callbackURL: '/signup/tumblr/callback/' }));
+  // app.get('/signup/tumblr/callback/', require('./views/signup/index').signupTumblr);
 
   //login/out
   app.get('/login/', require('./views/login/index').init);
@@ -92,16 +92,16 @@ exports = module.exports = function(app, passport) {
   app.get('/logout/', require('./views/logout/index').init);
 
   //social login
-  app.get('/login/twitter/', passport.authenticate('twitter', { callbackURL: '/login/twitter/callback/' }));
-  app.get('/login/twitter/callback/', require('./views/login/index').loginTwitter);
-  app.get('/login/github/', passport.authenticate('github', { callbackURL: '/login/github/callback/' }));
-  app.get('/login/github/callback/', require('./views/login/index').loginGitHub);
-  app.get('/login/facebook/', passport.authenticate('facebook', { callbackURL: '/login/facebook/callback/' }));
-  app.get('/login/facebook/callback/', require('./views/login/index').loginFacebook);
-  app.get('/login/google/', passport.authenticate('google', { callbackURL: '/login/google/callback/', scope: ['profile email'] }));
-  app.get('/login/google/callback/', require('./views/login/index').loginGoogle);
-  app.get('/login/tumblr/', passport.authenticate('tumblr', { callbackURL: '/login/tumblr/callback/', scope: ['profile email'] }));
-  app.get('/login/tumblr/callback/', require('./views/login/index').loginTumblr);
+  // app.get('/login/twitter/', passport.authenticate('twitter', { callbackURL: '/login/twitter/callback/' }));
+  // app.get('/login/twitter/callback/', require('./views/login/index').loginTwitter);
+  // app.get('/login/github/', passport.authenticate('github', { callbackURL: '/login/github/callback/' }));
+  // app.get('/login/github/callback/', require('./views/login/index').loginGitHub);
+  // app.get('/login/facebook/', passport.authenticate('facebook', { callbackURL: '/login/facebook/callback/' }));
+  // app.get('/login/facebook/callback/', require('./views/login/index').loginFacebook);
+  // app.get('/login/google/', passport.authenticate('google', { callbackURL: '/login/google/callback/', scope: ['profile email'] }));
+  // app.get('/login/google/callback/', require('./views/login/index').loginGoogle);
+  // app.get('/login/tumblr/', passport.authenticate('tumblr', { callbackURL: '/login/tumblr/callback/', scope: ['profile email'] }));
+  // app.get('/login/tumblr/callback/', require('./views/login/index').loginTumblr);
 
   //admin
   app.all('/admin*', ensureAuthenticated);
