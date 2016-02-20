@@ -130,6 +130,10 @@ much difficulty to most other Unix-like operating systems.
         # you're setting up an empty database) you can skip these migrations.
         smokealarm_development=# \i migrations/20151208-add-nonregion-code.sql
         smokealarm_development=# \i migrations/20151217-set-new-status.sql
+        smokealarm_development=# \q        
+
+        ### FOR DEVELOPMENT, load sample requests:
+        $ node data/fake_request_data.js 
 
 8. Start the smoke-alarm-portal app
 
