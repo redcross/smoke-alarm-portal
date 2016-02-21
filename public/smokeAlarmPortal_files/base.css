@@ -259,8 +259,8 @@ img.fourpanel {
     border-radius: 10px;
 }
 
-#availability {
-    font-size: 0.9em;
+.availability {
+    font-size: 1em;
 }
 
 /* Select dropdowns don't support placeholder text directly in HTML,
