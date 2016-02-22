@@ -19,7 +19,7 @@ exports = module.exports = function(app, passport) {
                 conditions.email = username.toLowerCase();
             }
 
-            app.db.User.findOne(conditions).then(function(user) {
+            app.db.User.findOne( { where: { username: conditions.username } }).then(function(user) {
                     if (!user) {
                         return done(null, false, {
                             message: 'Unknown user'
@@ -127,8 +127,7 @@ exports = module.exports = function(app, passport) {
     });
 
     passport.deserializeUser(function(id, done) {
-        app.db.User.findOne({
-                id: id
+        app.db.User.findOne({ where: { id: id }
             })
             .then(function(user) {
                 done(null, user);

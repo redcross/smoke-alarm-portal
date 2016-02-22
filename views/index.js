@@ -26,7 +26,7 @@ exports.saveRequest = function(req, res) {
             region_code = county_id.region;
         }
         else {
-            region_code = null
+            region_code = 'XXXX';
         }
         return utils.countRequestsPerRegion(region_code);
     }).then( function(numRequests) {

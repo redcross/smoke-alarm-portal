@@ -26,10 +26,12 @@ var _ = require('underscore');
 var faker = require('faker');
 var requestCount = 725; // TODO: Make configurable
 var requests = [];
+var regions = ['IDMT', 'NDSD', 'KSNE', 'IOWA', 'WEMO', 'EAMO', 'WISC', 'CHNI', 'CSIL', 'MINN', 'XXXX'];
 _.times(requestCount, function(index) {
 	var requestData = {
 		name: faker.name.findName(),
-		address: faker.address.streetAddress(),
+    	        address: faker.address.streetAddress(),
+                assigned_rc_region: faker.random.arrayElement(regions),
 		city: faker.address.city(),
 		state: faker.address.state(),
 		zip: faker.address.zipCode(),

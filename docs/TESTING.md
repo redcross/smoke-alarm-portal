@@ -36,6 +36,7 @@ A list of tests to be included in future unit tests:
 - search by start and end date
 - search by all regions
 - search by a region
+- search by status
 - change pagination
 
 ## SMS:
@@ -58,3 +59,22 @@ A list of tests to be included in future unit tests:
   - at the end of a request
 - start a next request without error after completing one
   - even after sending an "info" text
+
+### admin region checkboxes:
+
+- on initial page load, all requests in regions that the user has access
+  to are returned.
+- if some regions are checked, then they remain checked after "apply
+  filters" is clicked
+- requests are returned only in the checked regions
+- when "clear filters" is clicked, all accessible regions are checked
+  and all accessible requests are returned
+- if no regions are selected, no requests are returned
+
+### CSV export:
+
+- selected filters are maintained in exported file
+- all results are exported (not just the first page)
+- after export, new filters/sorting can be applied without error
+- CSV includes correct serial number and region
+

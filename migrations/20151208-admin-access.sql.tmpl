@@ -1,0 +1,26 @@
+/*
+ * Grant access to all regions for one user.  Copy this file to
+ * 20151208-admin-access.sql and replace __USER_ID__
+ * with whatever id belongs to the user that should have all-region
+ * access privileges.
+ *
+ * That user will then be able to view requests belonging to any active
+ * region, or to no region.
+ *
+ * This script will need to be updated as new active regions are added.
+*/
+
+INSERT INTO "regionPermissions" (rc_region, user_id, "createdAt", "updatedAt")
+VALUES
+('IDMT', '__USER_ID__', now(), now()),
+('NDSD', '__USER_ID__', now(), now()),
+('KSNE', '__USER_ID__', now(), now()),
+('MINN', '__USER_ID__', now(), now()),
+('IOWA', '__USER_ID__', now(), now()),
+('WEMO', '__USER_ID__', now(), now()),
+('EAMO', '__USER_ID__', now(), now()),
+('WISC', '__USER_ID__', now(), now()),
+('CHNI', '__USER_ID__', now(), now()),
+('CSIL', '__USER_ID__', now(), now()),
+('XXXX', '__USER_ID__', now(), now());
+

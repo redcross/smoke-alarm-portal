@@ -256,7 +256,8 @@ module.exports  = {
             sms_raw_phone: requestData.raw_phone,
             email: requestData.email,
             serial: requestData.serial,
-            assigned_rc_region: requestData.assigned_rc_region
+            assigned_rc_region: requestData.assigned_rc_region,
+            status: 'new'
         }).catch( function () {
             // uniqueness failed; increment serial
             var serial_array = requestData.serial.split("-");

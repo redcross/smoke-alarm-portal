@@ -60,5 +60,11 @@
 	"One last question: is there an email address we can use to contact you? If not, text NONE. If yes, please text us the email address.": "One last question: is there an email address we can use to contact you? If not, text NONE. If yes, please text us the email address.",
 	"Sorry, the Red Cross Region serving %s, %s does not yet offer smoke alarm installation service.": "Sorry, the Red Cross Region serving %s, %s does not yet offer smoke alarm installation service.",
 	"Sorry, we've encountered an error.  Please try sending your message again, or call <number> for assistance.": "Sorry, we've encountered an error.  Please try sending your message again, or call <number> for assistance.",
-	"This is the smoke alarm request system from the Red Cross.  For more information, call 1-800-RED-CROSS or visit getasmokealarm.org.": "This is the smoke alarm request system from the Red Cross.  For more information, call 1-800-RED-CROSS or visit getasmokealarm.org."
+    "This is the smoke alarm request system from the Red Cross.  For more information, call 1-800-RED-CROSS or visit getasmokealarm.org.": "This is the smoke alarm request system from the Red Cross.  For more information, call 1-800-RED-CROSS or visit getasmokealarm.org.",
+	"This web site is open source ": "This web site is open source ",
+	" volunteers welcome ": " volunteers welcome ",
+        " at GitHub": " at GitHub",
+	"Sorry, the Red Cross Region serving %s County, %s does not utilize this website to accept smoke alarm installation requests.": "Sorry, the Red Cross Region serving %s County, %s does not utilize this website to accept smoke alarm installation requests.",
+	"Please call 800-REDCROSS (800-733-2767) to be connected to your servicing Region.": "Please call 800-REDCROSS (800-733-2767) to be connected to your servicing Region."
 }
+
