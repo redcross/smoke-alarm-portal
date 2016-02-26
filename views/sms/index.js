@@ -142,7 +142,7 @@ exports.respond = function(req, res) {
         }
         else {
             if (request.county) {
-                msg = __("Sorry, the Red Cross Region serving %s, %s does not yet offer smoke alarm installation service.");
+                msg = __("Sorry, the Red Cross Region serving %s, %s does not yet accept smoke alarm installation requests by text message. Please call 1-800-RED CROSS (1-800-733-2767) to be connected with your local Region.");
                 msg = msg.replace('%s', request.county);
                 msg = msg.replace('%s', request.state);
             }

@@ -61,8 +61,12 @@
 	"¿Es el número de teléfono que está usando ahora la mejor forma de ponernos en contacto con Ud.? Si es así, mande 'SI' por mensaje de texto. Si no, mande un número de teléfono al que podemos llamarle.": "¿Es el número de teléfono que está usando ahora la mejor forma de ponernos en contacto con Ud.? Si es así, mande 'SI' por mensaje de texto. Si no, mande un número de teléfono al que podemos llamarle.",
 	"Por último: ¿Tiene una dirección de correo electronico a la que podemos escibirle? Si es así, por favor mandelanos por mensaje de texto. Si no, mande la palabra 'NO'.": "Por último: ¿Tiene una dirección de correo electronico a la que podemos escibirle? Si es así, por favor mandelanos por mensaje de texto. Si no, mande la palabra 'NO'.",
 	" To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.": "Estaremos en contacto con Ud. para programar una instalación.",
-    "Sorry, the Red Cross Region serving %s, %s does not yet offer smoke alarm installation service.": "Lo sentimos, pero la región de la Cruz Roja que sirve el condado de %s en el estado de %s todavía no ofrece un servicio de instalación de detectores de humo.",
+	"Sorry, the Red Cross Region serving %s, %s does not yet offer smoke alarm installation service.": "Lo sentimos, pero la región de la Cruz Roja que sirve el condado de %s en el estado de %s todavía no ofrece un servicio de instalación de detectores de humo.",
 	"Sorry, the Red Cross Region serving %s County, %s does not utilize this website to accept smoke alarm installation requests.": "Sorry, the Red Cross Region serving %s County, %s does not utilize this website to accept smoke alarm installation requests.",
-	"Please call 800-REDCROSS (800-733-2767) to be connected to your servicing Region.": "Please call 800-REDCROSS (800-733-2767) to be connected to your servicing Region."
+	"Please call 800-REDCROSS (800-733-2767) to be connected to your servicing Region.": "Please call 800-REDCROSS (800-733-2767) to be connected to your servicing Region.",
+	"This is the smoke alarm request system from the Red Cross.  For more information, call 1-800-RED-CROSS or visit getasmokealarm.org.": "This is the smoke alarm request system from the Red Cross.  For more information, call 1-800-RED-CROSS or visit getasmokealarm.org.",
+	"Sorry, the Red Cross Region serving %s, %s does not yet accept smoke alarm installation requests by text message. Please call 1-800-RED CROSS (1-800-733-2767) to be connected with your local Region.": "Lo sentimos, pero la región de la Cruz Roja que sirve el condado de %s en el estado de %s does not yet accept smoke alarm installation requests by text message. Por favor llame al 800-RED-CROSS (1-800-733-2767) para hablar con un representante de su oficina local de la Cruz Roja.",
+	"This web site is open source ": "This web site is open source ",
+	" volunteers welcome ": " volunteers welcome ",
+	" at GitHub": " at GitHub"
 }
-
