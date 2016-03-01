@@ -135,7 +135,8 @@ block content
     script(type="text/javascript").
       function setLocale(locale) { document.cookie= "locale=" + locale; location.reload(); }
       var locale = /locale=([^;]+)/.exec(document.cookie);
-      if (locale[1]) {
+
+      if (locale && locale[1]) {
         $("select#language-switcher").val(locale[1]);
       }
       $("select#state").addClass('state-not-yet-selected');
@@ -143,6 +144,7 @@ block content
         $(this).children('option[value="state-not-yet-selected"]').remove();
         $(this).removeClass('state-not-yet-selected');
       });
+      
       $(".form-horizontal").validationEngine({
         'scroll': false,
         'autoPositionUpdate': true,
