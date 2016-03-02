@@ -396,7 +396,8 @@ var sendEmail = function(request, selectedRegion) {
 };
 
 
-// Returns the number of row that matches those 3 arguments in the database - usually 0 or 1
+// Case 1
+// Returns the number of rows that matches those 3 arguments in the database
 var cityStateZipMatch = function (city, state, zip) {
     return db.UsAddress.count({
         where: {
@@ -407,20 +408,82 @@ var cityStateZipMatch = function (city, state, zip) {
     });
 };
 
+// Case 2
+var cityStateMatch = function (city, state) {
+    return db.UsAddress.count({
+        where: {
+            primary_city: city,
+            state: state
+        }
+    });
+};
+
+// Case 3
+var cityZipMatch = function (city, zip) {
+    return db.UsAddress.count({
+        where: {
+            primary_city: city,
+            zip: zip
+        }
+    });
+};
+
+// Case 4
+var stateZipMatch = function (state, zip) {
+    return db.UsAddress.count({
+        where: {
+            state: state,
+            zip: zip
+        }
+    });
+};
 
 exports.saveRequest = function(req, res) {
     var city = req.body.city;
     var state = req.body.state;
     var zip = req.body.zip;
-
-    cityStateZipMatch(city, state, zip).then(function(count){
-        if (count != 1) {
-            var test = {
-                status: true,
-                message: "Invalid Zip, City and State Combination. Please check your entry and try again."
-            };
-            res.send(test);     
-        } else {
+    cityStateZipMatch(city, state, zip).then(function(count1) {
+        if (count1 == 0) {
+            cityStateMatch(city, state).then(function(count2) {
+                if (count2 == 0) {
+                    cityZipMatch(city, zip).then(function(count3) {
+                        if (count3 == 0) {
+                            stateZipMatch(state, zip).then(function(count4) {
+                                if (count4 == 0) {
+                                    var errorMessage = {
+                                        status: true,
+                                        message: "Case 5: The state, city, and zip code do not match."
+                                    };
+                                    res.send(errorMessage);
+                                }
+                                else {
+                                    var errorMessage = { // Case 4 Message - state & zip
+                                        status: true,
+                                        message: "Case 4: The state and zip code has no city of that name."
+                                    };
+                                res.send(errorMessage);
+                                }
+                            })
+                        }
+                        else {
+                            var errorMessage = { // Case 3 Message - city & zip
+                                status: true,
+                                message: "Case 3: The state has no city of that name and zip code."
+                            };
+                            res.send(errorMessage);
+                        }
+                    })
+                }
+                else {
+                    var errorMessage = { // Case 2 Message - city & state
+                        status: true,
+                        message: "Case 2: The zip code does not belong to that state and city."
+                    };
+                    res.send(errorMessage);
+                }
+            })
+        }
+        else {
             var savedRequest = {};
             var region_code = "";
             // get zip in a function, to clean this up
