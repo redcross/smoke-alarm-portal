@@ -395,13 +395,18 @@ var sendEmail = function(request, selectedRegion) {
     });
 };
 
+// This function capitalizes every word in the string
+String.prototype.capitalize = function() {
+    return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+};
+
 
 // Case 1
 // Returns the number of rows that matches those 3 arguments in the database
 var cityStateZipMatch = function (city, state, zip) {
     return db.UsAddress.count({
         where: {
-            primary_city: city,
+            primary_city: city.capitalize(),
             state: state,
             zip: zip
         }
@@ -412,7 +417,7 @@ var cityStateZipMatch = function (city, state, zip) {
 var cityStateMatch = function (city, state) {
     return db.UsAddress.count({
         where: {
-            primary_city: city,
+            primary_city: city.capitalize(),
             state: state
         }
     });
@@ -422,7 +427,7 @@ var cityStateMatch = function (city, state) {
 var cityZipMatch = function (city, zip) {
     return db.UsAddress.count({
         where: {
-            primary_city: city,
+            primary_city: city.capitalize(),
             zip: zip
         }
     });
