@@ -35,7 +35,55 @@ TBD: Explain the various locations in the code tree that we most commonly find o
 
 	 * `offset` and `limit` are optional parameters to the findAll query
 
-	 
+
+### HOWTO Add a new region
+
+1. Add counties to the "SelectedCounties" table.  Note that the county
+column here does not include the string "County," unlike the
+corresponding column in the "UsAddress" table.  So, for any state's Cook
+County, the "SelectedCounties" `county` column would have the string
+"Cook," while the "UsAddress" `county` column has the string "Cook
+County."  In both tables, the state name is spelled out, not given in
+its postal abbreviation form.
+
+```
+for county in region:
+    INSERT INTO "SelectedCounties" (region, state, county, "createdAt",
+    "updatedAt") VALUES ('__REGION_ID__', '__FULL_STATE_NAME__',
+    '__COUNTY_NAME_NO_COUNTY__', now(), now());
+```
+
+2. Add the region to the `activeRegions` table.
+
+```
+
+INSERT INTO "activeRegions" (rc_region, region_name, contact_name,
+contact_email, is_active, "createdAt", "updatedAt") values ('__REGION_ID__',
+'__REGION_FULL_NAME__', '__CONTACT_PERSON_NAME__',
+'__CONTACT__EMAIL__ADDRESS__', true, now(), now());
+
+```
+
+3. Add an admin user for the new region.
+
+   a. Enable the signup route and add a user from the GUI interface.
+   b. Give that new user access to the new region.
+```
+INSERT INTO "regionPermissions" (rc_region, user_id, "createdAt",
+"updatedAt") VALUES ('__NEW_REGION_ID__', '__NEW_USER_ID__', now(),
+now()); 
+```
+
+4. Grant access for the new region to the global admin user, if one
+exists.
+```
+INSERT INTO "regionPermissions" (rc_region, user_id, "createdAt",
+"updatedAt") VALUES ('__NEW_REGION_ID__', '__ADMIN_USER_ID__', now(),
+now()); 
+```
+
+5. Update `data/selected_counties.json` with the new region's counties,
+so that fresh installs/imports will be up to date.
 
 ## Notes:
 
