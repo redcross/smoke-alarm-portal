@@ -400,7 +400,6 @@ String.prototype.capitalize = function() {
     return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
 };
 
-
 // Case 1
 // Returns the number of rows that matches those 3 arguments in the database
 var cityStateZipMatch = function (city, state, zip) {
@@ -523,5 +522,4 @@ exports.saveRequest = function(req, res) {
             });
         }
     });
-
 };

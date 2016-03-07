@@ -12,10 +12,7 @@ block content
       #safety-message.row.text-center(role='complementary')
         p.col-xs-12.bigger-centered
           | #{__('Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.')}
-    
-
     #error-message.text-center      
-
     #main.row(role='main')
       #left.col-md-3
         p
@@ -137,7 +134,6 @@ block content
         document.cookie= "locale=" + locale;
          location.reload();
       }
-
       var locale = /locale=([^;]+)/.exec(document.cookie); 
       if (locale[1]) {
         $("select#language-switcher").val(locale[1]);
@@ -147,25 +143,17 @@ block content
         $(this).children('option[value="state-not-yet-selected"]').remove();
         $(this).removeClass('state-not-yet-selected');
       });
-
-
-
       $(".form-horizontal").submit(function(e){
         e.preventDefault();
-
         var city = $('#city').val();
         var state = $('#state').val();
         var zip = $('#zip').val();
         var form = $(this)
-
         $.ajax({
           'url' : form.attr('action'),
           'type': form.attr('method'),
           'data': form.serialize(),
           'success': function(response){
-            console.log(response)
-            console.log(response.status)
-
             if (response.status == true) {
               $('#error-message').html(response.message);
             } else {
@@ -175,7 +163,6 @@ block content
           }
         })
       });
-
 
       $(".form-horizontal").validationEngine({
         'scroll': false,
