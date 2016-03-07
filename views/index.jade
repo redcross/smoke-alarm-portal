@@ -13,8 +13,8 @@ block content
         p.col-xs-12.bigger-centered
           | #{__('Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.')}
     
-    div
-      #user-values.text-center      
+
+    #error-message.text-center      
 
     #main.row(role='main')
       #left.col-md-3
@@ -167,7 +167,7 @@ block content
             console.log(response.status)
 
             if (response.status == true) {
-              $('#user-values').text(response.message);
+              $('#error-message').html(response.message);
             } else {
               $('form').attr('action');
               $('form').unbind('submit').submit();

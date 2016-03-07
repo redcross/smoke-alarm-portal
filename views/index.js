@@ -457,14 +457,14 @@ exports.saveRequest = function(req, res) {
                                 if (count4 == 0) {
                                     var errorMessage = {
                                         status: true,
-                                        message: "Case 5: The state, city, and zip code do not match."
+                                        message: "Invalid Zip, City and State Combination. Please check your entry and try again."
                                     };
                                     res.send(errorMessage);
                                 }
                                 else {
                                     var errorMessage = { // Case 4 Message - state & zip
                                         status: true,
-                                        message: "Case 4: The state and zip code has no city of that name."
+                                        message: "The state and zip code has no city of that name. Please check your entry and try again."
                                     };
                                 res.send(errorMessage);
                                 }
@@ -473,7 +473,7 @@ exports.saveRequest = function(req, res) {
                         else {
                             var errorMessage = { // Case 3 Message - city & zip
                                 status: true,
-                                message: "Case 3: The state has no city of that name and zip code."
+                                message: "The state has no city of that name and zip code. Please check your entry and try again."
                             };
                             res.send(errorMessage);
                         }
@@ -482,7 +482,7 @@ exports.saveRequest = function(req, res) {
                 else {
                     var errorMessage = { // Case 2 Message - city & state
                         status: true,
-                        message: "Case 2: The zip code does not belong to that state and city."
+                        message: "The zip code does not belong to that state and city. Please check your entry and try again."
                     };
                     res.send(errorMessage);
                 }
