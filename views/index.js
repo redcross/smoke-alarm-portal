@@ -395,7 +395,7 @@ var sendEmail = function(request, selectedRegion) {
     });
 };
 
-// This function capitalizes every word in the string
+// This function is from the user, 'disfated', at http://stackoverflow.com/questions/2332811/capitalize-words-in-string
 String.prototype.capitalize = function() {
     return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
 };
@@ -446,27 +446,26 @@ exports.saveRequest = function(req, res) {
     var city = req.body.city;
     var state = req.body.state;
     var zip = req.body.zip;
-    cityStateZipMatch(city, state, zip).then(function(count1) {
-        if (count1 == 0) {
-            cityStateMatch(city, state).then(function(count2) {
-                if (count2 == 0) {
-                    cityZipMatch(city, zip).then(function(count3) {
-                        if (count3 == 0) {
-                            stateZipMatch(state, zip).then(function(count4) {
-                                if (count4 == 0) {
+    cityStateZipMatch(city, state, zip).then(function(cityStateZipCount) {
+        if (cityStateZipCount == 0) {
+            cityStateMatch(city, state).then(function(cityStateCount) {
+                if (cityStateCount == 0) {
+                    cityZipMatch(city, zip).then(function(cityZipCount) {
+                        if (cityZipCount == 0) {
+                            stateZipMatch(state, zip).then(function(stateZipCount) {
+                                if (stateZipCount == 0) {
                                     var errorMessage = {
                                         status: true,
                                         message: "Invalid Zip, City and State Combination. Please check your entry and try again."
                                     };
-                                    res.send(errorMessage);
                                 }
                                 else {
                                     var errorMessage = { // Case 4 Message - state & zip
                                         status: true,
                                         message: "The state and zip code has no city of that name. Please check your entry and try again."
                                     };
-                                res.send(errorMessage);
                                 }
+                                res.send(errorMessage);
                             })
                         }
                         else {

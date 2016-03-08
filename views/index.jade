@@ -145,9 +145,6 @@ block content
       });
       $(".form-horizontal").submit(function(e){
         e.preventDefault();
-        var city = $('#city').val();
-        var state = $('#state').val();
-        var zip = $('#zip').val();
         var form = $(this)
         $.ajax({
           'url' : form.attr('action'),
