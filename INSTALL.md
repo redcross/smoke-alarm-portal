@@ -39,23 +39,22 @@ much difficulty to most other Unix-like operating systems.
 
         $ brew update
         $ brew install postgres
-        $ postgres -D /usr/local/var/postgres
-        $ created `whoami`   # (back ticks, not single quotes)
-        $ psql
 
-4. PostgreSQL probably created a `postgres` user, but if it didn't, add one:
+4. OPTIONAL: PostgreSQL probably created a `postgres` user, but if it
+didn't, you might want to add one:
 
         $ adduser postgres
 
-5. Set up the live config files.
+5. Set up the live config files.  Note that there are multiple files to
+be edited here.
 
-  * Do `cp config.js.tmpl config.js`, then edit the latter.
+  1. Do `cp config.js.tmpl config.js`, then edit the latter.
 
         You'll probably want to update `exports.companyName`,
         `exports.projectName`, `exports.signupEnabled`,`exports.systemEmail`, and
         `exports.cryptoKey`.
 
-  * Do `cp config/config.json.tmpl config/config.json`, then edit the latter.
+  2. Do `cp config/config.json.tmpl config/config.json`, then edit the second.
 
         You'll need to fill in database usernames and passwords, and
         the Mailgun.com API key and sender information that the app
@@ -67,10 +66,10 @@ much difficulty to most other Unix-like operating systems.
         (Don't worry if you don't know how to set up a database
         username / password; that will be explained in a later step.)
 
-  * Do `cp config/recipients.sql.tmpl config/recipients.sql`, then edit the latter.
+  3. Do `cp config/recipients.sql.tmpl config/recipients.sql`, then edit the new file.
 
         You'll need to fill in appropriate contact names and email
-        addresses.
+        addresses.  For dev, just leave the placeholders intact.
 
 6. Get other required node modules.
 
@@ -88,21 +87,20 @@ much difficulty to most other Unix-like operating systems.
 
 7. Create the databases and import the initial data.
 
+        ### become a postgres user.  We use "postgres" here but it could
+        ### also be your regular user, assuming that you have the
+        ### correct privileges in psql.
         $ su - postgres
         $ psql
         postgres=# CREATE DATABASE smokealarm_development;
         postgres=# CREATE USER <some_username> PASSWORD '<some_password>';
         postgres=# GRANT ALL ON DATABASE smokealarm_development TO <username>;
         postgres=# \q
-        $ exit       ### log out of postgres user; you should be yourself now
-
-        $ npm install sequelize
+        ### if you were postgres, log out; you should be yourself now
+        $ exit       
 
         ### This one needs to be available system-wide
         $ sudo npm install -g sequelize-cli 
-
-        $ npm install pg-hstore
-        $ npm install pg
 
         ### Choose whatever env you want from config/config.json
         $ NODE_ENV="development" 
@@ -130,6 +128,8 @@ much difficulty to most other Unix-like operating systems.
         # you're setting up an empty database) you can skip these migrations.
         smokealarm_development=# \i migrations/20151208-add-nonregion-code.sql
         smokealarm_development=# \i migrations/20151217-set-new-status.sql
+
+        ### exit psql
         smokealarm_development=# \q        
 
         ### FOR DEVELOPMENT, load sample requests:
@@ -295,7 +295,7 @@ Appendix B: Troubleshooting
 
   when you run the `data/import_into_postgres.js` script, the problem
   is most likely that you are connecting to an old version of
-  PostgreSQL that doesn't support JSON columns -- this can happene
+  PostgreSQL that doesn't support JSON columns -- this can happen
   even when a newer version of PostgreSQL that *does* support JSON is
   also installed on your system.  Here's how you can ask what `psql`
   connects to
