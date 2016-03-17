@@ -4,8 +4,8 @@ var renderSettings = function(req, res, next, oauthMessage) {
     var outcome = {};
 
     var getAccountData = function(callback) {
-        req.app.db.Account.findOne({
-                'UserId': req.user.id
+        req.app.db.Account.findOne({ where:  
+                {'UserId': req.user.id}
             })
             .then(function(account) {
                 if (account) {
@@ -309,7 +309,9 @@ exports.disconnectTumblr = function(req, res, next) {
 };
 
 exports.update = function(req, res, next) {
+
     var workflow = req.app.utility.workflow(req, res);
+
 
     workflow.on('validate', function() {
         if (!req.body.first) {
@@ -340,8 +342,8 @@ exports.update = function(req, res, next) {
             zip: req.body.zip
         };
 
-        req.app.db.Account.findOne({
-                'UserId': req.user.id
+        req.app.db.Account.findOne({ where:
+                {'UserId': req.user.id}
             })
             .then(function(account) {
                 account.updateAttributes(fieldsToSet)
