@@ -401,12 +401,8 @@ exports.identity = function(req, res, next) {
 
     workflow.on('duplicateEmailCheck', function() {
         console.log("***Duplicate Email Check 1")
-        req.app.db.models.User.findOne({
-            email: req.body.email.toLowerCase(),
-            _id: {
-                $ne: req.user.id
-            }
-        }, function(err, user) {
+        req.app.db.User.findOne({ where: { email: req.body.email.toLowerCase()} })
+            .then (function(err, user) {
             console.log("***Duplicate Email Check 2")
             if (err) {
                 return workflow.emit('exception', err);
@@ -435,14 +431,24 @@ exports.identity = function(req, res, next) {
             select: 'username email twitter.id github.id facebook.id google.id'
         };
 
-        req.app.db.models.User.findByIdAndUpdate(req.user.id, fieldsToSet, options, function(err, user) {
+        console.log("User id: " + req.user.id)
+        req.app.db.User.update(fieldsToSet, {where: {id: req.user.id} })
+            .then (function(err, user) {
             console.log("***Patch User 2")
+            console.log("***User: " + user)
             if (err) {
+                console.log("***patch User Error")
+                console.log("***Error: " + err)
+                console.log("***User: " + user)
                 return workflow.emit('exception', err);
             }
 
+            console.log("***before workflow.emit Patch Admin");
             workflow.emit('patchAdmin', user);
+            console.log("***after workflow.emit Patch Admin");
         });
+        // workflow.emit('patchAdmin'); //uncomment inorder to move onto patchAdmin
+        console.log("working")
     });
 
     workflow.on('patchAdmin', function(user) {
