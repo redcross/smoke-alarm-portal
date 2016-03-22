@@ -4,7 +4,7 @@ These installation instructions assume a Debian GNU/Linux 'testing'
 distribution operating system, but they should be portable without
 much difficulty to most other Unix-like operating systems.
 
-1. Get the code.
+1. Download the code.
 
         $ git clone https://github.com/OpenTechStrategies/smoke-alarm-portal.git
         $ cd smoke-alarm-portal
@@ -20,7 +20,7 @@ much difficulty to most other Unix-like operating systems.
    npm.  In Terminal, run:
 
         $ sudo npm install npm -g
-        $ sudo np
+        $ sudo npm
 
 3. Install PostgreSQL, at least version 9.2 (to support `JSON` column type).
 
@@ -48,28 +48,26 @@ didn't, you might want to add one:
 5. Set up the live config files.  Note that there are multiple files to
 be edited here.
 
-  1. Do `cp config.js.tmpl config.js`, then edit the latter.
+  1. Do `cp config.js.tmpl config.js` and edit the `config.js` file:
 
-        You'll probably want to update `exports.companyName`,
+        * Update `exports.companyName`,
         `exports.projectName`, `exports.signupEnabled`,`exports.systemEmail`, and
         `exports.cryptoKey`.
 
-  2. Do `cp config/config.json.tmpl config/config.json`, then edit the second.
+  2. Do `cp config/config.json.tmpl config/config.json`, edit the `config/config.json`:
 
-        You'll need to fill in database usernames and passwords, and
-        the Mailgun.com API key and sender information that the app
-        will use to send out email notifications.  You can modify one
-        of the existing top-level environments listed in `config.json`
-        or set up a whole new environment, e.g., "demo" (e.g., based
+        * Fill in database usernames and passwords, and
+        the Mailgun.com API key and sender information that the app will use to send out email notifications.  You can modify one of the existing top-level environments listed in `config.json` or set up a whole new environment, e.g., "demo" (e.g., based
         on the "test" example).
 
         (Don't worry if you don't know how to set up a database
         username / password; that will be explained in a later step.)
 
-  3. Do `cp config/recipients.sql.tmpl config/recipients.sql`, then edit the new file.
+  3. Do `cp config/recipients.sql.tmpl config/recipients.sql`, edit the `config/recipients.sql` file:
 
-        You'll need to fill in appropriate contact names and email
-        addresses.  For dev, just leave the placeholders intact.
+        * Fill in appropriate contact names and email
+        addresses.  
+        * For dev, just leave the placeholders intact.
 
 6. Get other required node modules.
 
@@ -105,6 +103,7 @@ be edited here.
         ### Choose whatever env you want from config/config.json
         $ NODE_ENV="development" 
 
+        ### Before you run this command, update the config/config.js with the recently created database username and password.
         ### This will spew a lot of information to the screen and may
         ### take several minutes.  It creates the tables and loads data
         ### into UsAddress and SelectedCounties.
