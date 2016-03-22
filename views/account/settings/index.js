@@ -384,13 +384,9 @@ exports.identity = function(req, res, next) {
     workflow.on('duplicateUsernameCheck', function() {
         console.log("***Duplicate Username Check 1")
         req.app.db.User.findOne({ where: {username: req.body.username} })
-            .then (function(err, user) {
+            .then (function(duplicateUser) {
             console.log("***Duplicate Username Check 2")
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
-            if (user) {
+            if (duplicateUser) {
                 workflow.outcome.errfor.username = 'username already taken';
                 return workflow.emit('response');
             }
@@ -402,15 +398,11 @@ exports.identity = function(req, res, next) {
     workflow.on('duplicateEmailCheck', function() {
         console.log("***Duplicate Email Check 1")
         req.app.db.User.findOne({ where: { email: req.body.email.toLowerCase()} })
-            .then (function(err, user) {
+            .then (function(duplicateEmail) {
             console.log("***Duplicate Email Check 2")
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
-            if (user) {
+            if (duplicateEmail) {
                 workflow.outcome.errfor.email = 'email already taken';
-                return workflow.emit('response');
+                return workflow.emit('exception', duplicateEmail);
             }
 
             workflow.emit('patchUser');
@@ -427,28 +419,17 @@ exports.identity = function(req, res, next) {
                 req.body.email
             ]
         };
-        var options = {
-            select: 'username email twitter.id github.id facebook.id google.id'
-        };
 
         console.log("User id: " + req.user.id)
         req.app.db.User.update(fieldsToSet, {where: {id: req.user.id} })
             .then (function(err, user) {
             console.log("***Patch User 2")
-            console.log("***User: " + user)
             if (err) {
-                console.log("***patch User Error")
-                console.log("***Error: " + err)
-                console.log("***User: " + user)
                 return workflow.emit('exception', err);
             }
 
-            console.log("***before workflow.emit Patch Admin");
-            workflow.emit('patchAdmin', user);
-            console.log("***after workflow.emit Patch Admin");
+            workflow.emit('patchAdmin');
         });
-        // workflow.emit('patchAdmin'); //uncomment inorder to move onto patchAdmin
-        console.log("working")
     });
 
     workflow.on('patchAdmin', function(user) {
