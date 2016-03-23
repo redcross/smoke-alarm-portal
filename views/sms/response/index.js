@@ -13,8 +13,5 @@ app.use(cookieParser());
 
 
 exports.status = function(req, res) {
-    console.log("hello, we're in the response dir");
-    console.log(req);
-    console.log("the request should be in the body:");
-    console.log(req.body);
+    console.log("DEBUG: we're in the status-checking function");
 }
