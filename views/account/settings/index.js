@@ -383,10 +383,8 @@ exports.identity = function(req, res, next) {
 
 
     workflow.on('duplicateUsernameCheck', function() {
-        console.log("***Duplicate Username Check 1")
         req.app.db.User.findOne({ where: {username: req.body.username, id: {$ne: req.user.id} }  })
             .then (function(duplicateUser) {
-            console.log("***Duplicate Username Check 2")
             if (duplicateUser) {
                 workflow.outcome.errfor.username = 'username already taken';
                 return workflow.emit('response');
@@ -414,7 +412,6 @@ exports.identity = function(req, res, next) {
     });
 
     workflow.on('patchUser', function() {
-        console.log("***Patch User 1")
         var fieldsToSet = {
             username: req.body.username,
             email: req.body.email.toLowerCase(),
@@ -424,19 +421,20 @@ exports.identity = function(req, res, next) {
             ]
         };
 
-        req.app.db.User.update(fieldsToSet, {where: {id: req.user.id} })
-            .then (function(user) {
-                workflow.user = user;
-                workflow.emit('patchUser');
-        })
-        .catch(function(err) {
-            return workflow.emit('exception', err);
-        });
-            workflow.emit('patchAdmin');
+        req.app.db.User.findOne({ where: {id: req.user.id} })
+            .then(function(user) {
+                user.updateAttributes(fieldsToSet)
+                    .then(function(user) {
+                        workflow.outcome.user = user;
+                        return workflow.emit('response');
+                    });
+            })
+            .catch(function(err) {
+                return workflow.emit('exception', err);
+            });
     });
 
     workflow.on('patchAdmin', function(user) {
-        console.log("***Patch Admin 1")
         if (user.roles.admin) {
             var fieldsToSet = {
                 user: {
@@ -445,7 +443,6 @@ exports.identity = function(req, res, next) {
                 }
             };
             req.app.db.models.Admin.findByIdAndUpdate(user.roles.admin, fieldsToSet, function(err, admin) {
-                console.log("***Patch Admin 2")
                 if (err) {
                     return workflow.emit('exception', err);
                 }
@@ -458,7 +455,6 @@ exports.identity = function(req, res, next) {
     });
 
     workflow.on('patchAccount', function(user) {
-        console.log("***Patch Account 1")
         if (user.roles.account) {
             var fieldsToSet = {
                 user: {
@@ -467,7 +463,6 @@ exports.identity = function(req, res, next) {
                 }
             };
             req.app.db.models.Account.findByIdAndUpdate(user.roles.account, fieldsToSet, function(err, account) {
-                console.log("***Patch Account 2")
                 if (err) {
                     return workflow.emit('exception', err);
                 }
@@ -480,9 +475,7 @@ exports.identity = function(req, res, next) {
     });
 
     workflow.on('populateRoles', function(user) {
-        console.log("***Populate Roles 1")
         user.populate('roles.admin roles.account', 'name.full', function(err, populatedUser) {
-            console.log("***Populate Roles 1")
             if (err) {
                 return workflow.emit('exception', err);
             }
