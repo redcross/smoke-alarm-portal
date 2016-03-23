@@ -402,7 +402,7 @@ exports.identity = function(req, res, next) {
             .then (function(duplicateEmail) {
             if (duplicateEmail) {
                 workflow.outcome.errfor.email = 'email already taken';
-                return workflow.emit('exception', duplicateEmail);
+                return workflow.emit('response');
             }
             workflow.emit('patchUser');
         })
