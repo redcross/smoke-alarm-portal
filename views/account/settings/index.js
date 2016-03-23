@@ -381,31 +381,35 @@ exports.identity = function(req, res, next) {
         workflow.emit('duplicateUsernameCheck');
     });
 
+
     workflow.on('duplicateUsernameCheck', function() {
         console.log("***Duplicate Username Check 1")
-        req.app.db.User.findOne({ where: {username: req.body.username} })
+        req.app.db.User.findOne({ where: {username: req.body.username, id: {$ne: req.user.id} }  })
             .then (function(duplicateUser) {
             console.log("***Duplicate Username Check 2")
             if (duplicateUser) {
                 workflow.outcome.errfor.username = 'username already taken';
                 return workflow.emit('response');
             }
-
             workflow.emit('duplicateEmailCheck');
+        })
+        .catch(function(err) {
+            return workflow.emit('exception', err);
         });
     });
 
+
     workflow.on('duplicateEmailCheck', function() {
-        console.log("***Duplicate Email Check 1")
-        req.app.db.User.findOne({ where: { email: req.body.email.toLowerCase()} })
+        req.app.db.User.findOne({ where: { email: req.body.email.toLowerCase(), id: {$ne: req.user.id} } })
             .then (function(duplicateEmail) {
-            console.log("***Duplicate Email Check 2")
             if (duplicateEmail) {
                 workflow.outcome.errfor.email = 'email already taken';
                 return workflow.emit('exception', duplicateEmail);
             }
-
             workflow.emit('patchUser');
+        })
+        .catch(function(err) {
+            return workflow.emit('exception', err);
         });
     });
 
@@ -420,16 +424,15 @@ exports.identity = function(req, res, next) {
             ]
         };
 
-        console.log("User id: " + req.user.id)
         req.app.db.User.update(fieldsToSet, {where: {id: req.user.id} })
-            .then (function(err, user) {
-            console.log("***Patch User 2")
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
-            workflow.emit('patchAdmin');
+            .then (function(user) {
+                workflow.user = user;
+                workflow.emit('patchUser');
+        })
+        .catch(function(err) {
+            return workflow.emit('exception', err);
         });
+            workflow.emit('patchAdmin');
     });
 
     workflow.on('patchAdmin', function(user) {
