@@ -340,19 +340,17 @@ exports.update = function(req, res, next) {
             zip: req.body.zip
         };
 
-        req.app.db.Account.findOne({ where:
-                {'UserId': req.user.id}
-            })
-            .then(function(account) {
-                account.updateAttributes(fieldsToSet)
-                    .then(function(account) {
-                        workflow.outcome.account = account;
-                        return workflow.emit('response');
-                    });
-            })
-            .catch(function(err) {
-                return workflow.emit('exception', err);
-            });
+        req.app.db.Account.findOne({ where: {'UserId': req.user.id} })
+        .then(function(account) {
+            return account.updateAttributes(fieldsToSet)
+        })
+        .then(function(account) {
+            workflow.outcome.account = account;
+            return workflow.emit('response')
+        })
+        .catch(function(err) {
+            return workflow.emit('exception', err);
+        });
     });
 
     workflow.emit('validate');
@@ -422,16 +420,16 @@ exports.identity = function(req, res, next) {
         };
 
         req.app.db.User.findOne({ where: {id: req.user.id} })
-            .then(function(user) {
-                user.updateAttributes(fieldsToSet)
-                    .then(function(user) {
-                        workflow.outcome.user = user;
-                        return workflow.emit('response');
-                    });
-            })
-            .catch(function(err) {
-                return workflow.emit('exception', err);
-            });
+        .then(function(user) {
+            return user.updateAttributes(fieldsToSet)
+        })
+        .then(function(user) {
+            workflow.outcome.user = user;
+            return workflow.emit('response')
+        })
+        .catch(function(err) {
+            return workflow.emit('exception', err);
+        });
     });
 
     workflow.on('patchAdmin', function(user) {
