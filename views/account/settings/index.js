@@ -320,6 +320,14 @@ exports.update = function(req, res, next) {
             workflow.outcome.errfor.last = 'required';
         }
 
+        if (!/^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/.test(req.body.phone)) {
+            workflow.outcome.errfor.phone = 'invalid phone number';
+        }
+
+        if (!/(^\d{5}$)|(^\d{5}-\d{4}$)/.test(req.body.zip)) {
+            workflow.outcome.errfor.zip = 'invalid zip code';
+        }
+
         if (workflow.hasErrors()) {
             return workflow.emit('response');
         }
