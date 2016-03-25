@@ -22,6 +22,10 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(cookieParser());
 
+var accountSid = config.twilio_accountSid;
+var authToken = config.twilio_authToken;
+var client = require('twilio')(accountSid, authToken);
+
 app.use(function(req, res, next) {
     req.i18n.setLocaleFromCookie();
     // can set this here for testing purposes
@@ -41,10 +45,30 @@ exports.respond = function(req, res) {
      * "res.end" is required by the node server to complete any
      * transmission to the client.
      */
-    var completeMsg = function (twiml) {
+    var completeMsg = function (twiml, phone_number) {
         res.cookie('locale', i18n_inst.getLocale());
         res.writeHead(200, {'Content-Type': 'text/xml'});
         res.end(twiml.toString());
+        checkMsgStatus(phone_number);
+    };
+
+    var checkMsgStatus = function (to_num) {
+        var now_var = new Date();
+        var today_var = new Date(now_var.getFullYear(), now_var.getMonth(), now_var.getDate(), 0, 0, 0, 0);
+        client.messages.list( {To: to_num, DateSent: today_var}, function(err, data) {
+            if (data) {
+                var most_recent_msg = data.messages[0];
+                // if the most recent message was delivered successfully
+                // then great!  Otherwise, do something else.
+                if (most_recent_msg.status != 'delivered') {
+                    // then send the message again
+                }
+            }
+            else {
+                console.log("DEBUG: we didn't get data back from the Twilio API");
+                console.log(err);
+            }
+        });
     };
 
     /*
@@ -58,8 +82,8 @@ exports.respond = function(req, res) {
         var twiml = new twilio.TwimlResponse();
         // add a help number here.
         var error_text = "Sorry, we've encountered an error.  Please try sending your message again, or call <number> for assistance.";
-        twiml.message(__(error_text), {statusCallback: '/sms/response/'});
-        completeMsg(twiml);
+        twiml.message(__(error_text));
+        completeMsg(twiml, req.query.From);
     };
 
     /* 
@@ -158,10 +182,10 @@ exports.respond = function(req, res) {
                 msg = msg.replace('%s', msg_zip);
             }
         }
-        twiml.message(msg, {statusCallback: '/sms/response/'});
+        twiml.message(msg);
         res.clearCookie('priorities');
         res.clearCookie('request_object');
-        completeMsg(twiml);
+        completeMsg(twiml, req.query.From);
     };
 
 
@@ -408,11 +432,11 @@ exports.respond = function(req, res) {
     // send the text associated with that element
     var texts = { name: "Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto \"ES\"\)." + " " + "We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?", address: __('What is your address, including the unit number, city, state, and zipcode?'), zipcode:  __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), phone: __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), email:  __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.'), help_response: __('This is the smoke alarm request system from the Red Cross.  For more information, call 1-800-RED-CROSS or visit getasmokealarm.org.')};
     var text_body = texts[text_name];
-    twiml.message( __(text_body), {statusCallback: '/sms/response/'});
+    twiml.message( __(text_body));
     if ( help_check || (req.cookies.priorities.email && req.cookies.priorities.email.value == "") ) {
         res.cookie('priorities', req.cookies.priorities);
         res.cookie('request_object', req.cookies.request_object);
-        completeMsg(twiml);
+        completeMsg(twiml, req.query.From);
     }
 };
 
