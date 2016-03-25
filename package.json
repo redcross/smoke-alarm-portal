@@ -2,6 +2,7 @@
   "name": "smoke-alarm-portal",
   "version": "0.0.1",
   "private": true,
+  "engine" : "node 0.12.x",
   "scripts": {
     "start": "nodemon ./bin/www",
     "test": "NODE_ENV=test mocha tests"

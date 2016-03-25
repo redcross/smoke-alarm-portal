@@ -4,7 +4,7 @@ These installation instructions assume a Debian GNU/Linux 'testing'
 distribution operating system, but they should be portable without
 much difficulty to most other Unix-like operating systems.
 
-1. Get the code.
+1. Download the code.
 
         $ git clone https://github.com/OpenTechStrategies/smoke-alarm-portal.git
         $ cd smoke-alarm-portal
@@ -15,9 +15,16 @@ much difficulty to most other Unix-like operating systems.
         $ sudo apt-get install nodejs
         $ sudo apt-get install npm
 
-   On Max OSX, use the Macintosh installer which can be downloaded from https://nodejs.org/download/. This will install both node and npm.
+   On Max OSX, use the Macintosh installer which can be downloaded
+   from https://nodejs.org/download/, to install both node and
+   npm.  In Terminal, run:
+
+        $ sudo npm install npm -g
+        $ sudo npm
 
 3. Install PostgreSQL, at least version 9.2 (to support `JSON` column type).
+
+   On Debian:
 
         $ sudo apt-get install postgresql-9.4  # for example
 
@@ -26,31 +33,41 @@ much difficulty to most other Unix-like operating systems.
    coming import step.  If you encounter such errors, see the
    appropriate part of the "Troubleshooting" section later on.)
 
-4. PostgreSQL probably created a `postgres` user, but if it didn't, add one:
+   On Mac OS X:
+
+   Install PostgreSQL via Brew (http://exponential.io/blog/2015/02/21/install-postgresql-on-mac-os-x-via-brew/)
+
+        $ brew update
+        $ brew install postgres
+
+4. OPTIONAL: PostgreSQL probably created a `postgres` user, but if it
+didn't, you might want to add one:
 
         $ adduser postgres
 
-5. Set up the live config files.
+5. Set up the live config files.  Note that there are multiple files to
+be edited here.
 
-  * Do `cp config.js.tmpl config.js`, then edit the latter.
+  1. Do `cp config.js.tmpl config.js` and edit the `config.js` file:
 
-        You'll probably want to update `exports.companyName`,
+        * Update `exports.companyName`,
         `exports.projectName`, `exports.signupEnabled`,`exports.systemEmail`, and
         `exports.cryptoKey`.
 
-  * Do `cp config/config.json.tmpl config/config.json`, then edit the latter.
+  2. Do `cp config/config.json.tmpl config/config.json`, edit the `config/config.json`:
 
-        You'll need to fill in database usernames and passwords, and
-        the Mailgun.com API key and sender information that the app
-        will use to send out email notifications.  You can modify one
-        of the existing top-level environments listed in `config.json`
-        or set up a whole new environment, e.g., "demo" (e.g., based
+        * Fill in database usernames and passwords, and
+        the Mailgun.com API key and sender information that the app will use to send out email notifications.  You can modify one of the existing top-level environments listed in `config.json` or set up a whole new environment, e.g., "demo" (e.g., based
         on the "test" example).
 
-  * Do `cp config/recipients.sql.tmpl config/recipients.sql`, then edit the latter.
+        (Don't worry if you don't know how to set up a database
+        username / password; that will be explained in a later step.)
 
-        You'll need to fill in appropriate contact names and email
-        addresses.
+  3. Do `cp config/recipients.sql.tmpl config/recipients.sql`, edit the `config/recipients.sql` file:
+
+        * Fill in appropriate contact names and email
+        addresses.  
+        * For dev, just leave the placeholders intact.
 
 6. Get other required node modules.
 
@@ -68,25 +85,25 @@ much difficulty to most other Unix-like operating systems.
 
 7. Create the databases and import the initial data.
 
+        ### become a postgres user.  We use "postgres" here but it could
+        ### also be your regular user, assuming that you have the
+        ### correct privileges in psql.
         $ su - postgres
         $ psql
         postgres=# CREATE DATABASE smokealarm_development;
         postgres=# CREATE USER <some_username> PASSWORD '<some_password>';
         postgres=# GRANT ALL ON DATABASE smokealarm_development TO <username>;
         postgres=# \q
-        $ exit       ### log out of postgres user; you should be yourself now
-
-        $ npm install sequelize
+        ### if you were postgres, log out; you should be yourself now
+        $ exit       
 
         ### This one needs to be available system-wide
         $ sudo npm install -g sequelize-cli 
 
-        $ npm install pg-hstore
-        $ npm install pg
-
         ### Choose whatever env you want from config/config.json
         $ NODE_ENV="development" 
 
+        ### Before you run this command, update the config/config.js with the recently created database username and password.
         ### This will spew a lot of information to the screen and may
         ### take several minutes.  It creates the tables and loads data
         ### into UsAddress and SelectedCounties.
@@ -97,6 +114,25 @@ much difficulty to most other Unix-like operating systems.
         ### Import the regions and recipients to the "activeRegions" table.
         smokealarm_development=# \i config/recipients.sql
 
+        ### Run the migrations
+
+        # use the most recent region codes in all places
+        smokealarm_development=# \i migrations/20150916-update-regions.sql
+        # add internal codes to regions
+        smokealarm_development=# \i migrations/20150916-internal-regions.sql
+        # add a "no region found" region
+        smokealarm_development=# \i migrations/20151208-create-nonregion.sql
+        
+        # If you already have requests, update them.  Otherwise (e.g. if
+        # you're setting up an empty database) you can skip these migrations.
+        smokealarm_development=# \i migrations/20151208-add-nonregion-code.sql
+        smokealarm_development=# \i migrations/20151217-set-new-status.sql
+
+        ### exit psql
+        smokealarm_development=# \q        
+
+        ### FOR DEVELOPMENT, load sample requests:
+        $ node data/fake_request_data.js 
 
 8. Start the smoke-alarm-portal app
 
@@ -134,6 +170,20 @@ much difficulty to most other Unix-like operating systems.
       (If you don't do this step, anyone who can figure out the URL can
       create a user account with administrative privileges, which would
       obviously be bad.)
+
+   5. Grant your new admin user permission to view requests from all
+      regions, using this file:
+      [migrations/20151208-admin-access.sql.tmpl](migrations/20151208-admin-access.sql.tmpl).
+      Following the instructions in the file, copy it to
+      `migrations/20151208-admin-access.sql` and replace the
+      `__USER_ID__` with the id of your new admin user (if the admin
+      user was the first user you created, then this will probably be
+      `1`).  Once you've done that, run the following commands:
+
+      ```
+      $ psql smokealarm_development  
+      smokealarm_development=# \i migrations/20151208-admin-access.sql
+      ```
 
    Now you can visit http://localhost:3000/login/ at any time, log in
    as `admin`, and from there click on "Smoke Alarm Installation Requests"
@@ -244,7 +294,7 @@ Appendix B: Troubleshooting
 
   when you run the `data/import_into_postgres.js` script, the problem
   is most likely that you are connecting to an old version of
-  PostgreSQL that doesn't support JSON columns -- this can happene
+  PostgreSQL that doesn't support JSON columns -- this can happen
   even when a newer version of PostgreSQL that *does* support JSON is
   also installed on your system.  Here's how you can ask what `psql`
   connects to

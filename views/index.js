@@ -221,7 +221,7 @@ var getRequestData = function(req, numberOfRequests, region) {
         fiscalYear = fiscalYear + 1;
     }
     var displayedYear = fiscalYear - 2000;
-    if (region) {
+    if (region && region != 'XXXX') {
         var serial = region + "-" + displayedYear + "-" + sequenceNumber;
     }
     else {
@@ -267,7 +267,8 @@ var saveRequestData = function(requestData) {
         phone: requestData.phone,
         email: requestData.email,
         serial: requestData.serial,
-        assigned_rc_region: requestData.assigned_rc_region
+        assigned_rc_region: requestData.assigned_rc_region,
+        status: 'new'
     }).catch( function () {
         // uniqueness failed; increment serial
         var serial_array = requestData.serial.split("-");

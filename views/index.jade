@@ -117,25 +117,27 @@ block content
         p
           | #{__('The American Red Cross and its partners have launched the Home Fire Campaign to reduce deaths and injuries caused by home fires by 25 percent over five years.')} #{__('The Red Cross asks every household in America to take two simple steps to help save lives: check or install smoke alarms and practice fire drills at home.')}
     #bottom.row
-      p#availability.col-xs-12
-        | #{__('For more information about the importance of smoke alarms, see ')}
-        a(class="contrast-link" href="http://labs.enigma.io/smoke-signals/" target="_blank") #{__('the Smoke Signals project')}
-        |.
-      p#availability.col-xs-12
+      p.availability.col-xs-12
         | #{__('This form can accept requests from the following States and Counties: IA (except Harrison, Mills and Pottawattamie Counties), IL, MN, MO, MT, ND, SD, WI, Dakota County, NE as well as all counties in ID (except Benewah, Bonner, Boundary, Kootenal and Shoshone Counties) and Malheur County, OR and Garfield and Asotin Counties in WA.')}
         span.notabene #{__('  If your location is not listed, please call 800-RED-CROSS to be connected to ')}
         span.notaoptime #{__('your')}
         span.notabene #{__(' local Red Cross Chapter.')}
-
+      p.availability.col-xs-12
+        | #{__('For more information about the importance of smoke alarms, see ')}
+        a(class="contrast-link" href="http://labs.enigma.io/smoke-signals/" target="_blank") #{__('the Smoke Signals project')}
+        |.
+      p.availability.col-xs-12
+        | #{__('This web site is open source ')}
+        |&mdash;
+        | #{__(' volunteers welcome ')}
+        a(class="contrast-link" href="https://github.com/redcross/smoke-alarm-portal/" target="_blank") #{__(' at GitHub')}
+        |.
 
     script(type="text/javascript").
-      //- creating the locale cookie and assigning it a value
-      function setLocale(locale) {
-        document.cookie= "locale=" + locale;
-         location.reload();
-      }
-      var locale = /locale=([^;]+)/.exec(document.cookie); 
-      if (locale[1]) {
+      function setLocale(locale) { document.cookie= "locale=" + locale; location.reload(); }
+      var locale = /locale=([^;]+)/.exec(document.cookie);
+
+      if (locale && locale[1]) {
         $("select#language-switcher").val(locale[1]);
       }
       $("select#state").addClass('state-not-yet-selected');
@@ -143,6 +145,7 @@ block content
         $(this).children('option[value="state-not-yet-selected"]').remove();
         $(this).removeClass('state-not-yet-selected');
       });
+      
       $(".form-horizontal").submit(function(e){
         e.preventDefault();
         var form = $(this)
@@ -160,7 +163,7 @@ block content
           }
         })
       });
-
+      
       $(".form-horizontal").validationEngine({
         'scroll': false,
         'autoPositionUpdate': true,

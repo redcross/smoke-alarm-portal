@@ -47,7 +47,7 @@ block body
             option(value='100') 100 items
             option(value='500') 500 items
         div.col-sm-3
-          a(href='/admin/requests/?format=csv') CSV Export
+          input#exportCSV(type='button', value='CSV Export')
       div.row
         div.col-sm-3
           label Start Date
@@ -60,21 +60,48 @@ block body
             input.form-control(name='endDate', type='hidden').datepickerTrigger
             .pickedDate
         div.col-sm-3
+          label Status
+          select.form-control(name='status')
+               option(value='all')
+               option(value='new') new 
+               option(value='inprogress') in-progress
+               option(value='installed') installed
+               option(value='canceled') canceled
+        div.col-sm-3
           label Region
-          select.form-control(name='region')
-            option(value="") All Regions
-            each item in data.region
-                 option(value="#{item.rc_region}") #{item.region_name}
+          br
+          .allowed_region
+                each item in data.usable_regions
+                     input(type="checkbox" name="region[]" value="#{item.rc_region}")
+                     | &nbsp #{item.region_name}
+                     br
+          br
+          if (data.non_region.disabled === true)
+             .disabled_region
+                input(type="checkbox" name="region[]" value="XXXX" disabled)
+                | &nbsp No Region Found
+          else
+             .allowed_region
+                input(type="checkbox" name="region[]" value="XXXX")
+                | &nbsp No Region Found
+
+          label
+          .disabled_region 
+               each item in data.disabled_regions
+                   input(type="checkbox" disabled="true" name="region[]" value="#{item}")
+                   | &nbsp #{item}
+                   br
       div.row
         div.col-sm-12
           input#applyFilters(type='button', value='apply filters')
           input#clearFilters(type='button', value='clear filters')
 
   script(type='text/template', id='tmpl-results-table')
-    table.table.table-striped
+    input(type="hidden" name="_csrf" id="csrf_token" value="#{csrfToken}")
+    table.table.table-striped#request_results
       thead
         tr
-          th
+          th status
           th id
           th name
           th address
@@ -88,17 +115,23 @@ block body
       tbody#results-rows
 
   script(type='text/template', id='tmpl-results-row')
-    td
-    td.nowrap <%- serial %>
-    td.nowrap <%- name %>
-    td.nowrap <%- address %>
-    td.nowrap <%- city %>
-    td.nowrap <%- state %>
-    td.nowrap <%- zip %>
-    td.nowrap <%- phone %>
-    td.nowrap <%- email %>
-    td.nowrap <%- moment(createdAt).format("YYYY-MM-DD HH:mm") %>
-    td.nowrap <%- assigned_rc_region %>
+    td.nowrap &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp
+        select.form-control.status_updater(name='status')
+               option(value=null)
+               option(value='new') new 
+               option(value='inprogress') in-progress
+               option(value='installed') installed
+               option(value='canceled') canceled
+    td <%- serial %>
+    td <%- name %>
+    td <%- address %>
+    td <%- city %>
+    td <%- state %>
+    td <%- zip %>
+    td <%- phone %>
+    td <%- email %>
+    td <%- moment(createdAt).format("YYYY-MM-DD HH:mm") %>
+    td <%- assigned_rc_region %>
       div
       div
 
