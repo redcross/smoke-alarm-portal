@@ -49,7 +49,7 @@ exports.respond = function(req, res) {
         res.cookie('locale', i18n_inst.getLocale());
         res.writeHead(200, {'Content-Type': 'text/xml'});
         res.end(twiml.toString());
-        checkMsgStatus(phone_number);
+        setTimeout(checkMsgStatus, 3000, phone_number);
     };
 
     var checkMsgStatus = function (to_num) {
@@ -63,6 +63,10 @@ exports.respond = function(req, res) {
                 if (most_recent_msg.status != 'delivered') {
                     // then send the message again
                 }
+ 		else {
+		    console.log("DEBUG: the most recent message, " + most_recent_msg.body + ", was delivered.");
+		}
+
             }
             else {
                 console.log("DEBUG: we didn't get data back from the Twilio API");
