@@ -12,7 +12,8 @@ block content
       #safety-message.row.text-center(role='complementary')
         p.col-xs-12.bigger-centered
           | #{__('Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.')}
-    #error-message.text-center      
+    #error-box
+      #error-message
     #main.row(role='main')
       #left.col-md-3
         p
@@ -155,7 +156,7 @@ block content
           'data': form.serialize(),
           'success': function(response){
             if (response.status == true) {
-              $('#error-message').html(response.message);
+              $('#error-message').addClass('alert alert-danger').html(response.message);
             } else {
               $('form').attr('action');
               $('form').unbind('submit').submit();
