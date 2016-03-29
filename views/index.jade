@@ -161,6 +161,9 @@ block content
               $('form').attr('action');
               $('form').unbind('submit').submit();
             }
+          },
+          'error': function() {
+            alert("An error occurred");
           }
         })
       });
