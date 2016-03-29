@@ -49,7 +49,7 @@ exports.respond = function(req, res) {
         res.cookie('locale', i18n_inst.getLocale());
         res.writeHead(200, {'Content-Type': 'text/xml'});
         res.end(twiml.toString());
-        setTimeout(checkMsgStatus, 3000, phone_number);
+        //setTimeout(checkMsgStatus, 3000, phone_number);
     };
 
     var checkMsgStatus = function (to_num) {
