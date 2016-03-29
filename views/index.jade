@@ -162,10 +162,14 @@ block content
               $('form').unbind('submit').submit();
             }
           },
-          'error': function() {
-            alert("An error occurred");
-          }
-        })
+          'error': function(jqXHR,error, errorThrown) {  
+             if(jqXHR.status&&jqXHR.status==400){
+                  alert(jqXHR.responseText); 
+             } else {
+                 alert("Something went wrong");
+             }
+            }
+        });
       });
       
       $(".form-horizontal").validationEngine({
