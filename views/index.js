@@ -396,44 +396,38 @@ var sendEmail = function(request, selectedRegion) {
     });
 };
 
-// This function is from the user, 'disfated', at http://stackoverflow.com/questions/2332811/capitalize-words-in-string
-String.prototype.capitalize = function() {
-    return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
-};
-
-// Case 1
-// Returns the number of rows that matches those 3 arguments in the database
+// Case 1: Returns the number of rows that matches all 3 arguments in the database
 var cityStateZipMatch = function (city, state, zip) {
     return db.UsAddress.count({
         where: {
-            primary_city: city.capitalize(),
+            primary_city: { $ilike: city },
             state: state,
             zip: zip
         }
     });
 };
 
-// Case 2
+// Case 2: Returns the number of rows that matches both arguments in the database
 var cityStateMatch = function (city, state) {
     return db.UsAddress.count({
         where: {
-            primary_city: city.capitalize(),
+            primary_city: { $ilike: city },
             state: state
         }
     });
 };
 
-// Case 3
+// Case 3: Returns the number of rows that matches both arguments in the database
 var cityZipMatch = function (city, zip) {
     return db.UsAddress.count({
         where: {
-            primary_city: city.capitalize(),
+            primary_city: { $ilike: city },
             zip: zip
         }
     });
 };
 
-// Case 4
+// Case 4: Returns the number of rows that matches both 2 arguments in the database
 var stateZipMatch = function (state, zip) {
     return db.UsAddress.count({
         where: {
