@@ -4,8 +4,8 @@ var renderSettings = function(req, res, next, oauthMessage) {
     var outcome = {};
 
     var getAccountData = function(callback) {
-        req.app.db.Account.findOne({
-                'UserId': req.user.id
+        req.app.db.Account.findOne({ where:  
+                {'UserId': req.user.id}
             })
             .then(function(account) {
                 if (account) {
@@ -340,19 +340,17 @@ exports.update = function(req, res, next) {
             zip: req.body.zip
         };
 
-        req.app.db.Account.findOne({
-                'UserId': req.user.id
-            })
-            .then(function(account) {
-                account.updateAttributes(fieldsToSet)
-                    .then(function(account) {
-                        workflow.outcome.account = account;
-                        return workflow.emit('response');
-                    });
-            })
-            .catch(function(err) {
-                return workflow.emit('exception', err);
-            });
+        req.app.db.Account.findOne({ where: {'UserId': req.user.id} })
+        .then(function(account) {
+            return account.updateAttributes(fieldsToSet)
+        })
+        .then(function(account) {
+            workflow.outcome.account = account;
+            return workflow.emit('response')
+        })
+        .catch(function(err) {
+            return workflow.emit('exception', err);
+        });
     });
 
     workflow.emit('validate');
@@ -381,43 +379,33 @@ exports.identity = function(req, res, next) {
         workflow.emit('duplicateUsernameCheck');
     });
 
-    workflow.on('duplicateUsernameCheck', function() {
-        req.app.db.models.User.findOne({
-            username: req.body.username,
-            _id: {
-                $ne: req.user.id
-            }
-        }, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
 
-            if (user) {
+    workflow.on('duplicateUsernameCheck', function() {
+        req.app.db.User.findOne({ where: {username: req.body.username, id: {$ne: req.user.id} }  })
+            .then (function(duplicateUser) {
+            if (duplicateUser) {
                 workflow.outcome.errfor.username = 'username already taken';
                 return workflow.emit('response');
             }
-
             workflow.emit('duplicateEmailCheck');
+        })
+        .catch(function(err) {
+            return workflow.emit('exception', err);
         });
     });
 
-    workflow.on('duplicateEmailCheck', function() {
-        req.app.db.models.User.findOne({
-            email: req.body.email.toLowerCase(),
-            _id: {
-                $ne: req.user.id
-            }
-        }, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
 
-            if (user) {
+    workflow.on('duplicateEmailCheck', function() {
+        req.app.db.User.findOne({ where: { email: req.body.email.toLowerCase(), id: {$ne: req.user.id} } })
+            .then (function(duplicateEmail) {
+            if (duplicateEmail) {
                 workflow.outcome.errfor.email = 'email already taken';
                 return workflow.emit('response');
             }
-
             workflow.emit('patchUser');
+        })
+        .catch(function(err) {
+            return workflow.emit('exception', err);
         });
     });
 
@@ -430,16 +418,17 @@ exports.identity = function(req, res, next) {
                 req.body.email
             ]
         };
-        var options = {
-            select: 'username email twitter.id github.id facebook.id google.id'
-        };
 
-        req.app.db.models.User.findByIdAndUpdate(req.user.id, fieldsToSet, options, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
-            workflow.emit('patchAdmin', user);
+        req.app.db.User.findOne({ where: {id: req.user.id} })
+        .then(function(user) {
+            return user.updateAttributes(fieldsToSet)
+        })
+        .then(function(user) {
+            workflow.outcome.user = user;
+            return workflow.emit('response')
+        })
+        .catch(function(err) {
+            return workflow.emit('exception', err);
         });
     });
 
