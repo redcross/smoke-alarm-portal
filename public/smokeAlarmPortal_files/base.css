@@ -330,3 +330,16 @@ a.contrast-link {
     -moz-border-radius: 5px 5px 5px 5px;
     border-radius: 5px 5px 5px 5px; /* standards-compliant: (IE) */
 }
+
+#error-box {
+  text-align: center;
+  margin: 0px;
+  padding: 0px;
+}
+
+#error-message {
+  display:inline-block;
+  margin: 0px;
+  text-align: center;
+  font: 12px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
