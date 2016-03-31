@@ -88,7 +88,6 @@ var countRequestsPerRegion = function (region) {
         });
     }
 };
-
 // takes a "value" that needs to be a certain "length" (in this file,
 // either a date or a sequence number) and pads it with leading zeroes
 // until it is "length" long.
@@ -397,37 +396,124 @@ var sendEmail = function(request, selectedRegion) {
     });
 };
 
+// Case 1: Returns the number of rows that matches all 3 arguments in the database
+var cityStateZipMatch = function (city, state, zip) {
+    return db.UsAddress.count({
+        where: {
+            primary_city: { $ilike: city },
+            state: state,
+            zip: zip
+        }
+    });
+};
+
+// Case 2: Returns the number of rows that matches both arguments in the database
+var cityStateMatch = function (city, state) {
+    return db.UsAddress.count({
+        where: {
+            primary_city: { $ilike: city },
+            state: state
+        }
+    });
+};
+
+// Case 3: Returns the number of rows that matches both arguments in the database
+var cityZipMatch = function (city, zip) {
+    return db.UsAddress.count({
+        where: {
+            primary_city: { $ilike: city },
+            zip: zip
+        }
+    });
+};
+
+// Case 4: Returns the number of rows that matches both 2 arguments in the database
+var stateZipMatch = function (state, zip) {
+    return db.UsAddress.count({
+        where: {
+            state: state,
+            zip: zip
+        }
+    });
+};
+
 exports.saveRequest = function(req, res) {
-    var savedRequest = {};
-    var region_code = "";
-    // get zip in a function, to clean this up
-    var zip_set = findZipForLookup(req);
-    var zip_for_lookup = zip_set.zip_for_lookup;
-    findAddressFromZip(zip_for_lookup).then(function(address) {
-        return findCountyFromAddress(address, zip_for_lookup);
-    }).then( function(county_id){
-        if (county_id){
-            region_code = county_id.region;
+    var city = req.body.city;
+    var state = req.body.state;
+    var zip = req.body.zip;
+    cityStateZipMatch(city, state, zip).then(function(cityStateZipCount) {
+        if (cityStateZipCount == 0) {
+            cityStateMatch(city, state).then(function(cityStateCount) {
+                if (cityStateCount == 0) {
+                    cityZipMatch(city, zip).then(function(cityZipCount) {
+                        if (cityZipCount == 0) {
+                            stateZipMatch(state, zip).then(function(stateZipCount) {
+                                if (stateZipCount == 0) {
+                                    var errorMessage = {
+                                        status: true,
+                                        message: "Invalid Zip, City and State Combination. Please check your entry and try again."
+                                    };
+                                }
+                                else {
+                                    var errorMessage = { // Case 4 Message - state & zip
+                                        status: true,
+                                        message: "The state and zip code has no city of that name. Please check your entry and try again."
+                                    };
+                                }
+                                res.send(errorMessage);
+                            })
+                        }
+                        else {
+                            var errorMessage = { // Case 3 Message - city & zip
+                                status: true,
+                                message: "The state has no city of that name and zip code. Please check your entry and try again."
+                            };
+                            res.send(errorMessage);
+                        }
+                    })
+                }
+                else {
+                    var errorMessage = { // Case 2 Message - city & state
+                        status: true,
+                        message: "The zip code does not belong to that state and city. Please check your entry and try again."
+                    };
+                    res.send(errorMessage);
+                }
+            })
         }
         else {
-            region_code = 'XXXX';
+            var savedRequest = {};
+            var region_code = "";
+            // get zip in a function, to clean this up
+            var zip_set = findZipForLookup(req);
+            var zip_for_lookup = zip_set.zip_for_lookup;
+            findAddressFromZip(zip_for_lookup).then(function(address) {
+                return findCountyFromAddress(address, zip_for_lookup);
+            }).then( function(county_id){
+                if (county_id){
+                    region_code = county_id.region;
+                }
+                else {
+                    region_code = null
+                }
+                return countRequestsPerRegion(region_code);
+            }).then( function(numRequests) {
+                requestData = getRequestData(req, numRequests, region_code);
+                return saveRequestData(requestData);
+            }).then(function(request) {
+                savedRequest = request;
+                return isActiveRegion(savedRequest);
+            }).then( function(activeRegion){
+                if (activeRegion) {
+                    // sendEmail(savedRequest, activeRegion);
+                    res.render('thankyou.jade', {region: activeRegion.region_name, id: savedRequest.serial});
+                }
+                else{
+                    res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup});
+                }
+            }).catch(function(error) {
+                res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup});
+            });
         }
-        return countRequestsPerRegion(region_code);
-    }).then( function(numRequests) {
-        requestData = getRequestData(req, numRequests, region_code);
-        return saveRequestData(requestData);
-    }).then(function(request) {
-        savedRequest = request;
-        return isActiveRegion(savedRequest);
-    }).then( function(activeRegion){
-        if (activeRegion) {
-            sendEmail(savedRequest, activeRegion);
-            res.render('thankyou.jade', {region: activeRegion.region_name, id: savedRequest.serial});
-        }
-        else{
-            res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup});
-        }
-    }).catch(function(error) {
-        res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup});
     });
 };
