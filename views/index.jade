@@ -12,6 +12,8 @@ block content
       #safety-message.row.text-center(role='complementary')
         p.col-xs-12.bigger-centered
           | #{__('Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.')}
+    #error-box
+      #error-message
     #main.row(role='main')
       #left.col-md-3
         p
@@ -145,10 +147,36 @@ block content
         $(this).removeClass('state-not-yet-selected');
       });
       
+      $(".form-horizontal").submit(function(e){
+        e.preventDefault();
+        var form = $(this)
+        $.ajax({
+          'url' : form.attr('action'),
+          'type': form.attr('method'),
+          'data': form.serialize(),
+          'success': function(response){
+            if (response.status == true) {
+              $('#error-message').addClass('alert alert-danger').html(response.message);
+            } else {
+              $('form').attr('action');
+              $('form').unbind('submit').submit();
+            }
+          },
+          'error': function(jqXHR,error, errorThrown) {  
+             if(jqXHR.status&&jqXHR.status==400){
+                  alert(jqXHR.responseText); 
+             } else {
+                 alert("Something went wrong");
+             }
+            }
+        });
+      });
+      
       $(".form-horizontal").validationEngine({
         'scroll': false,
         'autoPositionUpdate': true,
         'maxErrorsPerField': 1,
+        'promptPosition': 'bottomRight',
         'custom_error_messages': {
           '#name': {
             'required': {
@@ -198,4 +226,6 @@ block content
       });
       // Fix Safari font-weight. The bizzare if-clause is feature-detection for Safari.
       if (Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0) { $("body").css("font-weight", "400"); }
+
+
 
