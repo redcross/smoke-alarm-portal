@@ -20,7 +20,6 @@ much difficulty to most other Unix-like operating systems.
    npm.  In Terminal, run:
 
         $ sudo npm install npm -g
-        $ sudo npm
 
 3. Install PostgreSQL, at least version 9.2 (to support `JSON` column type).
 
@@ -104,6 +103,7 @@ be edited here.
         $ NODE_ENV="development" 
 
         ### Before you run this command, update the config/config.js with the recently created database username and password.
+        ### 
         ### This will spew a lot of information to the screen and may
         ### take several minutes.  It creates the tables and loads data
         ### into UsAddress and SelectedCounties.
@@ -140,7 +140,7 @@ be edited here.
 
         $ npm start
 
-   For demo or production, you might want to do this instead:
+   For production, you might want to do this instead:
 
         $ npm install forever
    
@@ -315,7 +315,7 @@ Appendix B: Troubleshooting
    etc, etc.  If you don't need the older versions. just remove them,
    e.g.:
 
-        # apt-get purge postgresql-9.1
+        $ apt-get purge postgresql-9.1
 
    Note you may have to purge everything, including the newest
    version, and then reinstall the newest version; at least, the
