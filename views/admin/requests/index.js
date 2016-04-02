@@ -138,7 +138,7 @@ exports.find = function(req, res, next) {
         }
 
         if (req.query.region) {
-            filters.assigned_rc_region = req.query.region
+            filters.assigned_rc_region = req.query.region;
         }
         return queryUsableRegions().then( function (usableRegions) {
             // find intersection of allowed and filtered regions and set
@@ -176,7 +176,7 @@ exports.find = function(req, res, next) {
             // region (for full-powered admins)?
             return filters;
     });
-}
+};
 var getResults = function(callback) {
     var filters = getFilters().then( function(filters) {
         // Determine direction for order
@@ -243,7 +243,7 @@ var getResults = function(callback) {
             res.setHeader('Content-Disposition','attachment; filename=smoke-alarm-requests-' + moment().format() + '.csv;');
             res.send(csv);
         });
-    }
+    };
 
     var asyncFinally = function(err, results) {
         if (err) {
