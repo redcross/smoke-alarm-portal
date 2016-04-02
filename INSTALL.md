@@ -48,15 +48,12 @@ didn't, you might want to add one:
 5. Set up the live config files.  Note that there are multiple files to
 be edited here.
 
-  1. Do `cp config.js.tmpl config.js` and edit the `config.js` file:
-
-        * Update `exports.companyName`,
-        `exports.projectName`, `exports.signupEnabled`,`exports.systemEmail`, and
-        `exports.cryptoKey`.
+  1. Do `cp config.js.tmpl config.js`.
 
   2. Do `cp config/config.json.tmpl config/config.json`, edit the `config/config.json`:
 
-        * Fill in database usernames and passwords, and
+        * For dev, don't edit, just leave the placeholders intact and go to step 3.
+        * For non-dev, fill in database usernames and passwords, and
         the Mailgun.com API key and sender information that the app will use to send out email notifications.  You can modify one of the existing top-level environments listed in `config.json` or set up a whole new environment, e.g., "demo" (e.g., based
         on the "test" example).
 
@@ -64,10 +61,9 @@ be edited here.
         username / password; that will be explained in a later step.)
 
   3. Do `cp config/recipients.sql.tmpl config/recipients.sql`, edit the `config/recipients.sql` file:
-
-        * Fill in appropriate contact names and email
-        addresses.  
-        * For dev, just leave the placeholders intact.
+        * For dev, don't edit, just leave the placeholders intact.
+        * For non-dev, Fill in appropriate contact names and email
+        addresses.
 
 6. Get other required node modules.
 
@@ -95,22 +91,22 @@ be edited here.
         postgres=# GRANT ALL ON DATABASE smokealarm_development TO <username>;
         postgres=# \q
         ### if you were postgres, log out; you should be yourself now
-        $ exit       
+        $ exit
 
         ### This one needs to be available system-wide
-        $ sudo npm install -g sequelize-cli 
+        $ sudo npm install -g sequelize-cli
 
         ### Choose whatever env you want from config/config.json
-        $ NODE_ENV="development" 
+        $ NODE_ENV="development"
 
-        ### Before you run this command, update the config/config.js with the recently created database username and password.
-        ### 
+        ### Before you run this command, update the config/config.json with the recently created database username and password.
+        ###
         ### This will spew a lot of information to the screen and may
         ### take several minutes.  It creates the tables and loads data
         ### into UsAddress and SelectedCounties.
         $ node data/import_into_postgres.js
-        
-        ### Load the active regions and recipients.  
+
+        ### Load the active regions and recipients.
         $ psql smokealarm_development
         ### Import the regions and recipients to the "activeRegions" table.
         smokealarm_development=# \i config/recipients.sql
@@ -123,28 +119,28 @@ be edited here.
         smokealarm_development=# \i migrations/20150916-internal-regions.sql
         # add a "no region found" region
         smokealarm_development=# \i migrations/20151208-create-nonregion.sql
-        
+
         # If you already have requests, update them.  Otherwise (e.g. if
         # you're setting up an empty database) you can skip these migrations.
         smokealarm_development=# \i migrations/20151208-add-nonregion-code.sql
         smokealarm_development=# \i migrations/20151217-set-new-status.sql
 
         ### exit psql
-        smokealarm_development=# \q        
+        smokealarm_development=# \q
 
         ### FOR DEVELOPMENT, load sample requests:
-        $ node data/fake_request_data.js 
+        $ node data/fake_request_data.js
 
 8. Start the smoke-alarm-portal app
 
-   For development, you can just do this:
+   For development, you can just do this (make sure you have a postgres server running first):
 
         $ npm start
 
    For production, you might want to do this instead:
 
         $ npm install forever
-   
+
     1. See "Appendix A" below about setting up Apache/ProxyPass->nodejs
     2. Install the forever module on the chosen server
     3. Run the forever server:
@@ -161,7 +157,7 @@ be edited here.
    To create the admin user, you must first temporarily re-enable
    signups, which are disabled by default.
 
-   1. In `config.js`, change `exports.signupEnabled` from `false` to `true`.  
+   1. In `config.js`, change `exports.signupEnabled` from `false` to `true`.
 
    2. Visit http://localhost:3000/signup in your browser
 
@@ -182,7 +178,7 @@ be edited here.
       `1`).  Once you've done that, run the following commands:
 
       ```
-      $ psql smokealarm_development  
+      $ psql smokealarm_development
       smokealarm_development=# \i migrations/20151208-admin-access.sql
       ```
 
@@ -259,7 +255,7 @@ access by iptables rules.  Below we describe this setup in detail.
 
         $ sudo apt-get update
         $ sudo apt-get install libapache2-mod-proxy-html
-        $ sudo a2enmod rewrite proxy  
+        $ sudo a2enmod rewrite proxy
         $ sudo a2enmod proxy_http
         $ sudo a2enmod ssl
 
@@ -277,7 +273,7 @@ access by iptables rules.  Below we describe this setup in detail.
 
 5. Restart Apache:
 
-        $ service apache2 restart  
+        $ service apache2 restart
 
 6. Visit the site and make sure it's working:
 
