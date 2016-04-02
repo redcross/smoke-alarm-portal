@@ -34,7 +34,8 @@ much difficulty to most other Unix-like operating systems.
 
    On Mac OS X:
 
-   Install PostgreSQL via Brew (http://exponential.io/blog/2015/02/21/install-postgresql-on-mac-os-x-via-brew/). Installation instructions for brew can be found on the [Homebrew website](http://brew.sh).
+   Install PostgreSQL via Brew (http://exponential.io/blog/2015/02/21/install-postgresql-on-mac-os-x-via-brew/). 
+    Installation instructions for brew can be found on the [Homebrew website](http://brew.sh).
 
         $ brew update
         $ brew install postgres
