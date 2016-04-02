@@ -53,10 +53,6 @@ block body
         label Address:
         input.form-control(type='text', name='address', value!='<%- address %>')
         span.help-block <%- errfor.address %>
-      div.form-group(class!='<%- errfor.address_2 ? "has-error" : "" %>')
-        label Address 2:
-        input.form-control(type='text', name='address_2', value!='<%- address_2 %>')
-        span.help-block <%- errfor.address_2 %>
       div.form-group(class!='<%- errfor.city ? "has-error" : "" %>')
         label City:
         input.form-control(type='text', name='city', value!='<%- city %>')

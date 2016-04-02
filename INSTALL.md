@@ -34,7 +34,8 @@ much difficulty to most other Unix-like operating systems.
 
    On Mac OS X:
 
-   Install PostgreSQL via Brew (http://exponential.io/blog/2015/02/21/install-postgresql-on-mac-os-x-via-brew/)
+   Install PostgreSQL via Brew (http://exponential.io/blog/2015/02/21/install-postgresql-on-mac-os-x-via-brew/). 
+    Installation instructions for brew can be found on the [Homebrew website](http://brew.sh).
 
         $ brew update
         $ brew install postgres
@@ -47,13 +48,13 @@ didn't, you might want to add one:
 5. Set up the live config files.  Note that there are multiple files to
 be edited here.
 
-  1. Do `cp config.js.tmpl config.js` and edit the `config.js` file:
+  1. Do `cp config.js.tmpl config.js`. For dev, move on to step 2. For non-dev, edit the `config.js` file:
 
         * Update `exports.companyName`,
         `exports.projectName`, `exports.signupEnabled`,`exports.systemEmail`, and
         `exports.cryptoKey`.
 
-  2. Do `cp config/config.json.tmpl config/config.json`, edit the `config/config.json`:
+  2. Do `cp config/config.json.tmpl config/config.json`. For dev, move on to step 3. For non-dev, edit the `config/config.json`:
 
         * Fill in database usernames and passwords, and
         the Mailgun.com API key and sender information that the app will use to send out email notifications.  You can modify one of the existing top-level environments listed in `config.json` or set up a whole new environment, e.g., "demo" (e.g., based
@@ -66,7 +67,7 @@ be edited here.
 
         * Fill in appropriate contact names and email
         addresses.  
-        * For dev, just leave the placeholders intact.
+        * For dev, either leave the placeholders intact (if you didn't set up Mailgun and don't want to test the email-sending functionality) or replace the placeholders with your name and email address (so that when you submit test requests to your local instance, all the emails generated come to you).
 
 6. Get other required node modules.
 
@@ -83,6 +84,10 @@ be edited here.
         $ sudo apt-get install nodejs-legacy
 
 7. Create the databases and import the initial data.
+
+        ### Start Postgres server
+        ### For example, on a Mac with Postgres installed from homebrew:
+        $ pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
 
         ### become a postgres user.  We use "postgres" here but it could
         ### also be your regular user, assuming that you have the
@@ -102,7 +107,7 @@ be edited here.
         ### Choose whatever env you want from config/config.json
         $ NODE_ENV="development" 
 
-        ### Before you run this command, update the config/config.js with the recently created database username and password.
+        ### Before you run this command, update the config/config.json with the recently created database username and password.
         ### 
         ### This will spew a lot of information to the screen and may
         ### take several minutes.  It creates the tables and loads data
@@ -136,7 +141,7 @@ be edited here.
 
 8. Start the smoke-alarm-portal app
 
-   For development, you can just do this:
+   For development, you can just do this (make sure you have a postgres server running):
 
         $ npm start
 
@@ -324,3 +329,11 @@ Appendix B: Troubleshooting
    If you need to keep older versions, then you'll need to find some
    other way to make sure that `psql` and this application connect to
    a new enough version of PostgreSQL to support the JSON type.
+
+* Problems with installing Postgres from homebrew on Mac:
+
+    Uninstall the Postgres from homebrew:
+
+        $ brew uninstall postgres
+
+    Install from the Postgres.app from http://postgresapp.com/. Then you can start/stop Postgres server from the app.

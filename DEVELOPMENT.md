@@ -3,6 +3,44 @@
 This file contains an overview of how to do development on this
 application, as well as HOWTOs for specific tasks.
 
+## Coding Practices
+
+### Change one thing at a time
+
+Please make each commit be one logical change -- i.e., each commit
+should be "about" one thing and not include parts of other changes.
+Among other things, this means that a commit should not contain
+unrelated whitespace changes that could distract someone trying to
+read the commit's diff.
+
+(Note that some text editors automatically trim trailing spaces at the
+ends of lines, which leads to lots of spurious whitespace changes.
+The Sublime Text editor does this; to turn that off, in Preferences ->
+Settings -> User, set `trim_trailing_whitespace_on_save` to false.)
+
+### Commit messages
+
+Please use the commit message conventions described in
+http://chris.beams.io/posts/git-commit/.  Include any issue numbers at
+the end of the first (summary) line of the commit message, prefixed by
+a #-mark.  If the commit is related to multiple issues, and you can't
+fit them all on the summary line while keeping the line under 50
+characters, then just put them in the body of the commit message.
+
+Here's a good example commit message:
+
+    commit 060a367d42c5ae15c388b7f348464a5ce8af600b
+    Author: Mike Chu <m.chu90@gmail.com>
+    Date:   Wed Mar 30 12:54:14 2016 -0500
+    
+        Edit validations for blank field #170
+        
+        Edited the validation so that it only raises an error if BOTH of the
+        conditions are met: the field is not empty AND the format is invalid
+    
+    M	views/account/settings/index.jade
+    M	views/account/settings/index.js
+
 ## Architecture Overview
 
 TBD: Explain the various locations in the code tree that we most commonly find ourselves editing to accomplish tasks.
