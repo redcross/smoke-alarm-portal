@@ -85,6 +85,10 @@ be edited here.
 
 7. Create the databases and import the initial data.
 
+        ### Start Postgres server
+        ### For example, on a Mac with Postgres installed from homebrew:
+        $ pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
+
         ### become a postgres user.  We use "postgres" here but it could
         ### also be your regular user, assuming that you have the
         ### correct privileges in psql.
@@ -325,3 +329,11 @@ Appendix B: Troubleshooting
    If you need to keep older versions, then you'll need to find some
    other way to make sure that `psql` and this application connect to
    a new enough version of PostgreSQL to support the JSON type.
+
+* Problems with installing Postgres from homebrew on Mac:
+
+    Uninstall the Postgres from homebrew:
+
+        $ brew uninstall postgres
+
+    Install from the Postgres.app from http://postgresapp.com/. Then you can start/stop Postgres server from the app.
