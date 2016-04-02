@@ -102,7 +102,7 @@ be edited here.
         ### Choose whatever env you want from config/config.json
         $ NODE_ENV="development" 
 
-        ### Before you run this command, update the config/config.js with the recently created database username and password.
+        ### Before you run this command, update the config/config.json with the recently created database username and password.
         ### 
         ### This will spew a lot of information to the screen and may
         ### take several minutes.  It creates the tables and loads data
