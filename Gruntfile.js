@@ -68,10 +68,9 @@ module.exports = function(grunt) {
     watch: {
       clientJS: {
          files: [
-          'public/layouts/**/*.js', '!public/layouts/**/*.min.js',
-          'public/views/**/*.js', '!public/views/**/*.min.js'
+          'public/layouts/**/*.es6', 'public/views/**/*.es6'
          ],
-         tasks: ['newer:uglify', 'newer:jshint:client']
+         tasks: ['newer:babel', 'newer:uglify', 'newer:jshint:client']
       },
       serverJS: {
          files: ['views/**/*.js'],
@@ -91,6 +90,21 @@ module.exports = function(grunt) {
           'public/less/**/*.less'
         ],
         tasks: ['less:layouts']
+      }
+    },
+    babel: {
+      options: {
+        sourceMap: false,
+        presets: ["es2015", "stage-0"]
+      },
+      dist: {
+        files: [{
+          expand: true,
+          cwd: 'public/',
+          src: ['layouts/**/*.es6', 'views/**/*.min.es6'],
+          dest: 'public/',
+          ext: '.js'
+        }],
       }
     },
     uglify: {
@@ -209,6 +223,7 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');

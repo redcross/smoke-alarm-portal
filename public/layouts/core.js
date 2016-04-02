@@ -1,30 +1,36 @@
+'use strict';
+
 /* global app:true */
 /* exported app */
 
-var app; //the main declaration
+var app = void 0; //the main declaration
 
-(function() {
+(function () {
   'use strict';
 
-  $(document).ready(function() {
+  $(document).ready(function () {
     //active (selected) navigation elements
-    $('.nav [href="'+ window.location.pathname +'"]').closest('li').toggleClass('active');
+    $('.nav [href="' + window.location.pathname + '"]').closest('li').toggleClass('active');
 
     //register global ajax handlers
-    $(document).ajaxStart(function(){ $('.ajax-spinner').show(); });
-    $(document).ajaxStop(function(){  $('.ajax-spinner').hide(); });
+    $(document).ajaxStart(function () {
+      $('.ajax-spinner').show();
+    });
+    $(document).ajaxStop(function () {
+      $('.ajax-spinner').hide();
+    });
     $.ajaxSetup({
-      beforeSend: function (xhr) {
+      beforeSend: function beforeSend(xhr) {
         xhr.setRequestHeader('x-csrf-token', $.cookie('_csrfToken'));
       }
     });
 
     //ajax spinner follows mouse
-    $(document).bind('mousemove', function(e) {
+    $(document).bind('mousemove', function (e) {
       $('.ajax-spinner').css({
         left: e.pageX + 15,
         top: e.pageY
       });
     });
   });
-}());
+})();
