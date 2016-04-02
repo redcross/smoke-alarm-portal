@@ -54,14 +54,16 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
-app.use(require('morgan')('dev'));
-app.use(require('compression')());
-app.use(require('serve-static')(path.join(__dirname, 'public')));
-app.use(require('method-override')());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+// keep this before the csrf middleware: #174
+require('./api-routes')(app);
+app.use(require('morgan')('dev'));
+app.use(require('compression')());
+app.use(require('serve-static')(path.join(__dirname, 'public')));
+app.use(require('method-override')());
 app.use(cookieParser(config.cryptoKey));
 app.use(cookieSession({
     resave: true,
