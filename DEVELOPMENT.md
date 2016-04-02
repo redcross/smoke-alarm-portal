@@ -3,6 +3,31 @@
 This file contains an overview of how to do development on this
 application, as well as HOWTOs for specific tasks.
 
+## Coding Practices
+
+### Commit messages
+
+Please use the commit message conventions described in
+http://chris.beams.io/posts/git-commit/.  Include any issue numbers at
+the end of the first (summary) line of the commit message, prefixed by
+a #-mark.  If the commit is related to multiple issues, and you can't
+fit them all on the summary line while keeping the line under 50
+characters, then just put them in the body of the commit message.
+
+Here's a good example commit message:
+
+    commit 060a367d42c5ae15c388b7f348464a5ce8af600b
+    Author: Mike Chu <m.chu90@gmail.com>
+    Date:   Wed Mar 30 12:54:14 2016 -0500
+    
+        Edit validations for blank field #170
+        
+        Edited the validation so that it only raises an error if BOTH of the
+        conditions are met: the field is not empty AND the format is invalid
+    
+    M	views/account/settings/index.jade
+    M	views/account/settings/index.js
+
 ## Architecture Overview
 
 TBD: Explain the various locations in the code tree that we most commonly find ourselves editing to accomplish tasks.
