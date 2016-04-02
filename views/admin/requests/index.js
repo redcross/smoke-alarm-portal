@@ -165,12 +165,6 @@ exports.find = function(req, res, next) {
                 // get no results.
                 filters.assigned_rc_region = entered_regions;
             }
-            // if they are allowed to see some regions and haven't
-            // filtered, show them all the results they're allowed to
-            // see
-            else if (allowed_regions.length > 0 && ! entered_regions) {
-                filters.assigned_rc_region = allowed_regions;
-            }
             else {
                 // TODO: then they don't have access to any regions and
                 // should not get any results.
