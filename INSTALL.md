@@ -67,7 +67,7 @@ be edited here.
 
         * Fill in appropriate contact names and email
         addresses.  
-        * For dev, just leave the placeholders intact.
+        * For dev, either leave the placeholders intact (if you didn't set up Mailgun and don't want to test the email-sending functionality) or replace the placeholders with your name and email address (so that when you submit test requests to your local instance, all the emails generated come to you).
 
 6. Get other required node modules.
 
