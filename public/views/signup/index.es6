@@ -62,6 +62,7 @@
     }
   });
 
+
   $(document).ready(function() {
     app.signupView = new app.SignupView();
   });

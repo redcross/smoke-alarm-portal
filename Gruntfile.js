@@ -1,6 +1,9 @@
 var path = require('path');
 
 module.exports = function(grunt) {
+
+  require('load-grunt-tasks')(grunt);
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     copy: {
@@ -70,11 +73,11 @@ module.exports = function(grunt) {
          files: [
           'public/layouts/**/*.es6', 'public/views/**/*.es6'
          ],
-         tasks: ['newer:babel', 'newer:uglify', 'newer:jshint:client']
+         tasks: ['newer:eslint:client', 'newer:babel', 'newer:uglify']
       },
       serverJS: {
          files: ['views/**/*.js'],
-         tasks: ['newer:jshint:server']
+         tasks: ['newer:eslint:server']
       },
       clientLess: {
          files: [
@@ -91,6 +94,10 @@ module.exports = function(grunt) {
         ],
         tasks: ['less:layouts']
       }
+    },
+    eslint: {
+      client: ['public/layouts/**/*.es6', 'public/views/**/*.min.es6'],
+      server: ['**/*.js', '!public/**/*.js']
     },
     babel: {
       options: {
@@ -154,30 +161,6 @@ module.exports = function(grunt) {
         }]
       }
     },
-    jshint: {
-      client: {
-        options: {
-          jshintrc: '.jshintrc-client',
-          ignores: [
-            'public/layouts/**/*.min.js',
-            'public/views/**/*.min.js'
-          ]
-        },
-        src: [
-          'public/layouts/**/*.js',
-          'public/views/**/*.js'
-        ]
-      },
-      server: {
-        options: {
-          jshintrc: '.jshintrc-server'
-        },
-        src: [
-          'schema/**/*.js',
-          'views/**/*.js'
-        ]
-      }
-    },
     less: {
       options: {
         compress: true
@@ -223,18 +206,7 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.loadNpmTasks('grunt-babel');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-concurrent');
-  grunt.loadNpmTasks('grunt-nodemon');
-  grunt.loadNpmTasks('grunt-newer');
-
   grunt.registerTask('default', ['copy:vendor', 'newer:uglify', 'newer:less', 'concurrent']);
   grunt.registerTask('build', ['copy:vendor', 'uglify', 'less']);
-  grunt.registerTask('lint', ['jshint']);
+  grunt.registerTask('lint', ['eslint']);
 };
