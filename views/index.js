@@ -1,5 +1,10 @@
 'use strict';
 var db = require('./../models');
+var env = process.env.NODE_ENV || 'development';
+var config = require(__dirname + '/../config/config.json')[env];
+var mailgun = require('mailgun-js')({apiKey: config.mailgun_api_key,
+                                       domain: config.mail_domain});
+var mail_from_addr = config.mail_from_addr;
 
 // Any reason not to just hardcode this here?
 var state_abbrevs =
@@ -110,7 +115,7 @@ exports.init = function(req, res) {
  * different functions in order to increase maintainability.
  * saveRequest in its current form was becoming too unweidly, IMO.
  *
- * As a result, saveRequest as we know it is now fulfilled by 
+ * As a result, saveRequest as we know it is now fulfilled by
  * several functions, including:
  * - getRequestData(req) - gets and parses request data from incoming request
  * - saveRequestData(request) - saves the request to the DB
@@ -168,7 +173,7 @@ var findZipForLookup = function (req) {
         // display it accurately.
         requestZip.zip_for_lookup = requestZip.zip_received;
     }
-    
+
     return requestZip;
 };
 
@@ -294,7 +299,7 @@ var findCountyFromAddress = function(address, zip) {
         // make sure that the correct "zip_for_lookup" is specified here...
         requestData.zip_for_lookup = zip;
         return null;
-    } 
+    }
 
 
     requestData.countyFromZip = address['county'].replace(" County", "");
@@ -373,16 +378,16 @@ var sendEmail = function(request, selectedRegion) {
 
     // Send an email to the appropriate Red Cross administrator.
     var outbound_email = {
-        from: db.mail_from_addr,
+        from: mail_from_addr,
         to: regionRecipientName + " <" + regionRecipientEmail + ">",
-        subject: "Smoke alarm install request from " 
+        subject: "Smoke alarm install request from "
             + request.name + " (#" + thisRequestID + ")",
         text: email_text
     };
 
 
-    db.mailgun.messages().send(outbound_email, function (error, body) {
-        // TODO: We need to record the sent message's Message-ID 
+    mailgun.messages().send(outbound_email, function (error, body) {
+        // TODO: We need to record the sent message's Message-ID
         // (which is body.id) in the database, with the request.
         if (body.id === undefined) {
             console.log("DEBUG: sent mail ID was undefined");
