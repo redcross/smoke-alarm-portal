@@ -3,9 +3,9 @@ extends layout
 block content
   #container.container-fluid
     #language
-      a(onclick='setLocale("EN")') English
+      a.language-toggle(data-lang='en') English
       | &nbsp;|&nbsp;
-      a(onclick='setLocale("ES")') Español
+      a.language-toggle(data-lang='es') Español
     #top
       #logo.text-center
         img.logo(src='./smokeAlarmPortal_files/redcross-logo-white-letters.png', alt='American Red Cross')
@@ -133,18 +133,7 @@ block content
         |.
 
     script(type="text/javascript").
-      function setLocale(locale) { document.cookie= "locale=" + locale; location.reload(); }
-      var locale = /locale=([^;]+)/.exec(document.cookie);
-
-      if (locale && locale[1]) {
-        $("select#language-switcher").val(locale[1]);
-      }
-      $("select#state").addClass('state-not-yet-selected');
-      $("select#state").bind("focus", function () {
-        $(this).children('option[value="state-not-yet-selected"]').remove();
-        $(this).removeClass('state-not-yet-selected');
-      });
-      
+      // data for jquery error tootips, translated by i18n
       $(".form-horizontal").validationEngine({
         'scroll': false,
         'autoPositionUpdate': true,
