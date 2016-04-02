@@ -4,7 +4,7 @@ var renderSettings = function(req, res, next, oauthMessage) {
     var outcome = {};
 
     var getAccountData = function(callback) {
-        req.app.db.Account.findOne({ where:  
+        req.app.db.Account.findOne({ where:
                 {'UserId': req.user.id}
             })
             .then(function(account) {
@@ -350,11 +350,11 @@ exports.update = function(req, res, next) {
 
         req.app.db.Account.findOne({ where: {'UserId': req.user.id} })
         .then(function(account) {
-            return account.updateAttributes(fieldsToSet)
+            return account.updateAttributes(fieldsToSet);
         })
         .then(function(account) {
             workflow.outcome.account = account;
-            return workflow.emit('response')
+            return workflow.emit('response');
         })
         .catch(function(err) {
             return workflow.emit('exception', err);
@@ -429,11 +429,11 @@ exports.identity = function(req, res, next) {
 
         req.app.db.User.findOne({ where: {id: req.user.id} })
         .then(function(user) {
-            return user.updateAttributes(fieldsToSet)
+            return user.updateAttributes(fieldsToSet);
         })
         .then(function(user) {
             workflow.outcome.user = user;
-            return workflow.emit('response')
+            return workflow.emit('response');
         })
         .catch(function(err) {
             return workflow.emit('exception', err);
@@ -530,15 +530,15 @@ exports.password = function(req, res, next) {
                 .then( function() {
                     // add some error check here
                     // get the user object
-                    return req.app.db.User.findOne({ where: {id: req.user.id} })
+                    return req.app.db.User.findOne({ where: {id: req.user.id} });
                 })
                 .then( function(user, err) {
                     /*
                      * Removing this line because it gave an error after
                      * I removed the "findByIdAndUpdate()" call above.
-                     * 
+                     *
                      * user.populate('roles.admin roles.account', 'name.full', function(err, user) {
-                     * 
+                     *
                      * We aren't currently using roles, but I'm leaving
                      * it here for future reference.  It won't work as
                      * is.

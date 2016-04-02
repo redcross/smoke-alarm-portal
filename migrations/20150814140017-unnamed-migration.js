@@ -7,9 +7,9 @@ module.exports = {
       Return a promise to correctly handle asynchronicity.
 
       Example:
-      return queryInterface.createTable('users', { id: Sequelize.INTEGER });      
+      return queryInterface.createTable('users', { id: Sequelize.INTEGER });
     */
-    queryInterface.renameColumn('Requests', 'address_2', 'rc_region')
+    queryInterface.renameColumn('Requests', 'address_2', 'rc_region');
   },
 
   down: function (queryInterface, Sequelize) {
@@ -20,6 +20,6 @@ module.exports = {
       Example:
       return queryInterface.dropTable('users');
     */
-    queryInterface.renameColumn('Requests', 'rc_region', 'address_2')
+    queryInterface.renameColumn('Requests', 'rc_region', 'address_2');
   }
 };
