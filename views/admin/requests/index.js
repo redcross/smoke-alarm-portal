@@ -421,7 +421,6 @@ exports.update = function(req, res, next) {
             search: [
                 req.body.name,
                 req.body.address,
-                req.body.address_2,
                 req.body.city,
                 req.body.state,
                 req.body.zip
