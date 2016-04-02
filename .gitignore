@@ -3,3 +3,4 @@ npm-debug.log
 err.log
 out.log
 config.js
+*.idea
