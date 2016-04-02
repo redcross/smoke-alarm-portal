@@ -5,6 +5,19 @@ application, as well as HOWTOs for specific tasks.
 
 ## Coding Practices
 
+### Change one thing at a time
+
+Please make each commit be one logical change -- i.e., each commit
+should be "about" one thing and not include parts of other changes.
+Among other things, this means that a commit should not contain
+unrelated whitespace changes that could distract someone trying to
+read the commit's diff.
+
+(Note that some text editors automatically trim trailing spaces at the
+ends of lines, which leads to lots of spurious whitespace changes.
+The Sublime Text editor does this; to turn that off, in Preferences ->
+Settings -> User, set `trim_trailing_whitespace_on_save` to false.)
+
 ### Commit messages
 
 Please use the commit message conventions described in
