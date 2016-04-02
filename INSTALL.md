@@ -48,13 +48,13 @@ didn't, you might want to add one:
 5. Set up the live config files.  Note that there are multiple files to
 be edited here.
 
-  1. Do `cp config.js.tmpl config.js` and edit the `config.js` file:
+  1. Do `cp config.js.tmpl config.js`. For dev, don't edit the file `config.js`, just leave the placeholders intact and go to step 2. For non-dev, edit the `config.js` file:
 
         * Update `exports.companyName`,
         `exports.projectName`, `exports.signupEnabled`,`exports.systemEmail`, and
         `exports.cryptoKey`.
 
-  2. Do `cp config/config.json.tmpl config/config.json`, edit the `config/config.json`:
+  2. Do `cp config/config.json.tmpl config/config.json`. For dev, don't edit the file `config.js`, just leave the placeholders intact and go to step 3. For non-dev, edit the `config/config.json`:
 
         * Fill in database usernames and passwords, and
         the Mailgun.com API key and sender information that the app will use to send out email notifications.  You can modify one of the existing top-level environments listed in `config.json` or set up a whole new environment, e.g., "demo" (e.g., based
@@ -137,7 +137,7 @@ be edited here.
 
 8. Start the smoke-alarm-portal app
 
-   For development, you can just do this:
+   For development, you can just do this (make sure you have a postgres server running first):
 
         $ npm start
 
