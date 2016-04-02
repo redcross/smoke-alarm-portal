@@ -112,6 +112,7 @@ block body
           th email
           th date created 
           th region
+          th origin
       tbody#results-rows
 
   script(type='text/template', id='tmpl-results-row')
@@ -132,6 +133,7 @@ block body
     td <%- email %>
     td <%- moment(createdAt).format("YYYY-MM-DD HH:mm") %>
     td <%- assigned_rc_region %>
+    td <%- source %>
       div
       div
 
