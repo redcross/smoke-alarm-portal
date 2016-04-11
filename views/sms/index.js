@@ -49,7 +49,6 @@ exports.respond = function(req, res) {
         res.cookie('locale', i18n_inst.getLocale());
         res.writeHead(200, {'Content-Type': 'text/xml'});
         res.end(twiml.toString());
-        //setTimeout(checkMsgStatus, 3000, phone_number);
     };
 
     var checkMsgStatus = function (to_num) {
@@ -444,4 +443,26 @@ exports.respond = function(req, res) {
     }
 };
 
+exports.resend = function (req, res) {
+    console.log("DEBUG: message sending failed; resending.");
+    // we have the ID of the SMS, so we can get info on it from Twilio
+    // API.
+    client.messages(req.body.SmsSid).get(function(err, message) {
+        // for testing: message.status = 'undelivered';
+        // double check failure
+        if (message.status == 'failed' || message.status == 'undelivered'){
+            // then resend
+            var twiml = new twilio.TwimlResponse();
+            twiml.message({to: message.to, from: config.twilio_phone, body: message.body, statusCallback: '/sms/response/'});
+            res.writeHead(200, {'Content-Type': 'text/xml'});
+            res.end(twiml.toString());
+        }
+        else {
+            console.log("DEBUG: message eventually succeeded");
+            res.send("Not resending.");
+        }
+    });
+};
 
+
+ 
