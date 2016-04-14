@@ -452,10 +452,15 @@ exports.resend = function (req, res) {
         // double check failure
         if (message.status == 'failed' || message.status == 'undelivered'){
             // then resend
-            var twiml = new twilio.TwimlResponse();
-            twiml.message({to: message.to, from: config.twilio_phone, body: message.body, statusCallback: '/sms/response/'});
-            res.writeHead(200, {'Content-Type': 'text/xml'});
-            res.end(twiml.toString());
+            client.messages.create({
+                to: message.to, from: config.twilio_phone, body: message.body, statusCallback: config.server_root + '/sms/response/'
+            }, function (err, message) {
+                console.log("DEBUG: resent message.");
+                if (err) {
+                    console.log("DEBUG: received error");
+                    console.log(err);
+                }
+            });
         }
         else {
             console.log("DEBUG: message eventually succeeded");
