@@ -1,6 +1,6 @@
 var env = process.env.NODE_ENV || 'development';
 var config = require(__dirname + '/../../../config/config.json')[env];
-var twilio = require('twilio');
+var client = require('twilio')(config.twilio_accountSid, config.twilio_authToken);
 var parser = require('parse-address'); 
 
 var http = require('http'),
@@ -23,18 +23,27 @@ exports.status = function(req, res) {
     // see https://www.twilio.com/docs/api/rest/message
     if (req.body.MessageStatus == 'failed' || req.body.MessageStatus == 'undelivered') {
         // check whether we've already resent this message to this
-        // number and do a exponential backoff
-        //
-        // For now, just fake the number of resends
-        var num_resends = 2;
-        if (num_resends <= max_resends) {
-            // if we haven't exceeded max resends, then:
-            sms_utils.resend(req,res);
-        }
-        else {
-            console.log("DEBUG: exceeded max resends to " + req.body.To);
-            res.send('Sorry, too many failures.');
-        }
+        // number today and do a exponential backoff
+        var now_var = new Date();
+        var today_var = new Date(now_var.getFullYear(), now_var.getMonth(), now_var.getDate(), 0, 0, 0, 0);
+        client.messages.list( {To: req.body.To, DateSent: today_var}, function(err, data) {
+            // count the failed texts to this number
+            var num_failed = 0;
+            data.messages.forEach( function (sms) {
+                // for testing: sms.status = 'failed';
+                if (sms.status == 'failed' || sms.status == 'undelivered') {
+                    num_failed++;
+                }
+            });
+            if (num_failed <= max_resends) {
+                // if we haven't exceeded max resends, then:
+                sms_utils.resend(req,res);
+            }
+            else {
+                console.log("DEBUG: exceeded max resends to " + req.body.To);
+                res.send('Sorry, too many failures.');
+            }
+        });
     }
     else {
         console.log("DEBUG: message has status " + req.body.MessageStatus);
