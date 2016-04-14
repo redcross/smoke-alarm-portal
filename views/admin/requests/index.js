@@ -26,10 +26,11 @@ exports.find = function(req, res, next) {
         }
     };
     var countResults = function(callback) {
-        var filters = getFilters();
-        req.app.db.Request.count( { where: filters }).then(function(results) {
-            outcome.items.total = results;
-            callback(null, 'done counting');
+        var filters = getFilters().then( function(filters) {
+            req.app.db.Request.count( { where: filters }).then(function(results) {
+                outcome.items.total = results;
+                callback(null, 'done counting');
+            });
         });
     };
 
@@ -58,12 +59,13 @@ exports.find = function(req, res, next) {
     */
     var queryUsableRegions = function() {
         var loggedin_id = String(req.user.id);
-        return req.app.db.activeRegion.findAll({
+        var usableRegions =  req.app.db.activeRegion.findAll({
             attributes: ['rc_region', 'region_name'],
             include: [{ model: req.app.db.regionPermission, where: {user_id: loggedin_id } }],
             where: {rc_region: {ne: 'rc_test_region'} },
             order: 'region_name'
         });
+        return usableRegions;
     };
 
     /*
@@ -94,6 +96,10 @@ exports.find = function(req, res, next) {
         return disabledRegions;
     };
 
+    /*
+     * Return promise object, then return filter object based on request
+     * data from global req.query, suitable for passing to sequelize functions
+     */
     var getFilters = function() {
         var filters = {};
         req.query.search = req.query.search ? req.query.search : '';
@@ -121,7 +127,6 @@ exports.find = function(req, res, next) {
                     lte:req.query.endDate.format()
                 };
             }
-            
         }
         if (req.query.status && req.query.status != 'all') {
             filters.status = req.query.status;
@@ -135,11 +140,6 @@ exports.find = function(req, res, next) {
         if (req.query.region) {
             filters.assigned_rc_region = req.query.region
         }
-        return filters;
-    };
-
-    var getResults = function(callback) {
-        var filters = getFilters();
         return queryUsableRegions().then( function (usableRegions) {
             // find intersection of allowed and filtered regions and set
             // that as our filter
@@ -165,12 +165,6 @@ exports.find = function(req, res, next) {
                 // get no results.
                 filters.assigned_rc_region = entered_regions;
             }
-            // if they are allowed to see some regions and haven't
-            // filtered, show them all the results they're allowed to
-            // see
-            else if (allowed_regions.length > 0 && ! entered_regions) {
-                filters.assigned_rc_region = allowed_regions;
-            }
             else {
                 // TODO: then they don't have access to any regions and
                 // should not get any results.
@@ -180,7 +174,11 @@ exports.find = function(req, res, next) {
             }
             // TODO: how do I show requests that aren't linked to a
             // region (for full-powered admins)?
-
+            return filters;
+    });
+}
+var getResults = function(callback) {
+    var filters = getFilters().then( function(filters) {
         // Determine direction for order
         var sortOrder = (req.query.sort[0] === '-')? 'DESC' : 'ASC';
         var limit;
@@ -193,7 +191,6 @@ exports.find = function(req, res, next) {
             limit = req.query.limit;
             offset = req.query.offset;
         }
-
         // Determine whether to filter by date
         req.app.db.Request.findAll({
             limit: limit,
@@ -216,24 +213,24 @@ exports.find = function(req, res, next) {
                     }
                     return previousValue;
                 });
-        }, []).then( function (results_array) {
-            outcome.data = results_array;
-            outcome.pages.total = Math.ceil(outcome.items.total / req.query.limit);
-            outcome.pages.next = ((outcome.pages.current + 1) > outcome.pages.total ? 0 : outcome.pages.current + 1);
-            outcome.pages.hasNext = (outcome.pages.next !== 0);
-            outcome.pages.prev = outcome.pages.current - 1;
-            outcome.pages.hasPrev = (outcome.pages.prev !== 0);
-            if (outcome.items.end > outcome.items.total) {
-                outcome.items.end = outcome.items.total;
-            }
+            }, []).then( function (results_array) {
+                outcome.data = results_array;
+                outcome.pages.total = Math.ceil(outcome.items.total / req.query.limit);
+                outcome.pages.next = ((outcome.pages.current + 1) > outcome.pages.total ? 0 : outcome.pages.current + 1);
+                outcome.pages.hasNext = (outcome.pages.next !== 0);
+                outcome.pages.prev = outcome.pages.current - 1;
+                outcome.pages.hasPrev = (outcome.pages.prev !== 0);
+                if (outcome.items.end > outcome.items.total) {
+                    outcome.items.end = outcome.items.total;
+                }
 
-            outcome.results = results_array;
-            return callback(null, 'done');
-        })
-        .catch(function(err) {
-            console.log("ERROR calling callback: " + err);
-            return callback(err, null);
-        });
+                outcome.results = results_array;
+                return callback(null, 'done');
+            })
+            .catch(function(err) {
+                console.log("ERROR calling callback: " + err);
+                return callback(err, null);
+            });
         });
     };
 
@@ -254,8 +251,8 @@ exports.find = function(req, res, next) {
         }
 
         // TODO: This section has duplicated logic which can be removed
-        // For some reason, after using a filter, Backbone treats all links 
-        // as XHR requests, even if they're not. This works around the 
+        // For some reason, after using a filter, Backbone treats all links
+        // as XHR requests, even if they're not. This works around the
         // issue for now, but should be fixed moving forward
         outcome.filters = req.query;
         if (req.xhr) {
@@ -401,7 +398,6 @@ exports.update = function(req, res, next) {
         if (workflow.hasErrors()) {
             return workflow.emit('response');
         }
-        
         workflow.emit('patchRequest');
     });
 
@@ -419,7 +415,6 @@ exports.update = function(req, res, next) {
             search: [
                 req.body.name,
                 req.body.address,
-                req.body.address_2,
                 req.body.city,
                 req.body.state,
                 req.body.zip
