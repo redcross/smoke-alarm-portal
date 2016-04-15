@@ -143,13 +143,16 @@ exports.find = function(req, res, next) {
         return queryUsableRegions().then( function (usableRegions) {
             // find intersection of allowed and filtered regions and set
             // that as our filter
+            // On first load, filters.assigned_rc_region will be
+            // undefined.  For a query with no regions checked,
+            // filters.assigned_rc_region will be an empty array
             var entered_regions = filters.assigned_rc_region;
-            filters.assigned_rc_region = [];
             var allowed_regions = [];
             usableRegions.forEach( function (region) {
                 allowed_regions.push(region.rc_region);
             });
-            // if they are allowed to see any regions and have filtered on a region
+            // if they are allowed to see any regions and have filtered
+            // on a region
             if (allowed_regions.length > 0 && entered_regions) {
                 // check if they're allowed to filter on that region
                 var i = 0;
@@ -161,15 +164,16 @@ exports.find = function(req, res, next) {
                     }
                     i++;
                 });
-                // what if they tried to filter on all regions that they don't have access to?
-                // get no results.
                 filters.assigned_rc_region = entered_regions;
             }
+            // else if they are allowed to see any regions but haven't
+            // filtered, because this is the first page load
+            else if (allowed_regions.length > 0 && ! entered_regions) {
+                filters.assigned_rc_region = allowed_regions;
+            }
+            // otherwise they don't have access to any regions and
+            // should not get any results.
             else {
-                // TODO: then they don't have access to any regions and
-                // should not get any results.
-                //
-                // how do I do that?
                 filters.assigned_rc_region = [];
             }
             // TODO: how do I show requests that aren't linked to a

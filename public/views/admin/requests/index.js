@@ -182,6 +182,14 @@
       this.render();
       this.initializeFormElements();
     },
+      serializeForm: function() {
+          var query = $('#filters form').serialize();
+          // if no checkboxes are checked, then add "no regions" to the query
+          if (query.indexOf("region") < 0 ) {
+              query = query + "&region%5B%5D=[]";
+          }
+          return query;
+      },
     initializeFormElements: function() {
         $("#filters form")[0].reset();
         // by default check all the regions they have access to
@@ -244,11 +252,7 @@
       this.filter();
     },
       filter: function() {
-          var query = $('#filters form').serialize();
-          // if no checkboxes are checked, then add "no regions" to the query
-          if (query.indexOf("region") < 0 ) {
-              query = query + "&region%5B%5D=[]";
-          }
+          var query = this.serializeForm();
           Backbone.history.navigate('q/'+ query, { trigger: true });
       },
       clearFilter: function () {
@@ -260,7 +264,7 @@
           this.filter();
       },
       makeCSV: function() {
-          var query = $('#filters form').serialize();
+          var query = this.serializeForm();
           // add format to the query
           query = "?format=csv&" + query;
           // using Backbone.history.navigate does not download the file,
