@@ -201,15 +201,20 @@ exports.respond = function(req, res) {
             if (! req.cookies.request_object) {
                 req.cookies.request_object = {};
             }
-            req.cookies.request_object.county = address['county'];
-            req.cookies.request_object.state = address['state'];
+            if (! address) {
+                address = null;
+            }
+            else {
+                req.cookies.request_object.county = address['county'];
+                req.cookies.request_object.state = address['state'];
+            }
             return save_utils.findCountyFromAddress(address, zip);
         }).then( function(county_id){
             if (county_id){
                 region_code = county_id.region;
             }
             else {
-                region_code = null
+                region_code = 'XXXX';
             }
             // add pieces of the street address as they exist
             if ( req.cookies.priorities.address.value ) {

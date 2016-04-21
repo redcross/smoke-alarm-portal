@@ -284,8 +284,9 @@ module.exports  = {
             return null;
         } 
 
-
-        requestData.countyFromZip = address['county'].replace(" County", "");
+        if (address['county']) {
+            requestData.countyFromZip = address['county'].replace(" County", "");
+        }
         requestData.stateFromZip = address['state'];
         return db.SelectedCounties.findOne({
             where: {
