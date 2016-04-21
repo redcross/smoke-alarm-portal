@@ -43,5 +43,13 @@
 	"Sorry, the Red Cross Region serving %s County, %s does not utilize this website to accept smoke alarm installation requests.": "Sorry, the Red Cross Region serving %s County, %s does not utilize this website to accept smoke alarm installation requests.",
 	"Please call 800-REDCROSS (800-733-2767) to be connected to your servicing Region.": "Please call 800-REDCROSS (800-733-2767) to be connected to your servicing Region.",
 	"Thank you for contacting the Red Cross.": "Thank you for contacting the Red Cross.",
-	"Sorry, we don't recognize any U.S. location for Zip Code \"%s\".  Are you sure you entered an accurate Zip Code?": "Sorry, we don't recognize any U.S. location for Zip Code \"%s\".  Are you sure you entered an accurate Zip Code?"
+	"Sorry, we don't recognize any U.S. location for Zip Code \"%s\".  Are you sure you entered an accurate Zip Code?": "Sorry, we don't recognize any U.S. location for Zip Code \"%s\".  Are you sure you entered an accurate Zip Code?",
+	"What is your address, including the unit number, city, state, and zipcode?": "What is your address, including the unit number, city, state, and zipcode?",
+	"Sorry, we couldn't process your zipcode. Please text us your 5-digit zipcode.": "Sorry, we couldn't process your zipcode. Please text us your 5-digit zipcode.",
+	"Is the number you're texting from the best way to get in touch with you?": "Is the number you're texting from the best way to get in touch with you?",
+	"If so, text YES. Otherwise, please text a phone number where we can reach you.": "If so, text YES. Otherwise, please text a phone number where we can reach you.",
+	"One last question: is there an email address we can use to contact you?": "One last question: is there an email address we can use to contact you?",
+	"If not, text NONE. If yes, please text us the email address.": "If not, text NONE. If yes, please text us the email address.",
+	"This is the smoke alarm request system from the Red Cross.  For more information, call 1-800-RED-CROSS or visit getasmokealarm.org.": "This is the smoke alarm request system from the Red Cross.  For more information, call 1-800-RED-CROSS or visit getasmokealarm.org.",
+	"Welcome to the smoke alarm request system (para continuar en espanol, mande el texto \"ES\"). We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?": "Welcome to the smoke alarm request system (para continuar en espanol, mande el texto \"ES\"). We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?"
 }
