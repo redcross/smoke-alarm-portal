@@ -164,8 +164,7 @@ exports.respond = function(req, res) {
         if (outcome) {
             msg = __("Thank you for your smoke alarm request! Your request number is %s.");
             msg = msg.replace('%s', request.serial);
-            msg += __(" To contact your local Red Cross about this request, call %s. We will be in touch with you to schedule an installation.", contact);
-            msg = msg.replace('%s', contact);
+            msg += __(" To contact your local Red Cross about this request, call 1-800-RED-CROSS (1-800-733-2767). We will be in touch with you to schedule an installation.");
         }
         else {
             if (request.county) {
