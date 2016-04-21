@@ -76,6 +76,12 @@ exports = module.exports = function(app, passport) {
   app.get('/signup/tumblr/', passport.authenticate('tumblr', { callbackURL: '/signup/tumblr/callback/' }));
   app.get('/signup/tumblr/callback/', require('./views/signup/index').signupTumblr);
 
+    // sms
+    app.get('/sms/', require('./views/sms/index').respond);
+    app.get('/sms/response/', require('./views/sms/response/index').init);
+    app.post('/sms/response/', require('./views/sms/response/index').status);
+
+    
   //login/out
   app.get('/login/', require('./views/login/index').init);
   app.post('/login/', require('./views/login/index').login);

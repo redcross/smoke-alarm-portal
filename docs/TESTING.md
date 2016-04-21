@@ -39,6 +39,27 @@ A list of tests to be included in future unit tests:
 - search by status
 - change pagination
 
+## SMS:
+
+- can switch language from english to spanish and vice versa
+- all SMS's send, in correct order, in any language
+- save the provided phone number or the "from" number, as directed
+- the correct information is saved in the database
+- requester receives correct final response (sorry, or thank you with serial)
+- suggested texts:
+  - active region in english
+  - active region in spanish
+  - inactive region in english
+  - inactive region in spanish
+  - nonexistent zipcode in english
+  - nonexistent zipcode in Spanish
+- Respond to "help" or "info" texts appropriately
+  - as the first text received
+  - in the middle of a request
+  - at the end of a request
+- start a next request without error after completing one
+  - even after sending an "info" text
+
 ### admin region checkboxes:
 
 - on initial page load, all requests in regions that the user has access
@@ -56,3 +77,4 @@ A list of tests to be included in future unit tests:
 - all results are exported (not just the first page)
 - after export, new filters/sorting can be applied without error
 - CSV includes correct serial number and region
+
