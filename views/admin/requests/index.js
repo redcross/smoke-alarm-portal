@@ -113,7 +113,7 @@ exports.find = function(req, res, next) {
 
         if (req.query.startDate != '' && req.query.endDate != '') {
             filters.createdAt = {
-                $between:[req.query.startDate.format(), req.query.endDate.format()]
+                $between:[req.query.startDate.format(), moment(req.query.endDate).endOf("day").format()]
             };
         }
         else {
@@ -124,7 +124,7 @@ exports.find = function(req, res, next) {
             }
             else if (req.query.endDate != '') {
                 filters.createdAt = {
-                    lte:req.query.endDate.format()
+                    lte:moment(req.query.endDate).endOf("day").format()
                 };
             }
         }
