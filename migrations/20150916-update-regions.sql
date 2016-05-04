@@ -1,4 +1,18 @@
-/* Copyright header goes here. */
+/* Copyright (C) 2016  American Red Cross
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 UPDATE "activeRegions" SET rc_region = 'IDMT' WHERE rc_region = 'rc_idaho_montana';
 UPDATE "activeRegions" SET rc_region = 'NDSD' WHERE rc_region = 'rc_dakotas';
 UPDATE "activeRegions" SET rc_region = 'KSNE' WHERE rc_region = 'rc_kansas_nebraska_sw_iowa';
