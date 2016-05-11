@@ -7,7 +7,8 @@
 */
 function refresh (timespan) {
     msTimespan = timespan*1000;
-    $("#countdown").html(timespan);
+    $(".countdown").html(timespan);
+    $(".countdown").css('font-weight', 'bold');
     if (timespan > 0) {
         timespan = timespan - 1;
         setTimeout(function(){ refresh(timespan); }, '1000');
