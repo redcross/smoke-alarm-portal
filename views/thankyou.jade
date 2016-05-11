@@ -19,8 +19,10 @@ block content
           | #{__(' to learn how to prepare for and prevent home fires.')}
 
         if origin == '/kiosk'
-          p
-            | You will be redirected to the home page in 
+          p.redirect
+            | You will be redirected to the 
+            a(href="/kiosk") home page
+            |  in 
             span.countdown
               | 
             |  
