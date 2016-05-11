@@ -16,7 +16,7 @@ function refresh (timespan, dest) {
         setTimeout(function(){ refresh(timespan, dest); }, '1000');
     }
     else {
-        //window.location = dest;
+        window.location = dest;
     }
 };
 
