@@ -6,7 +6,7 @@ var utils = require('./utilities');
 
 exports.init = function(req, res) {
     res.locals.csrf = encodeURIComponent(req.csrfToken());
-    res.render('index');
+    res.render('index', {origin: req.url});
 };
 
 // Request data context to use through the promise chain
@@ -40,12 +40,12 @@ exports.saveRequest = function(req, res) {
     }).then( function(activeRegion){
         if (activeRegion) {
             utils.sendEmail(savedRequest, activeRegion);
-            res.render('thankyou.jade', {region: activeRegion.region_name, id: savedRequest.serial});
+            res.render('thankyou.jade', {region: activeRegion.region_name, id: savedRequest.serial, origin: req.url});
         }
         else{
-            res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup});
+            res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup, origin: req.url});
         }
     }).catch(function(error) {
-        res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup});
+        res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup, origin: req.url});
     });
 };

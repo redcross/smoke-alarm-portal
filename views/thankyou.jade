@@ -2,7 +2,9 @@ extends layout
 
 block content
   // Local stylesheets and js
-  script(type='text/javascript', src='/js/refresh.js')
+  // only refresh if the request came from the kiosk route
+  if origin == '/kiosk'
+    script(type='text/javascript', src='/js/refresh.js')
 
   #container.container-fluid
     .row
@@ -16,9 +18,10 @@ block content
           a(href="http://www.redcross.org/prepare/location/home-family/prevent-home-fires" target="_blank") #{__('Visit the Red Cross')}
           | #{__(' to learn how to prepare for and prevent home fires.')}
 
-        p
-          | You will be redirected to the home page in 
-          span.countdown
-            | 
-          |  
-          | seconds.
+        if origin == '/kiosk'
+          p
+            | You will be redirected to the home page in 
+            span.countdown
+              | 
+            |  
+            | seconds.
