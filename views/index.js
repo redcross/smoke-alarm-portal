@@ -1,5 +1,7 @@
 'use strict';
 var db = require('./../models');
+var env = process.env.NODE_ENV || 'development';
+var config = require(__dirname + '/../config/config.json')[env];
 // all the functions used below are now defined in utilities.js so that
 // they can also be used by SMS requests
 var utils = require('./utilities');
@@ -36,8 +38,10 @@ exports.saveRequest = function(req, res) {
         return utils.saveRequestData(requestData);
     }).then(function(request) {
         savedRequest = request;
+        return utils.postRequest(savedRequest, config.external_endpoint);
+    }).then( function() {
         return utils.isActiveRegion(savedRequest);
-    }).then( function(activeRegion){
+    }).then( function(activeRegion) {
         if (activeRegion) {
             utils.sendEmail(savedRequest, activeRegion);
             res.render('thankyou.jade', {region: activeRegion.region_name, id: savedRequest.serial});

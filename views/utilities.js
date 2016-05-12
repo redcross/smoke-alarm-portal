@@ -1,4 +1,7 @@
 var db = require('./../models');
+var env = process.env.NODE_ENV || 'development';
+var config = require(__dirname + '/../config/config.json')[env];
+var requestlib = require('request');
 var requestData = {};
 
 var state_abbrevs =
@@ -390,5 +393,46 @@ module.exports  = {
                 console.log("DEBUG: sent mail msg: '" + body.message + "'");
             }
         });
+    },
+
+    /*
+     * Posts a given REQUEST to an external DESTINATION.
+     * 
+     * Takes:
+     * request: a smoke alarm request object from the database
+     * destination: an external server endpoint (string)
+     * 
+     * 
+    */
+    postRequest: function(request, destination) {
+        // see http://stackoverflow.com/a/12999483/6005068
+        requestlib.post(
+            destination,
+            { json: true,
+              body: request },
+            function (error, response, body) {
+                if (error) {
+                    // TODO: log and/or handle the error
+                    console.log("DEBUG: received an error from the external destination");
+                    console.log(error);
+                }
+                if (!error && (response.statusCode == 202 || response.statusCode == 200)) {
+                    // for testing
+                    response = { "status": "installed", "acceptance": true};
+                    // send the acceptance and status to our endpoint for this request
+                    var local_dest = String(config.server_root + '/admin/requests/status/' + request.serial);
+                    requestlib.post(
+                        local_dest,
+                        { json: true,
+                          body: response },
+                        function (error, response, body) {
+                            if (error){
+                                console.log("DEBUG: received an error from our endpoint");
+                                console.log(error);
+                            }
+                        });
+                }
+            });
     }
+    
 }

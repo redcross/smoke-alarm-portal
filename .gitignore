@@ -4,3 +4,5 @@ err.log
 out.log
 config.js
 *.idea
+config/*.json
+
