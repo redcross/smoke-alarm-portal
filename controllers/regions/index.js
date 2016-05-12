@@ -23,7 +23,7 @@ exports.init = function(req, res) {
             });
             var response = {"data": { "items": items}};
             res.send(response);
-        }).catch(function(error) {
+        }).catch(function() {
             var errors = { "error": { "errors": server_error } };
             res.send(errors);
         });

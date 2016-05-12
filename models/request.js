@@ -31,6 +31,7 @@ module.exports = function(sequelize, DataTypes) {
 	email: DataTypes.TEXT,
         source: DataTypes.TEXT,
         serial: { type: DataTypes.TEXT, unique: true },
-        status: DataTypes.TEXT
+        status: DataTypes.TEXT,
+        external_tracking: DataTypes.BOOLEAN
     })
 }
