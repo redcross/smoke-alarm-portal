@@ -78,3 +78,10 @@ A list of tests to be included in future unit tests:
 - after export, new filters/sorting can be applied without error
 - CSV includes correct serial number and region
 
+## Kiosk
+
+- when you navigate to /kiosk, you see the same page as at /
+- all request submission behavior is the same as on the front page (/)
+- on both thankyou and sorry pages, you see a countdown which, when it
+  reaches zero, redirects to /kiosk
+- the link on the thankyou/sorry pages works to get back to /kiosk 
