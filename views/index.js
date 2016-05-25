@@ -43,7 +43,11 @@ exports.saveRequest = function(req, res) {
         return utils.isActiveRegion(savedRequest);
     }).then( function(activeRegion) {
         region_info = activeRegion
-        return utils.postRequest(savedRequest, config.external_endpoint, activeRegion);
+        // get our token first
+        return utils.getOutboundToken();
+    }).then( function (token) {
+        // extract and pass the token itself here
+        return utils.postRequest(savedRequest, config.external_endpoint, region_info, token['token']);
     }).then( function (regionObject) {
         // if request was posted, regionObject will be undefined and so
         // we set activeRegion to the db object we saved in the last

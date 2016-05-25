@@ -396,6 +396,18 @@ module.exports  = {
     },
 
     /*
+     * Retrieves a outbound token from the database
+     */
+
+    getOutboundToken: function() {
+        return db.Token.findOne({
+            where: {
+                direction: "outbound"
+            }
+        });
+    },
+
+    /*
      * Posts a given REQUEST to an external DESTINATION.
      * 
      * Takes:
@@ -405,42 +417,43 @@ module.exports  = {
      * 
      * 
     */
-    postRequest: function(request, destination, active) {
+    postRequest: function(request, destination, active, token) {
         // see http://stackoverflow.com/a/12999483/6005068
-        if (destination && active) {
-        requestlib.post(
-            destination,
-            { json: true,
-              body: request },
-            function (error, response, body) {
-                if (error) {
-                    // TODO: log and/or handle the error
-                    console.log("DEBUG: received an error from the external destination");
-                    console.log(error);
-                }
-                else if (!error && (response.statusCode == 202 || response.statusCode == 200)) {
-                    // for testing
-                    response = { "status": "installed", "acceptance": true};
-                    // send the acceptance and status to our endpoint for this request
-                    var local_dest = String(config.server_root + '/admin/requests/status/' + request.serial);
-                    requestlib.post(
-                        local_dest,
-                        { json: true,
-                          body: response },
-                        function (error, response, body) {
-                            if (error){
-                                console.log("DEBUG: received an error from our endpoint");
-                                console.log(error);
-                            }
-                        });
-                }
-                else {
-                    // there was no error but the response code was not one of our success cases
-                    console.log("DEBUG: statusCode from remote server was " + response.statusCode);
-                }
-            });
+        if (destination && active && token) {
+            // pass our token in the body of our POST
+            request['token'] = token;
+            requestlib.post(
+                destination,
+                { json: true,
+                  body: request },
+                function (error, response, body) {
+                    if (error) {
+                        // TODO: log and/or handle the error
+                        console.log("DEBUG: received an error from the external destination");
+                        console.log(error);
+                    }
+                    else if (!error && (response.statusCode == 202 || response.statusCode == 200)) {
+                        // send the acceptance and status to our endpoint for this request
+                        var local_dest = String(config.server_root + '/admin/requests/status/' + request.serial);
+                        requestlib.post(
+                            local_dest,
+                            { json: true,
+                              body: response },
+                            function (error, response, body) {
+                                if (error){
+                                    console.log("DEBUG: received an error from our endpoint");
+                                    console.log(error);
+                                }
+                            });
+                    }
+                    else {
+                        // there was no error but the response code was not one of our success cases
+                        console.log("DEBUG: statusCode from remote server was " + response.statusCode);
+                    }
+                });
         }
         else {
+            // we aren't POSTing
             return active;
         }
     }

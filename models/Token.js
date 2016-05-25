@@ -17,8 +17,12 @@
  */
 
 module.exports = function(sequelize, DataTypes) {
-    return sequelize.define('InboundToken', {
+    return sequelize.define('Token', {
         token: {
+            type: DataTypes.TEXT,
+            unique: true
+        },
+        direction: {
             type: DataTypes.TEXT
         }
     });

@@ -20,11 +20,12 @@ exports.update = function(req, res) {
     var access_error = [{ "code": "ACCESS_DENIED", "message": "Please pass a valid token to access this content." }];
     var server_error = [{ "code": "QUERY_PROBLEM", "message": "Sorry, we had a problem updating this region.  Please try again." }];
 
-    // get token from req and compare to db
+    // get token from req and check whether it is valid
     var testToken = function () {
-        return db.InboundToken.count({
+        return db.Token.count({
             where: {
-                token: req.body.token
+                token: req.body.token,
+                direction: "inbound"
             }
         });
     }
