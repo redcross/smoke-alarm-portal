@@ -18,6 +18,8 @@ var requestData = {};
 exports.saveRequest = function(req, res) {
     var savedRequest = {};
     var region_code = "";
+    // use this to hold db information about whether a region is active
+    var region_info = null;
     // get zip in a function, to clean this up
     var zip_set = utils.findZipForLookup(req);
     var zip_for_lookup = zip_set.zip_for_lookup;
@@ -38,10 +40,23 @@ exports.saveRequest = function(req, res) {
         return utils.saveRequestData(requestData);
     }).then(function(request) {
         savedRequest = request;
-        return utils.postRequest(savedRequest, config.external_endpoint);
-    }).then( function() {
         return utils.isActiveRegion(savedRequest);
     }).then( function(activeRegion) {
+        region_info = activeRegion
+        return utils.postRequest(savedRequest, config.external_endpoint, activeRegion);
+    }).then( function (regionObject) {
+        // if request was posted, regionObject will be undefined and so
+        // we set activeRegion to the db object we saved in the last
+        // chunk.  If the request is not posted but the region is active
+        // then we'll get a full db object as regionObject from
+        // postRequest().  If the region is inactive then regionObject
+        // will be null.
+        if ( typeof regionObject == 'undefined') {
+            var activeRegion = region_info;
+        }
+        else {
+            var activeRegion = regionObject;
+        }
         if (activeRegion) {
             utils.sendEmail(savedRequest, activeRegion);
             res.render('thankyou.jade', {region: activeRegion.region_name, id: savedRequest.serial});

@@ -401,11 +401,13 @@ module.exports  = {
      * Takes:
      * request: a smoke alarm request object from the database
      * destination: an external server endpoint (string)
+     * active: a boolean indicating whether or not to send the post
      * 
      * 
     */
-    postRequest: function(request, destination) {
+    postRequest: function(request, destination, active) {
         // see http://stackoverflow.com/a/12999483/6005068
+        if (destination && active) {
         requestlib.post(
             destination,
             { json: true,
@@ -416,7 +418,7 @@ module.exports  = {
                     console.log("DEBUG: received an error from the external destination");
                     console.log(error);
                 }
-                if (!error && (response.statusCode == 202 || response.statusCode == 200)) {
+                else if (!error && (response.statusCode == 202 || response.statusCode == 200)) {
                     // for testing
                     response = { "status": "installed", "acceptance": true};
                     // send the acceptance and status to our endpoint for this request
@@ -432,7 +434,15 @@ module.exports  = {
                             }
                         });
                 }
+                else {
+                    // there was no error but the response code was not one of our success cases
+                    console.log("DEBUG: statusCode from remote server was " + response.statusCode);
+                }
             });
+        }
+        else {
+            return active;
+        }
     }
     
 }
