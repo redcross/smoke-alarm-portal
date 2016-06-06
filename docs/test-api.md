@@ -12,31 +12,33 @@ didn't have the right token and was rejected.
 2. So, in app.js, temporarily remove CSRF by commenting out the
 following lines:
 
-```
-app.use(csrf({
-    cookie: {
-        signed: true
-    }
-}));
-```
-and
+    ```
+    app.use(csrf({
+        cookie: {
+            signed: true
+        }
+    }));
+    ```
+    and
+    
+    ```
+        var token = req.csrfToken();
+        res.locals.csrfToken = token;
+        res.cookie('_csrfToken', token);
+    ```
 
-```
-    var token = req.csrfToken();
-    res.locals.csrfToken = token;
-    res.cookie('_csrfToken', token);
-```
+  Now, that is a huge security hole, so be sure not to leave it that
+  way.
 
-Now, that is a huge security hole, so be sure not to leave it that way.
+  This will also break the front page of the app, so in
+  `views/index.js`, comment out `res.locals.csrf =
+  encodeURIComponent(req.csrfToken());`.  Again, don't leave it like
+  that.
 
-This will also break the front page of the app, so in `views/index.js`,
-comment out `res.locals.csrf = encodeURIComponent(req.csrfToken());`.
-Again, don't leave it like that.
-
-We need to make this change so that our API call to `/` will be accepted
-without a CSRF token.  This probably implies that we should have an
-environment option that allows us to test us without hand-commenting
-lines (TODO).
+  We need to make this change so that our API call to `/` will be
+  accepted without a CSRF token.  This probably implies that we should
+  have an environment option that allows us to test us without
+  hand-commenting lines (TODO).
 
 3. Create a valid auth token (can be any string for now) and add it to
 your database like: `INSERT INTO "Tokens" (token, direction,
