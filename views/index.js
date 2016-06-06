@@ -47,6 +47,11 @@ exports.saveRequest = function(req, res) {
         return utils.getOutboundToken();
     }).then( function (token) {
         // extract and pass the token itself here
+        //
+        // TODO: Cecilia and Karl talked about this.  Calling
+        // postRequest should only have side effects, but there may be
+        // something confusing happening.  Ideally we don't need to
+        // return anything and can just invoke postRequest.
         return utils.postRequest(savedRequest, config.external_endpoint, region_info, token['token']);
     }).then( function (regionObject) {
         // if request was posted, regionObject will be undefined and so

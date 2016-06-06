@@ -22,7 +22,7 @@ exports.update = function(req, res) {
 
     // get token from req and check whether it is valid
     var testToken = function () {
-        return db.Token.count({
+        return db.Token.findOne({
             where: {
                 token: req.body.token,
                 direction: "inbound"
@@ -31,13 +31,14 @@ exports.update = function(req, res) {
     }
 
     testToken().then( function (token) {
-        if (token > 0) {
+        if (token) {
             // update the status of a request
             return db.Request.findOne(
                 { where:
                   {serial: req.params.id}
                 })
                 .then( function(request) {
+                    //TODO: check whether request exists before we try to update it.
                     return request.updateAttributes({
                         external_tracking: req.body.acceptance,
                         status: req.body.status

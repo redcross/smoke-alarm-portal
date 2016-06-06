@@ -435,14 +435,21 @@ module.exports  = {
                     else if (!error && (response.statusCode == 202 || response.statusCode == 200)) {
                         // send the acceptance and status to our endpoint for this request
                         var local_dest = String(config.server_root + '/admin/requests/status/' + request.serial);
+                        request.body = {};
                         requestlib.post(
                             local_dest,
                             { json: true,
-                              body: response },
+                              body: request.body },
                             function (error, response, body) {
                                 if (error){
                                     console.log("DEBUG: received an error from our endpoint");
                                     console.log(error);
+                                }
+                                else {
+                                    // TODO: handle an access error that
+                                    // might show up here
+                                    console.log("DEBUG: got a response from our endpoint");
+                                    console.log(body);
                                 }
                             });
                     }
