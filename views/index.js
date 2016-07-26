@@ -18,7 +18,9 @@ var requestData = {};
 exports.saveRequest = function(req, res) {
     var savedRequest = {};
     var region_code = "";
-    // use this to hold db information about whether a region is active
+    // will hold an "activeRegion" object (a database record about a
+    // given region).  If it is null, the region is not active or
+    // doesn't exist in the database.
     var region_info = null;
     // get zip in a function, to clean this up
     var zip_set = utils.findZipForLookup(req);

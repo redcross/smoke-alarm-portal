@@ -313,7 +313,9 @@ module.exports  = {
         });
     },
 
-    // find out whether a region is active or not
+    // Search db for a given region, checking whether it is active.
+    // Returns a region object if the region exists and is active, or
+    // null if not.
     isActiveRegion: function(request) {
         return db.activeRegion.findOne({
             where: {
