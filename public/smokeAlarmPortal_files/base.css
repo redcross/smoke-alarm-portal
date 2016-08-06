@@ -289,6 +289,14 @@ p.bigger-centered {
     line-height: 120%
 }
 
+p.redirect {
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: center;
+    color: #bdbdbd;
+    text-decoration: underline;
+}
+
 .notabene {
     font-weight: bold;
 }

@@ -1,6 +1,12 @@
 extends layout
 
+
 block content
+  // Local stylesheets and js
+  // only refresh if the request came from the kiosk route
+  if origin == '/kiosk'
+    script(type='text/javascript', src='/js/refresh.js')
+
   #container.container-fluid
     .row
       .col-sm-12
@@ -16,4 +22,15 @@ block content
 
         p
           a(href="http://www.redcross.org/prepare/location/home-family/prevent-home-fires" target="_blank") #{__('Visit the Red Cross')}
-          | #{__(' to learn how to prepare for and prevent home fires.')} 
+          | #{__(' to learn how to prepare for and prevent home fires.')}
+
+        if origin == '/kiosk'
+          p.redirect
+            | Returning to the 
+            a(href="/kiosk") home page
+            |  in 
+            span.countdown
+              | 
+            |  
+            | seconds.
+  

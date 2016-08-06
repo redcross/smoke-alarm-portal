@@ -20,7 +20,7 @@ block content
           | #{__('After submitting your request, you will be contacted by an American Red Cross representative with information on installation availability in your area.')}
       #center.col-md-6
         .container-fluid(role='form')
-          form(action="/", method="POST", class="form-horizontal")
+          form(action="#{origin}", method="POST", class="form-horizontal")
             fieldset
               .row
                 // Text input

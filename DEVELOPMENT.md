@@ -30,7 +30,7 @@ characters, then just put them in the body of the commit message.
 Here's a good example commit message:
 
     commit 060a367d42c5ae15c388b7f348464a5ce8af600b
-    Author: Mike Chu <m.chu90@gmail.com>
+    Author: Mike Chu <his-email>
     Date:   Wed Mar 30 12:54:14 2016 -0500
     
         Edit validations for blank field #170

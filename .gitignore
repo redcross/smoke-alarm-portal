@@ -5,4 +5,5 @@ out.log
 config.js
 *.idea
 config/*.json
-
+# OSX 
+.DS_Store

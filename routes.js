@@ -58,6 +58,11 @@ exports = module.exports = function(app, passport) {
   app.get('/', require('./views/index').init);
   app.post('/', require('./views/index').saveRequest);
 
+  // kiosk version
+  app.get('/kiosk', require('./views/index').init);
+  app.post('/kiosk', require('./views/index').saveRequest);
+
+    
   //sign up
   app.all('/signup*', ensureSignupEnabled);
   app.get('/signup/', require('./views/signup/index').init);
