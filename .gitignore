@@ -4,3 +4,6 @@ err.log
 out.log
 config.js
 *.idea
+
+# OSX 
+.DS_Store
