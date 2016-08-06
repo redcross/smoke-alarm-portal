@@ -21,7 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var db = require('./../models');
+var db = require('../models');
 var _ = require('underscore');
 var faker = require('faker');
 var requestCount = 725; // TODO: Make configurable

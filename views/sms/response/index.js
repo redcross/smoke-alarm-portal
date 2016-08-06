@@ -1,7 +1,7 @@
 var env = process.env.NODE_ENV || 'development';
-var config = require(__dirname + '/../../../config/config.json')[env];
+var config = require('../../../config/config.json')[env];
 var client = require('twilio')(config.twilio_accountSid, config.twilio_authToken);
-var parser = require('parse-address'); 
+var parser = require('parse-address');
 
 var http = require('http'),
     express = require('express'),

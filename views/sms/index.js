@@ -1,5 +1,5 @@
 var env = process.env.NODE_ENV || 'development';
-var config = require(__dirname + '/../../config/config.json')[env];
+var config = require('../../config/config.json')[env];
 var twilio = require('twilio');
 var parser = require('parse-address'); 
 
