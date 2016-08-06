@@ -1,6 +1,6 @@
 'use strict';
 var db = require('./../../../../models');
-
+var util = require('./../../../utilities.js');
 
 exports.init = function(req, res) {
     res.send("Please send the status of a smoke alarm request");
@@ -15,10 +15,10 @@ exports.init = function(req, res) {
  *  - BODY: Status (one of "new", "in progress", "canceled", "scheduled", and "installed".)
  *  - BODY: Token (shows that the POST-er has permission to send us information)
  * 
+ * TODO: maybe the token should be passed in a header, instead of as part of the body.
 */
 exports.update = function(req, res) {
     var access_error = [{ "code": "ACCESS_DENIED", "message": "Please pass a valid token to access this content." }];
-    var server_error = [{ "code": "QUERY_PROBLEM", "message": "Sorry, we had a problem accepting this status change.  Please try again." }];
 
     // get token from req and check whether it is valid
     var testToken = function () {
@@ -28,26 +28,14 @@ exports.update = function(req, res) {
                 direction: "inbound"
             }
         });
-    }
+    };
 
     testToken().then( function (token) {
         if (token) {
             // update the status of a request
-            return db.Request.findOne(
-                { where:
-                  {serial: req.params.id}
-                })
-                .then( function(request) {
-                    //TODO: check whether request exists before we try to update it.
-                    return request.updateAttributes({
-                        external_tracking: req.body.acceptance,
-                        status: req.body.status
-                    })
-                }).then( function (request) {
-                    res.send(request.dataValues);
-                }).catch(function() {
-                    var errors = { "error": { "errors": server_error } };
-                    res.send(errors);
+            return util.updateRequestStatus(req.params.id, req.body.acceptance, req.body.status)
+                .then(function (status) {
+                    res.send(status);
                 });
         }
         else {

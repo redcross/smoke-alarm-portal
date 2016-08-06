@@ -412,18 +412,50 @@ module.exports  = {
     },
 
     /*
+     * Updates a given request with a new status.  Takes: 
+     * 
+     * ID: the serial number (string) of the request
+     * ACCEPTANCE: a boolean indicating whether or not the external
+     * server will track this request 
+     * STATUS: one of a limited number of strings that indicate where in
+     * the process this request is, e.g.: "assigned", "completed".  Note
+     * that we still need to limit this set of strings in some
+     * meaningful way. 
+     * 
+     */
+
+    updateRequestStatus: function(id, acceptance, status) {
+        return db.Request.findOne(
+            { where:
+              {serial: id}
+            }).then( function(request) {
+                //TODO: check whether request exists before we try to update it.
+                return request.updateAttributes({
+                    external_tracking: acceptance,
+                    status: status
+                });
+            }).then( function (request) {
+                return request.dataValues;
+            }).catch(function() {
+                var server_error = [{ "code": "QUERY_PROBLEM", "message": "Sorry, we had a problem accepting this status change.  Please try again." }];
+                var errors = { "error": { "errors": server_error } };
+                return errors;
+            });
+    },
+    
+    /*
      * Posts a given REQUEST to an external DESTINATION.
      * 
      * Takes:
-     * request: a smoke alarm request object from the database
-     * destination: an external server endpoint (string)
-     * active: a boolean indicating whether or not to send the post
-     * 
+     * REQUEST: a smoke alarm request object from the database
+     * DESTINATION: an external server endpoint (string)
+     * REGION: a region object from the database (see "activeRegion" table)
+     * TOKEN: a secret code for authenticating with the DESTINATION
      * 
     */
-    postRequest: function(request, destination, active, token) {
+    postRequest: function(request, destination, region, token) {
         // see http://stackoverflow.com/a/12999483/6005068
-        if (destination && active && token) {
+        if (destination && token) {
             // pass our token in the body of our POST
             request['token'] = token;
             requestlib.post(
@@ -436,36 +468,24 @@ module.exports  = {
                         console.log("DEBUG: received an error from the external destination");
                         console.log(error);
                     }
-                    else if (!error && (response.statusCode == 202 || response.statusCode == 200)) {
+                    else if (response.statusCode == 202 || response.statusCode == 200) {
                         // send the acceptance and status to our endpoint for this request
-                        var local_dest = String(config.server_root + '/admin/requests/status/' + request.serial);
-                        request.body = {};
-                        requestlib.post(
-                            local_dest,
-                            { json: true,
-                              body: request.body },
-                            function (error, response, body) {
-                                if (error){
-                                    console.log("DEBUG: received an error from our endpoint");
-                                    console.log(error);
-                                }
-                                else {
-                                    // TODO: handle an access error that
-                                    // might show up here
-                                    console.log("DEBUG: got a response from our endpoint");
-                                    console.log(body);
-                                }
-                            });
+                        //
+                        // TODO: Do I need to send a confirmation back
+                        // to the external server?
+                        return module.exports.updateRequestStatus(response.id, response.acceptance, response.status);
                     }
                     else {
                         // there was no error but the response code was not one of our success cases
                         console.log("DEBUG: statusCode from remote server was " + response.statusCode);
+                        return;
                     }
                 });
         }
         else {
-            // we aren't POSTing
-            return active;
+            console.log("DEBUG: we're missing the destination and/or token, so can't POST to the remote destination");
+            // TODO: should we send an error back here?
+            return;
         }
     }
     

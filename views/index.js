@@ -45,29 +45,16 @@ exports.saveRequest = function(req, res) {
         return utils.isActiveRegion(savedRequest);
     }).then( function(activeRegion) {
         region_info = activeRegion
-        // get our token first
+        // get our token before trying to POST to the external DESTINATION
         return utils.getOutboundToken();
     }).then( function (token) {
         // extract and pass the token itself here
         //
-        // TODO: Cecilia and Karl talked about this.  Calling
-        // postRequest should only have side effects, but there may be
-        // something confusing happening.  Ideally we don't need to
-        // return anything and can just invoke postRequest.
-        return utils.postRequest(savedRequest, config.external_endpoint, region_info, token['token']);
+        // Invoke postRequest, causing only side effects.
+        utils.postRequest(savedRequest, config.external_endpoint, region_info, token['token']);
+        return region_info;
     }).then( function (regionObject) {
-        // if request was posted, regionObject will be undefined and so
-        // we set activeRegion to the db object we saved in the last
-        // chunk.  If the request is not posted but the region is active
-        // then we'll get a full db object as regionObject from
-        // postRequest().  If the region is inactive then regionObject
-        // will be null.
-        if ( typeof regionObject == 'undefined') {
-            var activeRegion = region_info;
-        }
-        else {
-            var activeRegion = regionObject;
-        }
+        var activeRegion = regionObject;
         if (activeRegion) {
             utils.sendEmail(savedRequest, activeRegion);
             res.render('thankyou.jade', {region: activeRegion.region_name, id: savedRequest.serial, origin: req.url});
