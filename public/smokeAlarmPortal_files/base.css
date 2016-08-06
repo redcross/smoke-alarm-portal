@@ -35,6 +35,14 @@ html, body, body::after {
     min-height: 100%;
 }
 
+a {
+  color:#529BDA
+}
+
+a:hover {
+  color:#FFEEFF
+}
+
 body {
     /* background commented out now that we're going with an image of
     class ".bg" that can stretch and stay centered on any screen
@@ -209,10 +217,8 @@ img.fourpanel {
 }
 
 #language {
-    padding: 5px;
-    top: 0px;
-    left: 0px;
-    float: right;
+    margin-top:1em;
+    margin-bottom:0;
 }
 
 #language a {
@@ -232,7 +238,7 @@ img.fourpanel {
 }
 
 #main {
-    margin-top: 1.2em;
+    margin-top: 0;
 }
 
 
