@@ -377,10 +377,10 @@ module.exports  = {
         };
 
         db.mailgun.messages().send(outbound_email, function (error, body) {
+            if (!body) return;
+            
             // TODO: We need to record the sent message's Message-ID 
             // (which is body.id) in the database, with the request.
-            if (!body) return;
-
             if (body.id === undefined) {
                 console.log("DEBUG: sent mail ID was undefined");
             } else {
