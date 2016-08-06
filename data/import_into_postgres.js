@@ -36,7 +36,7 @@ var usAddressesJson = require('../data/us_addresses.json');
 
 var theseCounties = null;
 var docs = null;
-var db = require('./../models');
+var db = require('../models');
 
 console.log("sync SelectedCounties")
 db.SelectedCounties.sync()
