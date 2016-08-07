@@ -57,8 +57,12 @@ be edited here.
   2. Do `cp config/config.json.tmpl config/config.json`. For dev, move on to step 3. For non-dev, edit the `config/config.json`:
 
         * Fill in database usernames and passwords, and
-        the Mailgun.com API key and sender information that the app will use to send out email notifications.  You can modify one of the existing top-level environments listed in `config.json` or set up a whole new environment, e.g., "demo" (e.g., based
-        on the "test" example).
+        the Mailgun.com API key and sender information that the app will use to send out email notifications.  
+        You can modify one of the existing top-level environments listed in `config.json` 
+        or set up a whole new environment, e.g., "demo" (e.g., based on the "test" example).
+
+        To enable Geocoding of entered addresses, make sure to configure your
+        Google Maps geocoding API key: `googleMapsApiKey`
 
         (Don't worry if you don't know how to set up a database
         username / password; that will be explained in a later step.)

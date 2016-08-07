@@ -1,5 +1,11 @@
+var axios = require('axios');
 var db = require('./../models');
+var config = require('../config');
 var requestData = {};
+
+// Config for Google Maps Geocode API
+var mapsApiUrl = 'https://maps.googleapis.com/maps/api/geocode/json';
+var mapsApiKey = config.googleMapsApiKey;
 
 var state_abbrevs =
     {
@@ -243,6 +249,7 @@ module.exports  = {
     // check again here).
 
     saveRequestData: function(requestData) {
+        var savedRequest;
         return db.Request.create({
             name: requestData.name,
             source: requestData.is_sms,
@@ -258,12 +265,36 @@ module.exports  = {
             serial: requestData.serial,
             assigned_rc_region: requestData.assigned_rc_region,
             status: 'new'
-        }).catch( function () {
+        }).then(function(request) {
+            savedRequest = request;
+            var query = [
+                request.address,
+                request.city,
+                request.state,
+                request.zip
+            ].join(' ');
+            return axios(mapsApiUrl, {
+                params: {
+                    key: mapsApiKey,
+                    address: query
+                }
+            });
+        }).then(function(geocodeResponse) {
+            console.log(JSON.stringify(geocodeResponse.data.results[0].geometry, null, 2));
+            var loc = geocodeResponse.data.results[0].geometry.location;
+            savedRequest.latitude = loc.latitude;
+            savedRequest.longitude = loc.longitude;
+            return savedRequest.save();
+        }).catch(function (error) {
+            console.log(error);
+            throw error;
+            /*
             // uniqueness failed; increment serial
             var serial_array = requestData.serial.split("-");
             var new_serial = module.exports.padWithZeroes((parseInt(serial_array[2]) + 1).toString(), 5);
             requestData.serial = serial_array[0] + "-" + serial_array[1] + "-" + new_serial;
             return saveRequestData(requestData); //loop until save works
+            */
         });
     },
 
