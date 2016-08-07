@@ -1,6 +1,7 @@
 var axios = require('axios');
-var db = require('./../models');
+var shortid = require('shortid');
 var config = require('../config');
+var db = require('../models');
 var requestData = {};
 
 // Config for Google Maps Geocode API
@@ -204,7 +205,7 @@ module.exports  = {
         // "region-date-00000."  I think that would be confusing for users.
         // We might as well start with 1.
         numberOfRequests = numberOfRequests + 1;
-        var sequenceNumber = module.exports.padWithZeroes(numberOfRequests.toString(), 5);
+        var sequenceNumber = shortid.generate();
          // find fiscal year
         var fiscalYear = today.getFullYear();
         //account for zero-indexing
@@ -250,6 +251,7 @@ module.exports  = {
 
     saveRequestData: function(requestData) {
         var savedRequest;
+
         return db.Request.create({
             name: requestData.name,
             source: requestData.is_sms,
@@ -280,21 +282,19 @@ module.exports  = {
                 }
             });
         }).then(function(geocodeResponse) {
-            console.log(JSON.stringify(geocodeResponse.data.results[0].geometry, null, 2));
-            var loc = geocodeResponse.data.results[0].geometry.location;
-            savedRequest.latitude = loc.latitude;
-            savedRequest.longitude = loc.longitude;
-            return savedRequest.save();
+            var loc;
+            try {
+                loc = geocodeResponse.data.results[0].geometry.location;
+                savedRequest.latitude = loc.lat;
+                savedRequest.longitude = loc.lng;
+            } catch (e) {
+                console.log('Location not found in response, NBD.');
+            }
+
+            return savedRequest.save(); 
         }).catch(function (error) {
-            console.log(error);
+            console.log('Error saving ' + error);
             throw error;
-            /*
-            // uniqueness failed; increment serial
-            var serial_array = requestData.serial.split("-");
-            var new_serial = module.exports.padWithZeroes((parseInt(serial_array[2]) + 1).toString(), 5);
-            requestData.serial = serial_array[0] + "-" + serial_array[1] + "-" + new_serial;
-            return saveRequestData(requestData); //loop until save works
-            */
         });
     },
 
@@ -408,6 +408,8 @@ module.exports  = {
         };
 
         db.mailgun.messages().send(outbound_email, function (error, body) {
+            if (!body) return;
+
             // TODO: We need to record the sent message's Message-ID 
             // (which is body.id) in the database, with the request.
             if (body.id === undefined) {

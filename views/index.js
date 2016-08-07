@@ -1,5 +1,5 @@
 'use strict';
-var db = require('./../models');
+var db = require('../models');
 // all the functions used below are now defined in utilities.js so that
 // they can also be used by SMS requests
 var utils = require('./utilities');

@@ -2,16 +2,18 @@ extends layout
 
 block content
   #container.container-fluid
-    #language
-      a.language-toggle(data-lang='en') English
-      | &nbsp;|&nbsp;
-      a.language-toggle(data-lang='es') Español
     #top
       #logo.text-center
         img.logo(src='./smokeAlarmPortal_files/redcross-logo-white-letters.png', alt='American Red Cross')
       #safety-message.row.text-center(role='complementary')
         p.col-xs-12.bigger-centered
           | #{__('Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.')}
+    #language
+      .row
+        p.col-xs-12.bigger-centered
+            a.language-toggle(data-lang='en') English
+            | &nbsp;|&nbsp;
+            a.language-toggle(data-lang='es') Español
     #main.row(role='main')
       #left.col-md-3
         p

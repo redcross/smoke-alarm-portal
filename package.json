@@ -50,6 +50,7 @@
     "sequelize-cli": "^2.3.1",
     "serve-favicon": "~2.2.1",
     "serve-static": "^1.9.x",
+    "shortid": "^2.2.6",
     "twilio": "^2.5.1",
     "underscore": "^1.x.x"
   },

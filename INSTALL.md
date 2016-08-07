@@ -9,7 +9,7 @@ much difficulty to most other Unix-like operating systems.
         $ git clone https://github.com/OpenTechStrategies/smoke-alarm-portal.git
         $ cd smoke-alarm-portal
 
-2. Install [Node](https://nodejs.org/download/) and npm (a package manager).
+1. Install [Node](https://nodejs.org/download/) and npm (a package manager).
    On Debian, run:
 
         $ sudo apt-get install nodejs
@@ -21,7 +21,7 @@ much difficulty to most other Unix-like operating systems.
 
         $ sudo npm install npm -g
 
-3. Install PostgreSQL, at least version 9.2 (to support `JSON` column type).
+1. Install PostgreSQL, at least version 9.2 (to support `JSON` column type).
 
    On Debian:
 
@@ -40,12 +40,12 @@ much difficulty to most other Unix-like operating systems.
         $ brew update
         $ brew install postgres
 
-4. OPTIONAL: PostgreSQL probably created a `postgres` user, but if it
+1. OPTIONAL: PostgreSQL probably created a `postgres` user, but if it
 didn't, you might want to add one:
 
         $ adduser postgres
 
-5. Set up the live config files.  Note that there are multiple files to
+1. Set up the live config files.  Note that there are multiple files to
 be edited here.
 
   1. Do `cp config.js.tmpl config.js`. For dev, move on to step 2. For non-dev, edit the `config.js` file:
@@ -54,7 +54,7 @@ be edited here.
         `exports.projectName`, `exports.signupEnabled`,`exports.systemEmail`, and
         `exports.cryptoKey`.
 
-  2. Do `cp config/config.json.tmpl config/config.json`. For dev, move on to step 3. For non-dev, edit the `config/config.json`:
+  1. Do `cp config/config.json.tmpl config/config.json`. For dev, move on to step 3. For non-dev, edit the `config/config.json`:
 
         * Fill in database usernames and passwords, and
         the Mailgun.com API key and sender information that the app will use to send out email notifications.  
@@ -67,17 +67,17 @@ be edited here.
         (Don't worry if you don't know how to set up a database
         username / password; that will be explained in a later step.)
 
-  3. Do `cp config/recipients.sql.tmpl config/recipients.sql`, edit the `config/recipients.sql` file:
+  1. Do `cp config/recipients.sql.tmpl config/recipients.sql`, edit the `config/recipients.sql` file:
 
         * Fill in appropriate contact names and email
         addresses.  
         * For dev, either leave the placeholders intact (if you didn't set up Mailgun and don't want to test the email-sending functionality) or replace the placeholders with your name and email address (so that when you submit test requests to your local instance, all the emails generated come to you).
 
-6. Get other required node modules.
+1. Get other required node modules.
 
         $ npm install
 
-   6a. If you get errors from `npm install`, starting with something like
+   **If you get errors** from `npm install`, starting with something like
    `sh: 1: node: not found`, you may need to install the legacy node
    package (see [the
    package](https://packages.debian.org/sid/nodejs-legacy)
@@ -87,23 +87,29 @@ be edited here.
 
         $ sudo apt-get install nodejs-legacy
 
-7. Create the databases and import the initial data.
+1. 	Start Postgres server
 
-        ### Start Postgres server
         ### For example, on a Mac with Postgres installed from homebrew:
         $ pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
+1. Access the default postgres instance and create the top-level database
 
-        ### become a postgres user.  We use "postgres" here but it could
-        ### also be your regular user, assuming that you have the
-        ### correct privileges in psql.
+        ### Approach 1: become a postgres user.
         $ su - postgres
         $ psql
+        ### Approach 2: use your user if you have access
+        $ psql postgres
+
+
+        ### Now you can setup the database/user/rights
         postgres=# CREATE DATABASE smokealarm_development;
         postgres=# CREATE USER <some_username> PASSWORD '<some_password>';
         postgres=# GRANT ALL ON DATABASE smokealarm_development TO <username>;
         postgres=# \q
-        ### if you were postgres, log out; you should be yourself now
-        $ exit       
+
+        ### if you used approach 1, log out; you should be yourself now
+        $ exit
+
+1. Generate tables in postgres
 
         ### This one needs to be available system-wide
         $ sudo npm install -g sequelize-cli 
@@ -117,14 +123,14 @@ be edited here.
         ### take several minutes.  It creates the tables and loads data
         ### into UsAddress and SelectedCounties.
         $ node data/import_into_postgres.js
-        
-        ### Load the active regions and recipients.  
+
+
+1. Load sample data and run migrations
+
+        ### Load the active regions and recipients.
         $ psql smokealarm_development
         ### Import the regions and recipients to the "activeRegions" table.
         smokealarm_development=# \i config/recipients.sql
-
-        ### Run the migrations
-
         # use the most recent region codes in all places
         smokealarm_development=# \i migrations/20150916-update-regions.sql
         # add internal codes to regions
@@ -143,7 +149,7 @@ be edited here.
         ### FOR DEVELOPMENT, load sample requests:
         $ node data/fake_request_data.js 
 
-8. Start the smoke-alarm-portal app
+1. Start the smoke-alarm-portal app
 
    For development, you can just do this (make sure you have a postgres server running):
 
@@ -159,28 +165,28 @@ be edited here.
 
         $ ./node_modules/.bin/forever -da start --watchDirectory . -l forever.log -o out.log -e err.log ./bin/www
 
-9. See if it's working, by visiting http://localhost:3000/
+1. See if it's working, by visiting http://localhost:3000/
 
    TBD: Need instructions for changing to port 80 and eventually 443
    for demo and production.
 
-10. Create an admin user.
+1. Create an admin user.
 
    To create the admin user, you must first temporarily re-enable
    signups, which are disabled by default.
 
    1. In `config.js`, change `exports.signupEnabled` from `false` to `true`.  
 
-   2. Visit http://localhost:3000/signup in your browser
+   1. Visit http://localhost:3000/signup in your browser
 
-   3. Create a user named `admin` there (remember the password you choose)
+   1. Create a user named `admin` there (remember the password you choose)
 
-   4. In `config.js`, change `exports.signupEnabled` back to `false`.
+   1. In `config.js`, change `exports.signupEnabled` back to `false`.
       (If you don't do this step, anyone who can figure out the URL can
       create a user account with administrative privileges, which would
       obviously be bad.)
 
-   5. Grant your new admin user permission to view requests from all
+   1. Grant your new admin user permission to view requests from all
       regions, using this file:
       [migrations/20151208-admin-access.sql.tmpl](migrations/20151208-admin-access.sql.tmpl).
       Following the instructions in the file, copy it to
@@ -204,10 +210,10 @@ be edited here.
    page (http://localhost:3000/) before any requests would be listed
    on the /admin/requests page.)
 
-11. Sign up for [Twilio](https://www.twilio.com).  Set up a number that
+1. Sign up for [Twilio](https://www.twilio.com).  Set up a number that
 uses `<your url>/sms` with `HTTP GET` for incoming SMS requests.
 
-11. Manually perform tests listed in [TESTING.md](docs/TESTING.md).
+1. Manually perform tests listed in [TESTING.md](docs/TESTING.md).
 
 Appendix A: Setting up Apache->Node ProxyPass with https://
 -----------------------------------------------------------
@@ -266,7 +272,7 @@ access by iptables rules.  Below we describe this setup in detail.
             </VirtualHost>
         </IfModule>
 
-2. Enable mod\_rewrite, mod\_proxy, and mod\_proxy\_http
+1. Enable mod\_rewrite, mod\_proxy, and mod\_proxy\_http
 
         $ sudo apt-get update
         $ sudo apt-get install libapache2-mod-proxy-html
@@ -274,7 +280,7 @@ access by iptables rules.  Below we describe this setup in detail.
         $ sudo a2enmod proxy_http
         $ sudo a2enmod ssl
 
-3. Make sure the right config file is installed.
+1. Make sure the right config file is installed.
 
         $ cd /etc/apache2/sites-enabled
         $ ls -l
@@ -284,13 +290,13 @@ access by iptables rules.  Below we describe this setup in detail.
         $ sudo rm 000-default.conf
         $ sudo ln -s ../sites-available/default-ssl.conf 000-default-ssl.conf
 
-4. _TBD: Do something magical with iptables to block port 3000_
+1. _TBD: Do something magical with iptables to block port 3000_
 
-5. Restart Apache:
+1. Restart Apache:
 
         $ service apache2 restart  
 
-6. Visit the site and make sure it's working:
+1. Visit the site and make sure it's working:
 
    http://yourhost.example.com/ should auto-redirect to
    https://yourhost.example.com/ and show the front page.
