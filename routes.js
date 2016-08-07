@@ -119,9 +119,9 @@ exports = module.exports = function(app, passport) {
 
   //admin > requests
   app.get('/admin/requests/', require('./views/admin/requests/index').find);
-  app.put('/admin/requests/:id/', require('./views/admin/requests/index').update);
-  app.get('/admin/requests/:id/', require('./views/admin/requests/index').read);
-  app.delete('/admin/requests/:id/', require('./views/admin/requests/index').delete);
+  app.put('/admin/requests/:publicId/', require('./views/admin/requests/index').update);
+  app.get('/admin/requests/:publicId/', require('./views/admin/requests/index').read);
+  app.delete('/admin/requests/:publicId/', require('./views/admin/requests/index').delete);
 
 
   //admin > users

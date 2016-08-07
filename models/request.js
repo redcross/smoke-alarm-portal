@@ -30,7 +30,7 @@ module.exports = function(sequelize, DataTypes) {
     sms_raw_phone: DataTypes.TEXT,
     email: DataTypes.TEXT,
     source: DataTypes.TEXT,
-    serial: { type: DataTypes.TEXT, unique: true },
+    public_id: { type: DataTypes.TEXT, unique: true },
     status: DataTypes.TEXT
   }, {
     classMethods: {
