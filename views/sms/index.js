@@ -191,6 +191,33 @@ exports.respond = function(req, res) {
     };
 
 
+    var savePartial = function (id, fieldname, data) {
+        if (id) {
+            // update the record
+            db.Request.findOne({
+                id: id
+            }).then( function(request) {
+                return request.updateAttributes(fieldname: data);
+            }).catch( function (error) {
+                console.log("DEBUG: update error");
+                console.log(error);
+            });
+        }
+        else {
+            // create the record
+            return db.Request.create({
+                fieldname: data
+            }).then (function (new_request) {
+                // create id cookie
+                req.cookies.request_id = new_request.id;
+                // TBD: will this cookie get created/saved correctly?
+            }).catch( function (error) {
+                console.log("DEBUG: create error.");
+                console.log(error);
+            });
+        }
+    };
+
     /* Generally to find the county and region we use the zipcode, so this
      * takes the entered zip.
      * Returns nothing, but saves the request to the database.
@@ -292,18 +319,19 @@ exports.respond = function(req, res) {
 
         if (current_priority == 5) {
             // we think we've just received a name
-            req.cookies.priorities.name.value = req.query.Body;
+            savePartial(null, 'name', req.query.Body);
         }
         else if (current_priority == 4) {
             // maybe test to make sure this looks like an address
             if (! req.cookies.request_object) {
                 req.cookies.request_object = {};
             }
-            req.cookies.request_object.raw_address = req.query.Body;
-            req.cookies.priorities.address.value = parser.parseLocation(req.query.Body);
-            if (req.cookies.priorities.address.value) {
-                if (req.cookies.priorities.address.value.zip) {
-                    req.cookies.priorities.zipcode.value = req.cookies.priorities.address.value.zip;
+            savePartial(req.cookies.request_id, 'sms_raw_address', req.query.Body);
+            var parsed_address = parser.parseLocation(req.query.Body);
+            if (parsed_address) {
+                if (parsed_address.zip) {
+                    // should this be raw zip or zip?
+                    savePartial(req.cookies.request_id, 'zip', parsed_address.zip);
                 }
             }
             else {
@@ -318,9 +346,9 @@ exports.respond = function(req, res) {
             if (! req.cookies.request_object) {
                 req.cookies.request_object = {};
             }
-            req.cookies.request_object.raw_zip = req.query.Body;
+            savePartial(req.cookies.request_id, 'sms_raw_zip', req.query.Body);
             var zipset = save_utils.findZipForLookup(req);
-            req.cookies.priorities.zipcode.value = zipset.zip_final;
+            savePartial(req.cookies.request_id, 'zip', zipset.zip_final);
         }
         else if (current_priority == 2) {
             if (! req.cookies.request_object) {
