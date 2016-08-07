@@ -132,6 +132,7 @@ be edited here.
         # you're setting up an empty database) you can skip these migrations.
         smokealarm_development=# \i migrations/20151208-add-nonregion-code.sql
         smokealarm_development=# \i migrations/20151217-set-new-status.sql
+        smokealarm_development=# \i migrations/20160806-rename-serial-to-public-id.sql
 
         ### exit psql
         smokealarm_development=# \q        
