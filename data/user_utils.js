@@ -25,7 +25,6 @@ var prompt = require('prompt');
 var _ = require('underscore');
 
 var emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-var allRegionPermissions = ['IDMT', 'NDSD', 'KSNE', 'MINN', 'IOWA', 'WEMO', 'EAMO', 'WISC', 'CHNI', 'CSIL', 'XXXX'];
 
 var actionOptions = [{
     name: 'action',
@@ -58,17 +57,19 @@ var handleError = function (err) {
     return 1;
 };
 
-var addRegionsForUser = function(user) {
+var makeAdmin = function(user) {
     db.regionPermission.sync().then(function () {
-        _.each(allRegionPermissions, function(region) {
-            db.regionPermission.create({
-                rc_region: region,
-                user_id: user.id
-            }).then( function(region) {
-                console.log('Added permissions to ' + region.rc_region + ' for ' + user.username);
+        db.activeRegion.findAll()
+            .then(function (regions) {
+                _.each(regions, function(region) {
+                    db.regionPermission.create({
+                        rc_region: region.rc_region,
+                        user_id: user.id
+                    });
+                    console.log('Added permissions to ' + region.rc_region + ' for ' + user.username);
+                });
             });
-        });
-    })
+    });
 };
 
 var createUser = function () {
@@ -85,7 +86,7 @@ var createUser = function () {
                 }).then(function(user) {
                     console.log('Created user with id: ' + user.id);
                     if (userInput.is_admin == 'yes') {
-                        addRegionsForUser(user);
+                        makeAdmin(user);
                     }
                 });
             });
