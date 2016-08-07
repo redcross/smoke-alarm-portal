@@ -168,28 +168,18 @@ be edited here.
 
 1. Create an admin user.
 
-   To create the admin user, you must first temporarily re-enable
-   signups, which are disabled by default.
+   To create the admin user run `node data/user_utils.js` and fill out the
+   `create-user` menu option. After you enter username, password, and email
+   be sure to specify `yes` for `is_admin` to get access to all regions.
 
-   1. In `config.js`, change `exports.signupEnabled` from `false` to `true`.  
-
-   1. Visit http://localhost:3000/signup in your browser
-
-   1. Create a user named `admin` there (remember the password you choose)
-
-   1. In `config.js`, change `exports.signupEnabled` back to `false`.
-      (If you don't do this step, anyone who can figure out the URL can
-      create a user account with administrative privileges, which would
-      obviously be bad.)
-
-   1. Grant your new admin user permission to view requests from all
-      regions, using this file:
-      [migrations/20151208-admin-access.sql.tmpl](migrations/20151208-admin-access.sql.tmpl).
-      Following the instructions in the file, copy it to
-      `migrations/20151208-admin-access.sql` and replace the
-      `__USER_ID__` with the id of your new admin user (if the admin
-      user was the first user you created, then this will probably be
-      `1`).  Once you've done that, run the following commands:
+   The alternate way to create admin users is to enable
+   `exports.signupEnabled` in `config.js` and do it interactively through
+   `http://localhost:3000/signup`. If you do it this way, remember to
+   disable the signups route before you continue. Then grant your user admin
+   rights using [migrations/20151208-admin-access.sql.tmpl](migrations/20151208-admin-access.sql.tmpl).
+   Copy it to `migrations/20151208-admin-access.sql` and replace the
+   `__USER_ID__` with the id of your new admin user (first user is `1`,
+   second is `2` and so on). Run with:
 
       ```
       $ psql smokealarm_development  
