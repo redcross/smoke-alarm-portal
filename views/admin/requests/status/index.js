@@ -19,12 +19,26 @@ exports.init = function(req, res) {
 */
 exports.update = function(req, res) {
     var access_error = [{ "code": "ACCESS_DENIED", "message": "Please pass a valid token to access this content." }];
+    try {
+        // This now assumes that the request body isn't going to be
+        // parsed correctly.  If it *is*, then we'll have other
+        // problems.
+        var body_keys = [];
+        for (key in req.body) {
+            body_keys.push(key);
+        }
+        var body = JSON.parse(body_keys[0]);
+    }
+    catch (err) {
+        // TODO: handle error correctly
+        console.log("DEBUG: Parsing error is " + err);
+    }
 
     // get token from req and check whether it is valid
     var testToken = function () {
         return db.Token.findOne({
             where: {
-                token: req.body.token,
+                token: body.token,
                 direction: "inbound"
             }
         });
@@ -33,7 +47,7 @@ exports.update = function(req, res) {
     testToken().then( function (token) {
         if (token) {
             // update the status of a request
-            return util.updateRequestStatus(req.params.id, req.body.acceptance, req.body.status)
+            return util.updateRequestStatus(req.params.id, body.acceptance, body.status)
                 .then(function (status) {
                     res.send(status);
                 });
