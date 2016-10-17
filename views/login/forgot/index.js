@@ -29,7 +29,7 @@ exports.send = function(req, res, next){
       }
 
       var token = buf.toString('hex');
-      req.app.db.models.User.encryptPassword(token, function(err, hash) {
+      req.app.db.User.encryptPassword(token, function(err, hash) {
         if (err) {
           return next(err);
         }
@@ -45,17 +45,24 @@ exports.send = function(req, res, next){
       resetPasswordToken: hash,
       resetPasswordExpires: Date.now() + 10000000
     };
-    req.app.db.models.User.findOneAndUpdate(conditions, fieldsToSet, function(err, user) {
-      if (err) {
-        return workflow.emit('exception', err);
-      }
+      
+      req.app.db.User.findOne( {where: conditions})
+          .then( function(User) {
+              if (User) {
+                  return User.updateAttributes( fieldsToSet)
+              }
+              else {
+                  return workflow.emit('exception', 'Sorry, we don\'t recognize that email address.' );
+              }
+          })
+          .then(function (User) {
+              workflow.emit('sendEmail', token, User);
 
-      if (!user) {
-        return workflow.emit('response');
-      }
+          })
+          .catch(function (err) {
+              return workflow.emit('exception', err);
+          });
 
-      workflow.emit('sendEmail', token, user);
-    });
   });
 
   workflow.on('sendEmail', function(token, user) {
