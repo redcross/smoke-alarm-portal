@@ -1,4 +1,5 @@
 'use strict';
+var db = require('../../../models');
 
 exports.init = function(req, res){
   if (req.isAuthenticated()) {
@@ -35,7 +36,7 @@ exports.set = function(req, res){
   workflow.on('findUser', function() {
     var conditions = {
         email: req.params.email,
-        resetPasswordExpires: { gt: Date.now() }
+        resetPasswordExpires: { gt: db.sequelize.fn('NOW') }
     };
       req.app.db.User.findOne({where: conditions})
           .then( function(user, err) {
