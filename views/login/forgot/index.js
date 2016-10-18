@@ -1,4 +1,5 @@
 'use strict';
+var db = require('../../../models');
 
 exports.init = function(req, res){
   if (req.isAuthenticated()) {
@@ -10,15 +11,15 @@ exports.init = function(req, res){
 };
 
 exports.send = function(req, res, next){
-  var workflow = req.app.utility.workflow(req, res);
-
-  workflow.on('validate', function() {
+    var workflow = req.app.utility.workflow(req, res);
+    
+    workflow.on('validate', function() {
     if (!req.body.email) {
       workflow.outcome.errfor.email = 'required';
       return workflow.emit('response');
     }
 
-    workflow.emit('generateToken');
+        workflow.emit('generateToken');
   });
 
   workflow.on('generateToken', function() {
@@ -65,27 +66,51 @@ exports.send = function(req, res, next){
 
   });
 
-  workflow.on('sendEmail', function(token, user) {
-    req.app.utility.sendmail(req, res, {
-      from: req.app.config.smtp.from.name +' <'+ req.app.config.smtp.from.address +'>',
-      to: user.email,
-      subject: 'Reset your '+ req.app.config.projectName +' password',
-      textPath: 'login/forgot/email-text',
-      htmlPath: 'login/forgot/email-html',
-      locals: {
-        username: user.username,
-        resetLink: req.protocol +'://'+ req.headers.host +'/login/reset/'+ user.email +'/'+ token +'/',
-        projectName: req.app.config.projectName
-      },
-      success: function(message) {
-        workflow.emit('response');
-      },
-      error: function(err) {
-        workflow.outcome.errors.push('Error Sending: '+ err);
-        workflow.emit('response');
-      }
-    });
-  });
+    workflow.on('sendEmail', function(token, user) {
 
-  workflow.emit('validate');
+        var email_text = "\n"
+            + "Hi " + user.username + ","
+            + "\n"
+            + "\n"
+            + "We received a request to reset the password for your account.  "
+            + "\n"
+            + "To reset your password, click here: "
+            + req.protocol +'://'+ req.headers.host +'/login/reset/'+ user.email +'/'+ token +'/'
+            + "\n"
+            + "\n"
+            + "Thank you, "
+            + "\n"
+            + "-The Smoke Alarm Request Portal";
+        
+        var outbound_email = {
+            from: db.mail_from_addr,
+            to: user.email,
+            subject: 'Reset your '+ req.app.config.projectName +' password',
+            text: email_text
+        };
+
+        db.mailgun.messages().send(outbound_email, function (error, body) {
+            if (error) {
+                workflow.outcome.errors.push('Error Sending:' + error);
+                return workflow.emit('exception', error);
+            }
+
+            // TODO: We need to record the sent message's Message-ID 
+            // (which is body.id) in the database, with the request.
+            if (body.id === undefined) {
+                console.log("DEBUG: sent mail ID was undefined");
+            } else {
+                console.log("DEBUG: sent mail ID:  '" + body.id + "'");
+            }
+            if (body.message === undefined) {
+                console.log("DEBUG: sent mail msg was undefined");
+            } else {
+                console.log("DEBUG: sent mail msg: '" + body.message + "'");
+            }
+        });
+        workflow.emit('response', "Thanks! You will receive an email shortly.");
+    });
+    
+    workflow.emit('validate');
+
 };
