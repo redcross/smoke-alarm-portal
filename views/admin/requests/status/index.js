@@ -24,7 +24,7 @@ exports.update = function(req, res) {
         // parsed correctly.  If it *is*, then we'll have other
         // problems.
         var body_keys = [];
-        for (key in req.body) {
+        for (var key in req.body) {
             body_keys.push(key);
         }
         var body = JSON.parse(body_keys[0]);
@@ -38,7 +38,7 @@ exports.update = function(req, res) {
     var testToken = function () {
         return db.Token.findOne({
             where: {
-                token: body.token,
+                token: req.headers.authorization,
                 direction: "inbound"
             }
         });

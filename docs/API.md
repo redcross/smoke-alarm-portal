@@ -9,7 +9,7 @@ given in the URL).
 
 Here's an example `curl` call that updates the status of a request:
 
-`$ curl -H "application/json" -X POST -d [SOME JSON] [SERVER_ROOT]/admin/requests/status/[SERIAL_NUMBER]`
+`$ curl -H "application/json" -H "Authorization:__SOME_TOKEN__" -X POST -d [SOME JSON] [SERVER_ROOT]/admin/requests/status/[SERIAL_NUMBER]`
 
 
 The JSON data you send should look like this:
@@ -17,8 +17,7 @@ The JSON data you send should look like this:
 ```
 {
   "acceptance": true,
-  "status": "completed",
-  "token": "SOME_TOKEN"
+  "status": "completed"
 }
 ```
 
@@ -28,7 +27,9 @@ In the JSON: "acceptance" is a boolean that expresses whether or not the
 external service is going to be tracking this request, the status is the
 new status of the request (we expect values "new," "inprogress,"
 "complete," or "canceled," though those aren't enforced on our side
-yet), and the token is the API token.
+yet).
+
+The API token is passed in the Authorization header.
 
 If your request is successful, you'll get back a request object like
 this:
@@ -90,6 +91,6 @@ Or:
 These errors follow the Google style guide, though the data response
 doesn't yet.
 
-This is all implemented on the (#196 branch in our
-repo)[https://github.com/redcross/smoke-alarm-portal/tree/196-api-integration].
+This is all implemented on the [#196 branch in our
+repo](https://github.com/redcross/smoke-alarm-portal/tree/196-api-integration).
 
