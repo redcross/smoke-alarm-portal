@@ -19,19 +19,28 @@
 /* Apply this class to text that is for screen readers only.  Copied
 from http://www.coolfields.co.uk/2009/12/text-for-screen-readers-only/
 */
-.screenreader {border: 0; 
-   clip: rect(0 0 0 0); 
-   height: 1px; 
-   width: 1px; 
-   margin: -1px; 
-   padding: 0; 
-   overflow: hidden; 
-   position: absolute !important;
+.screenreader {
+    border: 0; 
+    clip: rect(0 0 0 0); 
+    height: 1px; 
+    width: 1px; 
+    margin: -1px; 
+    padding: 0; 
+    overflow: hidden; 
+    position: absolute !important;
 }
 
 html, body, body::after {
     margin: 0px;
     min-height: 100%;
+}
+
+a {
+  color:#529BDA
+}
+
+a:hover {
+  color:#FFEEFF
 }
 
 body {
@@ -45,7 +54,10 @@ body {
     font-size: 1.6em;
 }
 
-img.bg {
+.bg {
+    background: no-repeat center center url('../images/install-bg.png');
+    background-size: cover;
+    height: 100%;
     width: 100%;
     position: fixed;
     top: 0;
@@ -205,10 +217,8 @@ img.fourpanel {
 }
 
 #language {
-    padding: 5px;
-    top: 0px;
-    left: 0px;
-    float: right;
+    margin-top:1em;
+    margin-bottom:0;
 }
 
 #language a {
@@ -228,7 +238,7 @@ img.fourpanel {
 }
 
 #main {
-    margin-top: 1.2em;
+    margin-top: 0;
 }
 
 

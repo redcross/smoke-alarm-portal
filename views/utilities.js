@@ -1,6 +1,6 @@
-var db = require('./../models');
+var db = require('../models');
 var env = process.env.NODE_ENV || 'development';
-var config = require(__dirname + '/../config/config.json')[env];
+var config = require('../config/config.json')[env];
 var requestlib = require('request');
 var requestData = {};
 
@@ -383,7 +383,7 @@ module.exports  = {
 
         db.mailgun.messages().send(outbound_email, function (error, body) {
             if (!body) return;
-            
+
             // TODO: We need to record the sent message's Message-ID 
             // (which is body.id) in the database, with the request.
             if (body.id === undefined) {

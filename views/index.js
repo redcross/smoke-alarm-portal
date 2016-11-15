@@ -1,5 +1,5 @@
 'use strict';
-var db = require('./../models');
+var db = require('../models');
 var env = process.env.NODE_ENV || 'development';
 var config = require(__dirname + '/../config/config.json')[env];
 // all the functions used below are now defined in utilities.js so that
