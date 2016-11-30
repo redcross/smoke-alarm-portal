@@ -32,6 +32,7 @@ exports.update = function(req, res) {
     catch (err) {
         // TODO: handle error correctly
         console.log("DEBUG: Parsing error is " + err);
+        var body = req.body;
     }
 
     // get token from req and check whether it is valid
