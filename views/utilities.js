@@ -458,33 +458,53 @@ module.exports  = {
         if (destination && token) {
             // pass our token in the body of our POST
             request['token'] = token;
+            external_body = {
+                "ProviderRequestId": request['serial'],
+                "ProviderData": request['assigned_rc_region'],
+                "Status":"new",
+                "Name": request['name'],
+                "Address": request['address'],
+                "City": request['city'],
+                "State": request['state'],
+                "Zip": request['zip'],
+                "Phone": request['phone'],
+                "Email": request['email']
+            }
             requestlib.post(
                 destination,
                 { json: true,
-                  body: request },
+                  body: external_body },
                 function (error, response, body) {
                     if (error) {
                         // TODO: log and/or handle the error
                         console.log("DEBUG: received an error from the external destination");
                         console.log(error);
+                        // TODO: save "false" for acceptance
+                        //return module.exports.updateRequestStatus(response.id, false, response.status);
                     }
                     else if (response.statusCode == 202 || response.statusCode == 200) {
-                        // send the acceptance and status to our endpoint for this request
-                        //
-                        // TODO: Do I need to send a confirmation back
-                        // to the external server?
+                        // update the acceptance and status for this request
+                        
+                        // TODO: they may not send back an acceptance
+                        // and status along with a 202.  When we get a
+                        // 202, we can set acceptance to True and leave
+                        // status unchanged.  If some business logic
+                        // fails, they'll send an update to the status
+                        // endpoint afterward.
                         return module.exports.updateRequestStatus(response.id, response.acceptance, response.status);
                     }
                     else {
                         // there was no error but the response code was not one of our success cases
                         console.log("DEBUG: statusCode from remote server was " + response.statusCode);
-                        return;
+                        // TODO: will we always receive a serial back?
+                        // If not, get it some other way.
+                        return module.exports.updateRequestStatus(response.id, false, 'new');
                     }
                 });
         }
         else {
             console.log("DEBUG: we're missing the destination and/or token, so can't POST to the remote destination");
-            // TODO: should we send an error back here?
+            // TODO: send an error here
             return;
         }
     }
