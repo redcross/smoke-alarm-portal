@@ -78,8 +78,7 @@ exports.login = function(req, res) {
                 return workflow.emit('exception', err);
             }
 
-            if (results.ip >= req.app.config.loginAttempts.forIp ||
-                results.ipUser >= req.app.config.loginAttempts.forIpAndUser) {
+            if ( results.ipUser >= req.app.config.loginAttempts.forIpAndUser) {
                 workflow.outcome.errors.push('You\'ve reached the maximum number of login attempts. Please try again later.');
                 return workflow.emit('response');
             } else {
