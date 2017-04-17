@@ -48,7 +48,7 @@ exports.find = function(req, res, next) {
 };
 
 exports.read = function(req, res, next) {
-    req.app.db.models.User.findById(req.params.id).populate('roles.admin', 'name.full').populate('roles.account', 'name.full').exec(function(err, user) {
+    req.app.db.User.findById(req.params.id).populate('roles.admin', 'name.full').populate('roles.account', 'name.full').exec(function(err, user) {
         if (err) {
             return next(err);
         }
@@ -147,7 +147,7 @@ exports.update = function(req, res, next) {
     });
 
     workflow.on('duplicateUsernameCheck', function() {
-        req.app.db.models.User.findOne({
+        req.app.db.User.findOne({
             username: req.body.username,
             _id: {
                 $ne: req.params.id
@@ -167,7 +167,7 @@ exports.update = function(req, res, next) {
     });
 
     workflow.on('duplicateEmailCheck', function() {
-        req.app.db.models.User.findOne({
+        req.app.db.User.findOne({
             email: req.body.email.toLowerCase(),
             _id: {
                 $ne: req.params.id
@@ -197,7 +197,7 @@ exports.update = function(req, res, next) {
             ]
         };
 
-        req.app.db.models.User.findByIdAndUpdate(req.params.id, fieldsToSet, function(err, user) {
+        req.app.db.User.findByIdAndUpdate(req.params.id, fieldsToSet, function(err, user) {
             if (err) {
                 return workflow.emit('exception', err);
             }
@@ -214,7 +214,7 @@ exports.update = function(req, res, next) {
                     name: user.username
                 }
             };
-            req.app.db.models.Admin.findByIdAndUpdate(user.roles.admin, fieldsToSet, function(err, admin) {
+            req.app.db.Admin.findByIdAndUpdate(user.roles.admin, fieldsToSet, function(err, admin) {
                 if (err) {
                     return workflow.emit('exception', err);
                 }
@@ -234,7 +234,7 @@ exports.update = function(req, res, next) {
                     name: user.username
                 }
             };
-            req.app.db.models.Account.findByIdAndUpdate(user.roles.account, fieldsToSet, function(err, account) {
+            req.app.db.Account.findByIdAndUpdate(user.roles.account, fieldsToSet, function(err, account) {
                 if (err) {
                     return workflow.emit('exception', err);
                 }
@@ -284,7 +284,7 @@ exports.password = function(req, res, next) {
     });
 
     workflow.on('patchUser', function() {
-        req.app.db.models.User.encryptPassword(req.body.newPassword, function(err, hash) {
+        req.app.db.User.encryptPassword(req.body.newPassword, function(err, hash) {
             if (err) {
                 return workflow.emit('exception', err);
             }
@@ -292,7 +292,7 @@ exports.password = function(req, res, next) {
             var fieldsToSet = {
                 password: hash
             };
-            req.app.db.models.User.findByIdAndUpdate(req.params.id, fieldsToSet, function(err, user) {
+            req.app.db.User.findByIdAndUpdate(req.params.id, fieldsToSet, function(err, user) {
                 if (err) {
                     return workflow.emit('exception', err);
                 }
@@ -332,7 +332,7 @@ exports.linkAdmin = function(req, res, next) {
     });
 
     workflow.on('verifyAdmin', function(callback) {
-        req.app.db.models.Admin.findById(req.body.newAdminId).exec(function(err, admin) {
+        req.app.db.Admin.findById(req.body.newAdminId).exec(function(err, admin) {
             if (err) {
                 return workflow.emit('exception', err);
             }
@@ -353,7 +353,7 @@ exports.linkAdmin = function(req, res, next) {
     });
 
     workflow.on('duplicateLinkCheck', function(callback) {
-        req.app.db.models.User.findOne({
+        req.app.db.User.findOne({
             'roles.admin': req.body.newAdminId,
             _id: {
                 $ne: req.params.id
@@ -373,7 +373,7 @@ exports.linkAdmin = function(req, res, next) {
     });
 
     workflow.on('patchUser', function(callback) {
-        req.app.db.models.User.findById(req.params.id).exec(function(err, user) {
+        req.app.db.User.findById(req.params.id).exec(function(err, user) {
             if (err) {
                 return workflow.emit('exception', err);
             }
@@ -431,7 +431,7 @@ exports.unlinkAdmin = function(req, res, next) {
     });
 
     workflow.on('patchUser', function() {
-        req.app.db.models.User.findById(req.params.id).exec(function(err, user) {
+        req.app.db.User.findById(req.params.id).exec(function(err, user) {
             if (err) {
                 return workflow.emit('exception', err);
             }
@@ -461,7 +461,7 @@ exports.unlinkAdmin = function(req, res, next) {
     });
 
     workflow.on('patchAdmin', function(id) {
-        req.app.db.models.Admin.findById(id).exec(function(err, admin) {
+        req.app.db.Admin.findById(id).exec(function(err, admin) {
             if (err) {
                 return workflow.emit('exception', err);
             }
@@ -503,7 +503,7 @@ exports.linkAccount = function(req, res, next) {
     });
 
     workflow.on('verifyAccount', function(callback) {
-        req.app.db.models.Account.findById(req.body.newAccountId).exec(function(err, account) {
+        req.app.db.Account.findById(req.body.newAccountId).exec(function(err, account) {
             if (err) {
                 return workflow.emit('exception', err);
             }
@@ -524,7 +524,7 @@ exports.linkAccount = function(req, res, next) {
     });
 
     workflow.on('duplicateLinkCheck', function(callback) {
-        req.app.db.models.User.findOne({
+        req.app.db.User.findOne({
             'roles.account': req.body.newAccountId,
             _id: {
                 $ne: req.params.id
@@ -544,7 +544,7 @@ exports.linkAccount = function(req, res, next) {
     });
 
     workflow.on('patchUser', function(callback) {
-        req.app.db.models.User.findById(req.params.id).exec(function(err, user) {
+        req.app.db.User.findById(req.params.id).exec(function(err, user) {
             if (err) {
                 return workflow.emit('exception', err);
             }
@@ -597,7 +597,7 @@ exports.unlinkAccount = function(req, res, next) {
     });
 
     workflow.on('patchUser', function() {
-        req.app.db.models.User.findById(req.params.id).exec(function(err, user) {
+        req.app.db.User.findById(req.params.id).exec(function(err, user) {
             if (err) {
                 return workflow.emit('exception', err);
             }
@@ -627,7 +627,7 @@ exports.unlinkAccount = function(req, res, next) {
     });
 
     workflow.on('patchAccount', function(id) {
-        req.app.db.models.Account.findById(id).exec(function(err, account) {
+        req.app.db.Account.findById(id).exec(function(err, account) {
             if (err) {
                 return workflow.emit('exception', err);
             }
@@ -669,7 +669,7 @@ exports.delete = function(req, res, next) {
     });
 
     workflow.on('deleteUser', function(err) {
-        req.app.db.models.User.findByIdAndRemove(req.params.id, function(err, user) {
+        req.app.db.User.findByIdAndRemove(req.params.id, function(err, user) {
             if (err) {
                 return workflow.emit('exception', err);
             }
