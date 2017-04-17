@@ -83,37 +83,31 @@ exports.create = function(req, res, next) {
     });
 
     workflow.on('duplicateUsernameCheck', function() {
-        req.app.db.models.User.findOne({
-            username: req.body.username
-        }, function(err, user) {
+        req.app.db.User.find(
+            { where: { username: req.body.username }
+        }).then( function(user, err) {
             if (err) {
                 return workflow.emit('exception', err);
             }
 
             if (user) {
-                workflow.outcome.errors.push('That username is already taken.');
+                workflow.outcome.errors.push('Sorry, that username is already taken.  Please choose a different one, or edit the existing user.');
                 return workflow.emit('response');
             }
-
             workflow.emit('createUser');
         });
     });
 
     workflow.on('createUser', function() {
-        var fieldsToSet = {
-            username: req.body.username,
-            search: [
-                req.body.username
-            ]
-        };
-        req.app.db.models.User.create(fieldsToSet, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
+        req.app.db.User.create( {username: req.body.username} )
+            .then( function(user, err) {
+                if (err) {
+                    return workflow.emit('exception', err);
+                }
 
-            workflow.outcome.record = user;
-            return workflow.emit('response');
-        });
+                workflow.outcome.record = user;
+                return workflow.emit('response');
+            });
     });
 
     workflow.emit('validate');
