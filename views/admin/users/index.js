@@ -48,21 +48,23 @@ exports.find = function(req, res, next) {
 };
 
 exports.read = function(req, res, next) {
-    req.app.db.User.findById(req.params.id).populate('roles.admin', 'name.full').populate('roles.account', 'name.full').exec(function(err, user) {
-        if (err) {
-            return next(err);
-        }
+    req.app.db.User
+        .find( { where: {id: req.params.id} } )
+        .then( function(user, err) {
+            if (err) {
+                return workflow.emit('exception', err);
+            }
 
-        if (req.xhr) {
-            res.send(user);
-        } else {
-            res.render('admin/users/details', {
-                data: {
-                    record: escape(JSON.stringify(user))
-                }
-            });
-        }
-    });
+            if (req.xhr) {
+                res.send(user);
+            } else {
+                res.render('admin/users/details', {
+                    data: {
+                        record: escape(JSON.stringify(user))
+                    }
+                });
+            }
+        });
 };
 
 exports.create = function(req, res, next) {

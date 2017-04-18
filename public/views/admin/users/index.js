@@ -13,8 +13,12 @@
       email: '',
       isActive: ''
     },
-    url: function() {
-      return '/admin/users/'+ (this.isNew() ? '' : this.id +'/');
+      url: function(isNew) {
+          if (isNew === undefined) {
+              isNew = true;
+          }
+          var model_url =  '/admin/users/'+ (isNew ? '' : this.attributes.id +'/');
+          return model_url;
     }
   });
 
@@ -76,18 +80,18 @@
       if (this.$el.find('[name="username"]').val() === '') {
         alert('Please enter a username.');
       }
-      else {
+        else {
         this.model.save({
           username: this.$el.find('[name="username"]').val()
         },{
-          success: function(model, response) {
-            if (response.success) {
-              model.id = response.record._id;
-              location.href = model.url();
-            }
-            else {
-              alert(response.errors.join('\n'));
-            }
+            always: function(model, response) {
+                if (response.success) {
+                    model.id = response.record._id;
+                    location.href = model.url(true);
+                }
+                else {
+                    alert(response.errors.join('\n'));
+                }
           }
         });
       }
@@ -124,8 +128,8 @@
     events: {
       'click .btn-details': 'viewDetails'
     },
-    viewDetails: function() {
-      location.href = this.model.url();
+      viewDetails: function() {
+          location.href = this.model.url(false);
     },
     render: function() {
       this.$el.html(this.template( this.model.attributes ));
