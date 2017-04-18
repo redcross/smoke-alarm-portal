@@ -143,32 +143,38 @@ exports.update = function(req, res, next) {
     });
 
     workflow.on('duplicateUsernameCheck', function() {
-        req.app.db.User.findOne({
-            username: req.body.username,
-            _id: {
-                $ne: req.params.id
+        req.app.db.User.find(
+            { where : {
+                username: req.body.username,
+                id: {
+                    $ne: req.body.id
+                }
             }
-        }, function(err, user) {
-            if (err) {
+            }).then( function(user, err) {
+                if (err) {
+                    return workflow.emit('exception', err);
+                }
+
+                if (user) {
+                    workflow.outcome.errfor.username = 'username already taken';
+                    return workflow.emit('response');
+                }
+
+                workflow.emit('duplicateEmailCheck');
+            }).catch( function(err) {
                 return workflow.emit('exception', err);
-            }
-
-            if (user) {
-                workflow.outcome.errfor.username = 'username already taken';
-                return workflow.emit('response');
-            }
-
-            workflow.emit('duplicateEmailCheck');
         });
     });
 
     workflow.on('duplicateEmailCheck', function() {
-        req.app.db.User.findOne({
-            email: req.body.email.toLowerCase(),
-            _id: {
-                $ne: req.params.id
+        req.app.db.User.find( {
+            where: {
+                email: req.body.email.toLowerCase(),
+                id: {
+                    $ne: req.body.id
+                }
             }
-        }, function(err, user) {
+        }).then( function(user, err) {
             if (err) {
                 return workflow.emit('exception', err);
             }
@@ -183,23 +189,23 @@ exports.update = function(req, res, next) {
     });
 
     workflow.on('patchUser', function() {
-        var fieldsToSet = {
-            isActive: req.body.isActive,
-            username: req.body.username,
-            email: req.body.email.toLowerCase(),
-            search: [
-                req.body.username,
-                req.body.email
-            ]
-        };
+        req.app.db.User.findOne( { where: {id: req.body.id} })
+            .then( function(User) {
+                if (User) {
+                    User.updateAttributes({
+                        isActive: req.body.isActive,
+                        username: req.body.username,
+                        email: req.body.email.toLowerCase()
+                    })
+                        .then( function(user, err) {
+                            if (err) {
+                                return workflow.emit('exception', err);
+                            }
 
-        req.app.db.User.findByIdAndUpdate(req.params.id, fieldsToSet, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
-            workflow.emit('patchAdmin', user);
-        });
+                            workflow.emit('response');
+                        });
+                }
+            });
     });
 
     workflow.on('patchAdmin', function(user) {

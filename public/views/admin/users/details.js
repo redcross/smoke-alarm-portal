@@ -7,7 +7,7 @@
 
   app.User = Backbone.Model.extend({
     idAttribute: '_id',
-    url: function() {
+      url: function() {
       return '/admin/users/'+ this.id +'/';
     }
   });
@@ -19,7 +19,7 @@
       errors: [],
       errfor: {}
     },
-    url: function() {
+  url: function() {
       return '/admin/users/'+ app.mainView.model.id +'/';
     }
   });
@@ -113,6 +113,8 @@
     },
     initialize: function() {
       this.model = new app.Identity();
+      this.model.id = app.mainView.model.attributes.id;
+      this.model.attributes._id = app.mainView.model.attributes.id;
       this.syncUp();
       this.listenTo(app.mainView.model, 'change', this.syncUp);
       this.listenTo(this.model, 'sync', this.render);
@@ -135,11 +137,24 @@
         }
       }
     },
-    update: function() {
-      this.model.save({
-        isActive: this.$el.find('[name="isActive"]').val(),
+      update: function() {
+          this.model.id = app.mainView.model.attributes.id;
+          this.model.save({
+              _id: app.mainView.model.attributes.id,
+              id: app.mainView.model.attributes.id,
+              isActive: this.$el.find('[name="isActive"]').val(),
         username: this.$el.find('[name="username"]').val(),
         email: this.$el.find('[name="email"]').val()
+      }, {
+          always: function (model, response, options) {
+              console.log("DEBUG: something happened with updating a user");
+              console.log(response);
+          },
+          error: function (model, xhr, options) {
+              console.log(model);
+              console.log("DEBUG: error saving user");
+              console.log(xhr.responseText);
+          }
       });
     }
   });
