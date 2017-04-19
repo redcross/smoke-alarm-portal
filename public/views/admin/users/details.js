@@ -8,7 +8,7 @@
   app.User = Backbone.Model.extend({
     idAttribute: '_id',
       url: function() {
-      return '/admin/users/'+ this.id +'/';
+      return '/admin/users/'+ this.attributes.id +'/';
     }
   });
 
@@ -19,8 +19,9 @@
       errors: [],
       errfor: {}
     },
-  url: function() {
-      return '/admin/users/'+ app.mainView.model.id +'/';
+    url: function() {
+      var new_url = '/admin/users/'+ app.mainView.model.attributes.id +'/';
+      return new_url;
     }
   });
 
@@ -288,6 +289,8 @@
     },
     delete: function() {
       if (confirm('Are you sure?')) {
+        this.model.id = app.mainView.model.attributes.id;
+        this.model.attributes._id = app.mainView.model.attributes.id;
         this.model.destroy({
           success: function(model, response) {
             if (response.success) {

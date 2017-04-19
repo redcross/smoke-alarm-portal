@@ -657,12 +657,14 @@ exports.delete = function(req, res, next) {
     var workflow = req.app.utility.workflow(req, res);
 
     workflow.on('validate', function() {
-        if (!req.user.roles.admin.isMemberOf('root')) {
+        // TODO: Test whether the logged-in user has permission to edit users
+        
+        /*if (!req.user.roles.admin.isMemberOf('root')) {
             workflow.outcome.errors.push('You may not delete users.');
             return workflow.emit('response');
-        }
+        }*/
 
-        if (req.user._id === req.params.id) {
+        if (req.user.dataValues.id === req.params.id) {
             workflow.outcome.errors.push('You may not delete yourself from user.');
             return workflow.emit('response');
         }
@@ -671,14 +673,15 @@ exports.delete = function(req, res, next) {
     });
 
     workflow.on('deleteUser', function(err) {
-        req.app.db.User.findByIdAndRemove(req.params.id, function(err, user) {
-            if (err) {
+        req.app.db.User.findOne(
+            {where: {id: req.params.id}
+            }).then( function(User) {
+                User.destroy();
+                workflow.emit('response');
+            }).catch ( function (err) {
                 return workflow.emit('exception', err);
-            }
-
-            workflow.emit('response');
+            })
         });
-    });
 
     workflow.emit('validate');
 };
