@@ -36,7 +36,8 @@
       email: ''
     },
     url: function() {
-      return '/admin/users/'+ app.mainView.model.id +'/';
+      var new_url = '/admin/users/'+ app.mainView.model.attributes.id +'/';
+      return new_url;
     },
     parse: function(response) {
       if (response.user) {
@@ -59,7 +60,7 @@
       newAdminId: ''
     },
     url: function() {
-      return '/admin/users/'+ app.mainView.model.id +'/';
+      return '/admin/users/'+ app.mainView.model.attributes.id +'/';
     },
     parse: function(response) {
       if (response.user) {
@@ -81,7 +82,7 @@
       confirm: ''
     },
     url: function() {
-      return '/admin/users/'+ app.mainView.model.id +'/password/';
+      return '/admin/users/'+ app.mainView.model.attributes.id +'/password/';
     },
     parse: function(response) {
       if (response.user) {
@@ -166,6 +167,7 @@
     events: {
       'click .btn-admin-open': 'adminOpen',
       'click .btn-admin-link': 'adminLink',
+      'change #addAdmin': 'adminLink',
       'click .btn-admin-unlink': 'adminUnlink',
       'click .btn-account-open': 'accountOpen',
       'click .btn-account-link': 'accountLink',
@@ -196,9 +198,12 @@
     adminOpen: function() {
       location.href = '/admin/administrators/'+ this.model.get('roles').admin._id +'/';
     },
-    adminLink: function() {
+      adminLink: function() {
+          // TODO: For now, we want to link all users to the same value
+          // of "AdminId" -- 1.  I've hardcoded that here as a a magic
+          // number, which isn't sustainable.
       this.model.save({
-        newAdminId: $('[name="newAdminId"]').val()
+        newAdminId: 1
       },{
         url: this.model.url() +'role-admin/'
       });

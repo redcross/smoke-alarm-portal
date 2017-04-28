@@ -35,11 +35,21 @@ module.exports = function(sequelize, DataTypes) {
         github: DataTypes.JSON,
         facebook: DataTypes.JSON,
         google: DataTypes.JSON,
-        tumblr: DataTypes.JSON
+        tumblr: DataTypes.JSON,
+        adminGroupId: DataTypes.INTEGER
     }, {
         freezeTableName: true,
         instanceMethods: {
             canPlayRoleOf: function(role) {
+                if (role == 'superuser') {
+                    // TODO: fix this magic number!
+                    if (this.adminGroupId == 1) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
                 return true;
             },
             defaultReturnUrl: function() {

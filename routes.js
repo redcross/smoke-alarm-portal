@@ -34,6 +34,13 @@ function ensureAdmin(req, res, next) {
   res.redirect('/');
 }
 
+function ensureSuperuser(req, res, next) {
+  if (req.user.canPlayRoleOf('superuser')) {
+    return next();
+  }
+  res.redirect('/');
+}
+
 function ensureAccount(req, res, next) {
   if (req.user.canPlayRoleOf('account')) {
     if (req.app.config.requireAccountVerification) {
@@ -122,11 +129,13 @@ exports = module.exports = function(app, passport) {
 
 
   //admin > users
+  app.all('/admin/users*', ensureSuperuser);
   app.get('/admin/users/', require('./views/admin/users/index').find);
   app.post('/admin/users/', require('./views/admin/users/index').create);
   app.get('/admin/users/:id/', require('./views/admin/users/index').read);
   app.put('/admin/users/:id/', require('./views/admin/users/index').update);
   app.put('/admin/users/:id/password/', require('./views/admin/users/index').password);
+  app.post('/admin/users/:id/role-admin/', require('./views/admin/users/index').linkAdmin);
   app.put('/admin/users/:id/role-admin/', require('./views/admin/users/index').linkAdmin);
   app.delete('/admin/users/:id/role-admin/', require('./views/admin/users/index').unlinkAdmin);
   app.put('/admin/users/:id/role-account/', require('./views/admin/users/index').linkAccount);
