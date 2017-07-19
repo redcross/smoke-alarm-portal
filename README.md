@@ -12,6 +12,9 @@ Central Division, which is comprised of 10 regions.  This software is
 a lightweight web portal for receiving and routing smoke alarm
 installation requests.
 
+Please see [DEVELOPMENT.md](DEVELOPMENT.md) for information about
+design, user model, data model, and development / contribution.
+
 ## Features
 
 The expected user workflow is:

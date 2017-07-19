@@ -3,6 +3,60 @@
 This file contains an overview of how to do development on this
 application, as well as HOWTOs for specific tasks.
 
+## Architecture Overview
+
+TBD: Explain the various locations in the code tree that we most commonly find ourselves editing to accomplish tasks.
+
+## User Model Overview
+
+Each Red Cross region using the Smoke Alarm Portal has one or more
+users (administrators) who have permission to view and manage requests
+associated with that region.  Users are always individuals; that way
+one of them can be added or removed for a particular region without
+affecting the other users associated with that region.
+
+Each region also has a designated email address to which notification
+of inbound smoke alarm installation requests should be sent.
+Sometimes that notification address is the same as an email address
+for one the region's user accounts, and sometimes not (e.g., it might
+be an alias that forwards the email to several people).
+
+When a new user is created via the `/signup` route (which must first
+be temporarily enabled via a `config.js` edit and server restart right
+now, until issue #138 is resolved), that causes a new row in the
+"Users" table to be created.  But the new user does not have
+administrative privileges on any region(s) yet.  To grant privileges
+for a particular region, set up the relation in the database in the
+"regionPermissions" table:
+
+    smokealarm=# select username, id from "User";
+       username   | id
+    --------------+----
+     ...          | ...
+     jrandom      | 1729
+    (1729 rows)
+
+    smokealarm=# select "rc_region", "region_name", "is_active" from "activeRegions";
+       rc_region    |         region_name         | is_active
+    ----------------+-----------------------------+-----------
+     ...            | ...                         | ...
+     IDMT           | Idaho/Montana               | t
+    (15 rows)
+    smokealarm=# INSERT INTO "regionPermissions" "(rc_region", "user_id", "createdAt", "updatedAt") VALUES ('IDMT', 1729, now(), now());
+
+Meanwhile, notification address relations are in the "activeRegions" table:
+
+    smokealarm=# select "rc_region", "contact_name", "contact_email" from "activeRegions";
+       rc_region    |    contact_name      |            contact_email
+    ----------------+----------------------+--------------------------------------
+     ...            | ...                  | ...
+     IDMT           | Idaho Montana Region | idmt-region-admin-nospam@redcross.org
+    (15 rows)
+
+(Yes, this is veering over into admin documentation, rather than
+developer documentation.  At some point we should probably split it
+out into a separate document.)
+
 ## Coding Practices
 
 ### Change one thing at a time
@@ -40,10 +94,6 @@ Here's a good example commit message:
     
     M	views/account/settings/index.jade
     M	views/account/settings/index.js
-
-## Architecture Overview
-
-TBD: Explain the various locations in the code tree that we most commonly find ourselves editing to accomplish tasks.
 
 ## HOWTOs:
 
