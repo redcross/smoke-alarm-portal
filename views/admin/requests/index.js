@@ -240,7 +240,7 @@ var getResults = function(callback) {
 
     var createCSV = function() {
         var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created','region'];
-        var requestFields = ['serial','name','address','city','state','zip','phone','email','createdAt','assigned_rc_region'];
+        var requestFields = ['public_id','name','address','city','state','zip','phone','email','createdAt','assigned_rc_region'];
         json2csv({ data: outcome.results, fields: requestFields, fieldNames: requestFieldNames }, function(err, csv) {
             if (err) console.log("ERROR: error converting to CSV" + err);
             res.setHeader('Content-Type','application/csv');

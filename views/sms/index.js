@@ -151,11 +151,11 @@ exports.respond = function(req, res) {
      * Takes: the "outcome" (a boolean that is true iff the entered zip code
      * is valid and in an active region),
      * If the outcome was successful:
-     * serial: the serial number assigned to the request
+     * public_id: the unique ID number assigned to the request
      * county: the county found based on the entered zipcode
      * contact: the phone number for this RC region
      *
-     * Returns: a message with "thank you," the serial number, and a contact
+     * Returns: a message with "thank you," the ID number (public id), and a contact
      * phone for successful outcomes and a "sorry" message with a generic RC
      * phone number for out-of-area zip codes (just like the website).
      */
@@ -163,7 +163,7 @@ exports.respond = function(req, res) {
         var twiml = new twilio.TwimlResponse();
         if (outcome) {
             msg = __("Thank you for your smoke alarm request! Your request number is %s.");
-            msg = msg.replace('%s', request.serial);
+            msg = msg.replace('%s', request.public_id);
             msg += __(" To contact your local Red Cross about this request, call 1-800-RED-CROSS (1-800-733-2767). We will be in touch with you to schedule an installation.");
         }
         else {
@@ -240,7 +240,7 @@ exports.respond = function(req, res) {
             req.cookies.request_object.assigned_rc_region = region_code;
             return save_utils.countRequestsPerRegion(region_code);
         }).then( function(numRequests) {
-            requestData = save_utils.createSerial(numRequests, req.cookies.request_object, region_code);
+            requestData = save_utils.createPublicId(numRequests, req.cookies.request_object, region_code);
             requestData.is_sms = 'sms';
             requestData.name = req.cookies.priorities.name.value;
             requestData.phone = req.cookies.priorities.phone.value;
