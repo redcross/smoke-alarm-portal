@@ -234,7 +234,7 @@ img.fourpanel {
 */
 
 #logo {
-  margin: 1em 0em;
+    margin: 1em 0em;
 }
 
 #main {
@@ -347,4 +347,9 @@ a.contrast-link {
     background-color: rgba(0, 0, 0, 0.3);
     -moz-border-radius: 5px 5px 5px 5px;
     border-radius: 5px 5px 5px 5px; /* standards-compliant: (IE) */
+}
+
+.img-circle {
+    border-radius: 50%;
+    height: 150px;
 }
