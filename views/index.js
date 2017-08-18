@@ -35,10 +35,10 @@ exports.saveRequest = function(req, res) {
         
         // Check for 311 origin:
         if (req.url == '/311') {
-            requestData.origin = '311-web';
+            requestData.origin = 'chi-311-web';
         }
         else {
-            requestData.origin = 'web';
+            requestData.origin = 'web-home';
         }
         return utils.saveRequestData(requestData);
     }).then(function(request) {
