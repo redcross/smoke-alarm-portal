@@ -6,8 +6,7 @@ block content
       #logo.text-center
         img.logo(src='./smokeAlarmPortal_files/redcross-logo-white-letters.png', alt='American Red Cross')
         if origin == '/311'
-          
-          img.img-circle(src='./images/311-chicago.png', alt='311 Chicago')
+          img.img-circle(src='./images/311-chicago-mod.png', alt='311 Chicago')
       #safety-message.row.text-center(role='complementary')
         p.col-xs-12.bigger-centered
           | #{__('Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.')}
@@ -135,7 +134,7 @@ block content
           a(class="contrast-link" href="http://labs.enigma.io/smoke-signals/" target="_blank") #{__('the Smoke Signals project')}
           |.
           
-      p.availability.col-xs-12
+      p.availability.col-xs-12(class= origin != '/311' ? "" : "text-center")
         | #{__('This web site is open source ')}
         |&mdash;
         | #{__(' volunteers welcome ')}
