@@ -349,9 +349,8 @@ a.contrast-link {
     border-radius: 5px 5px 5px 5px; /* standards-compliant: (IE) */
 }
 
-.img-circle {
-    border-radius: 50%;
-    height: 150px;
+.img-square {
+    height: 75px;
     margin-left: 70px;
 }
 
