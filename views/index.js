@@ -33,12 +33,12 @@ exports.saveRequest = function(req, res) {
         requestData = utils.getRequestData(req, numRequests, region_code);
         requestData = utils.createSerial(numRequests, requestData, region_code);
         
-        // Check for 311 origin:
+        // Check what url the request came from:
         if (req.url == '/311') {
-            requestData.origin = 'chi-311-web';
+            requestData.source = 'chi-311-web';
         }
         else {
-            requestData.origin = 'web-home';
+            requestData.source = 'web-home';
         }
         return utils.saveRequestData(requestData);
     }).then(function(request) {

@@ -239,7 +239,7 @@ var getResults = function(callback) {
     };
 
     var createCSV = function() {
-        var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created','region', 'origin'];
+        var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created','region', 'source'];
         var requestFields = ['serial','name','address','city','state','zip','phone','email','createdAt','assigned_rc_region', 'source'];
         json2csv({ data: outcome.results, fields: requestFields, fieldNames: requestFieldNames }, function(err, csv) {
             if (err) console.log("ERROR: error converting to CSV" + err);

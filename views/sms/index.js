@@ -241,7 +241,7 @@ exports.respond = function(req, res) {
             return save_utils.countRequestsPerRegion(region_code);
         }).then( function(numRequests) {
             requestData = save_utils.createSerial(numRequests, req.cookies.request_object, region_code);
-            requestData.origin = 'sms';
+            requestData.source = 'sms';
             requestData.name = req.cookies.priorities.name.value;
             requestData.phone = req.cookies.priorities.phone.value;
             requestData.email = req.cookies.priorities.email.value;
