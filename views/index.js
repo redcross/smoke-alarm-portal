@@ -32,7 +32,14 @@ exports.saveRequest = function(req, res) {
     }).then( function(numRequests) {
         requestData = utils.getRequestData(req, numRequests, region_code);
         requestData = utils.createSerial(numRequests, requestData, region_code);
-        requestData.is_sms = 'web';
+        
+        // Check what url the request came from:
+        if (req.url == '/311') {
+            requestData.source = 'chi-311-web';
+        }
+        else {
+            requestData.source = 'web-home';
+        }
         return utils.saveRequestData(requestData);
     }).then(function(request) {
         savedRequest = request;

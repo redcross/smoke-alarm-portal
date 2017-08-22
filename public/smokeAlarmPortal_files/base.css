@@ -348,3 +348,9 @@ a.contrast-link {
     -moz-border-radius: 5px 5px 5px 5px;
     border-radius: 5px 5px 5px 5px; /* standards-compliant: (IE) */
 }
+
+.img-311-right-square {
+    height: 75px;
+    margin-left: 70px;
+}
+

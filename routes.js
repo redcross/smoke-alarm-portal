@@ -62,6 +62,9 @@ exports = module.exports = function(app, passport) {
   app.get('/kiosk', require('./views/index').init);
   app.post('/kiosk', require('./views/index').saveRequest);
 
+  // 311 version
+  app.get('/311', require('./views/index').init);
+  app.post('/311', require('./views/index').saveRequest);
     
   //sign up
   app.all('/signup*', ensureSignupEnabled);
