@@ -234,7 +234,7 @@ img.fourpanel {
 */
 
 #logo {
-    margin: 1em 0em;
+  margin: 1em 0em;
 }
 
 #main {
@@ -349,7 +349,7 @@ a.contrast-link {
     border-radius: 5px 5px 5px 5px; /* standards-compliant: (IE) */
 }
 
-.img-square {
+.img-311-right-square {
     height: 75px;
     margin-left: 70px;
 }

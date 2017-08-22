@@ -1,4 +1,4 @@
-/* Add copyright header here.
+/* Copyright (C) American Red Cross, 2017
  *
  * Edit existing requests to show "web-home" instead of simply "web,"
  * since we now have the "chi-311-web" subcategory.

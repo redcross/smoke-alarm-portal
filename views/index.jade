@@ -6,11 +6,11 @@ block content
       #logo.text-center
         img.logo(src='./smokeAlarmPortal_files/redcross-logo-white-letters.png', alt='American Red Cross')
         if origin == '/311'
-          img.img-square(src='./images/311-chicago.png', alt='311 Chicago')
+          img.img-311-right-square(src='./images/311-chicago.png', alt='311 Chicago')
       #safety-message.row.text-center(role='complementary')
         p.col-xs-12.bigger-centered
           | #{__('Smoke alarms save lives.  Installing a smoke alarm is the first step to keeping your family safe.')}
-      #language
+    #language
       .row
         p.col-xs-12.bigger-centered
             a.language-toggle(data-lang='en') English
