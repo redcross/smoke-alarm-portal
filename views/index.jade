@@ -147,6 +147,11 @@ block content
         'scroll': false,
         'autoPositionUpdate': true,
         'maxErrorsPerField': 1,
+        'onValidationComplete': function() {
+          $("#singlebutton").prop("disabled", true);
+          $("#singlebutton").append("<img class='loader' src='/images/loader.gif'>");
+          return true;
+        },
         'custom_error_messages': {
           '#name': {
             'required': {

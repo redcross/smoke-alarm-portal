@@ -354,3 +354,7 @@ a.contrast-link {
     margin-left: 70px;
 }
 
+img.loader {
+  margin-left: 5px;
+  height: 25px;
+}
