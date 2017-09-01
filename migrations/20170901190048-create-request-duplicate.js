@@ -16,28 +16,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-module.exports = function(sequelize, DataTypes) {
-  var Request = sequelize.define('Request', {
-    name: DataTypes.TEXT,
-    address: DataTypes.TEXT,
-          sms_raw_address: DataTypes.TEXT,
-    assigned_rc_region: DataTypes.TEXT,
-    city: DataTypes.TEXT,
-    state: DataTypes.TEXT,
-    zip: DataTypes.TEXT,
-          sms_raw_zip: DataTypes.TEXT,
-    phone: DataTypes.TEXT,
-          sms_raw_phone: DataTypes.TEXT,
-    email: DataTypes.TEXT,
-          source: DataTypes.TEXT,
-          serial: { type: DataTypes.TEXT, unique: true },
-          status: DataTypes.TEXT
-  }, {
-    classMethods: {
-      associate: function(models) {
-        Request.hasMany(models.RequestDuplicate, { name: "requestId" });
+'use strict';
+
+module.exports = {
+  up: function(queryInterface, Sequelize) {
+    return queryInterface.createTable('RequestDuplicates', {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER
+      },
+      requestId: {
+        type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
+        references: { model: 'Requests', key: 'id' }
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE
       }
-    }
-  });
-  return Request;
-}
+    });
+  },
+  down: function(queryInterface, Sequelize) {
+    return queryInterface.dropTable('RequestDuplicates');
+  }
+};

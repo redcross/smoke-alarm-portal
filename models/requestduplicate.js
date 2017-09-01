@@ -16,28 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+'use strict';
+
 module.exports = function(sequelize, DataTypes) {
-  var Request = sequelize.define('Request', {
-    name: DataTypes.TEXT,
-    address: DataTypes.TEXT,
-          sms_raw_address: DataTypes.TEXT,
-    assigned_rc_region: DataTypes.TEXT,
-    city: DataTypes.TEXT,
-    state: DataTypes.TEXT,
-    zip: DataTypes.TEXT,
-          sms_raw_zip: DataTypes.TEXT,
-    phone: DataTypes.TEXT,
-          sms_raw_phone: DataTypes.TEXT,
-    email: DataTypes.TEXT,
-          source: DataTypes.TEXT,
-          serial: { type: DataTypes.TEXT, unique: true },
-          status: DataTypes.TEXT
-  }, {
+  var RequestDuplicate = sequelize.define('RequestDuplicate', {}, {
     classMethods: {
       associate: function(models) {
-        Request.hasMany(models.RequestDuplicate, { name: "requestId" });
+        RequestDuplicate.belongsTo(models.Request, { onDelete: "CASCADE", foreignKey: "requestId" });
       }
     }
   });
-  return Request;
-}
+  return RequestDuplicate;
+};

@@ -227,6 +227,39 @@ module.exports  = {
         return requestData;
     },
 
+    // Searches for any previous request to see if this is a duplicate
+    // Returns null if not found, otherwise returns first record
+    findPriorRequest: function(requestData) {
+      // Replacing non-numeric characters with Postgres match operator, adding 
+      // one to the beginning to accommodate country codes
+      var phoneQuery = "%" + requestData.phone.replace(/[^0-9]/g, "%");
+
+      return db.Request.findOne({
+          where: {
+            name: { $ilike: requestData.name },
+            source: requestData.source,
+            address: { $ilike: requestData.street_address },
+            city: { $ilike: requestData.city },
+            state: { $ilike: requestData.state },
+            zip: requestData.zip_final,
+            email: { $ilike: requestData.email },
+            phone: { $like: phoneQuery },
+          }
+      });
+    },
+
+    // Force update of updatedAt without changing attributes
+    // source: https://github.com/sequelize/sequelize/issues/3759
+    updateRequestTime: function(request) {
+      request.changed('updatedAt', true);
+      return request.save();
+    },
+
+    // Saves request duplicate, with only parameter being the request ID
+    saveRequestDuplicate: function(request) {
+      return db.RequestDuplicate.create({ requestId: request.id });
+    },
+
     // Save the request data unconditionally.  Even if we can't
     // service the request -- or even if it contains some invalid
     // data, such as an unknown zip code -- we still want to record
@@ -264,6 +297,28 @@ module.exports  = {
             var new_serial = module.exports.padWithZeroes((parseInt(serial_array[2]) + 1).toString(), 5);
             requestData.serial = serial_array[0] + "-" + serial_array[1] + "-" + new_serial;
             return saveRequestData(requestData); //loop until save works
+        });
+    },
+
+    // Convenience method for checking if a request exists already, updating 
+    // the updatedAt column and creating a request duplicate if so, otherwise 
+    // create a new request. 
+    // Returns a promise resolving to a request
+    saveOrDuplicateRequest: function(requestData) {
+      return module.exports.findPriorRequest(requestData)
+        .then( function(request) {
+          // If request is a duplicate, resolve promises for updating request 
+          // time and saving a request duplicate. Return the request promise
+          if (request !== null) {
+            return Promise.all([
+              module.exports.updateRequestTime(request),
+              module.exports.saveRequestDuplicate(request)
+            ]).then( function(updates) {
+              return updates[0];
+            });
+          }
+          // If request is not a duplicate, save it and return a promise
+          return module.exports.saveRequestData(requestData);
         });
     },
 
