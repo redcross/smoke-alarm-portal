@@ -117,6 +117,7 @@ block content
                   .col-xs-12.text-center
                     input(type='hidden', name='_csrf', value='#{csrf}')
                     button#singlebutton.btn.btn-primary(name='singlebutton') #{__("Submit")}
+                      img.loader(src='/images/loader.gif', style='display:none;')
       #right.col-md-3
         if origin != '/311'
           p
@@ -149,7 +150,7 @@ block content
         'maxErrorsPerField': 1,
         'onValidationComplete': function() {
           $("#singlebutton").prop("disabled", true);
-          $("#singlebutton").append("<img class='loader' src='/images/loader.gif'>");
+          $("img.loader").show();
           return true;
         },
         'custom_error_messages': {
