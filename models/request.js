@@ -20,18 +20,18 @@ module.exports = function(sequelize, DataTypes) {
   var Request = sequelize.define('Request', {
     name: DataTypes.TEXT,
     address: DataTypes.TEXT,
-          sms_raw_address: DataTypes.TEXT,
+    sms_raw_address: DataTypes.TEXT,
     assigned_rc_region: DataTypes.TEXT,
     city: DataTypes.TEXT,
     state: DataTypes.TEXT,
     zip: DataTypes.TEXT,
-          sms_raw_zip: DataTypes.TEXT,
+    sms_raw_zip: DataTypes.TEXT,
     phone: DataTypes.TEXT,
-          sms_raw_phone: DataTypes.TEXT,
+    sms_raw_phone: DataTypes.TEXT,
     email: DataTypes.TEXT,
-          source: DataTypes.TEXT,
-          serial: { type: DataTypes.TEXT, unique: true },
-          status: DataTypes.TEXT
+    source: DataTypes.TEXT,
+    serial: { type: DataTypes.TEXT, unique: true },
+    status: DataTypes.TEXT
   }, {
     classMethods: {
       associate: function(models) {

@@ -1,6 +1,6 @@
 /* Smoke Alarm Installation Request Portal (getasmokealarm.org)
  * 
- * Copyright (C) 2015  American Red Cross
+ * Copyright (C) 2017  American Red Cross
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by

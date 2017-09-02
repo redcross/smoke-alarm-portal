@@ -244,7 +244,8 @@ module.exports  = {
             zip: requestData.zip_final,
             email: { $ilike: requestData.email },
             phone: { $like: phoneQuery },
-          }
+          },
+          order: '"createdAt" DESC'
       });
     },
 
