@@ -35,7 +35,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       associate: function(models) {
-        Request.hasMany(models.RequestDuplicate, { name: "requestId" });
+        Request.hasMany(models.RequestDuplicate, { foreignKey: "requestId" });
       }
     }
   });
