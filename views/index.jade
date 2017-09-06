@@ -142,16 +142,7 @@ block content
 
     script(type="text/javascript").
       // data for jquery error tootips, translated by i18n
-      $(".form-horizontal").validationEngine({
-        'scroll': false,
-        'autoPositionUpdate': true,
-        'maxErrorsPerField': 1,
-        'onValidationComplete': function() {
-          $("#singlebutton").prop("disabled", true);
-          $("img.loader").show();
-          return true;
-        },
-        'custom_error_messages': {
+      var validationRules = {
           '#name': {
             'required': {
               'message': "* " + "#{__('This field is required')}"
@@ -196,7 +187,30 @@ block content
               'message': "* " + "#{__('The email address is invalid')}"
             }
           }
-        }
+      };
+      // Change validation rules for contact info on 311
+      if (window.location.pathname.substr(0, 4) === '/311') {
+        // Delete contact rules from object, change custom validation classes
+        delete validationRules['#email']['custom[email'];
+        delete validationRules['#phone']['groupRequired'];
+        $('#phone, #email').attr('class', 'form-control input-md');
+        $('#email').addClass('validate[custom[email]]');
+        $('#phone').addClass('validate[required, custom[phone-10-digit-US]]');
+
+        validationRules['#phone']['required'] = {
+          'message': '* ' + "#{__('A 10-digit phone number is required')}"
+        };
+      }
+      $(".form-horizontal").validationEngine({
+        'scroll': false,
+        'autoPositionUpdate': true,
+        'maxErrorsPerField': 1,
+        'onValidationComplete': function() {
+          $("#singlebutton").prop("disabled", true);
+          $("img.loader").show();
+          return true;
+        },
+        'custom_error_messages': validationRules
       });
       // Fix Safari font-weight. The bizzare if-clause is feature-detection for Safari.
       if (Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0) { $("body").css("font-weight", "400"); }
