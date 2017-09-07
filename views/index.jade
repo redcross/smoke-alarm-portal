@@ -198,6 +198,15 @@ block content
           }
         }
       });
+      // On Firefox and Safari back-forward caching causes the submit button state to be retained,
+      // even after clicking the back button. This checks if the state has been cached, and
+      // if so re-enables the submit button. https://stackoverflow.com/a/13123626
+      $(window).bind("pageshow", function(event) {
+        if (event.originalEvent.persisted) {
+          $("#singlebutton").prop("disabled", false);
+          $("img.loader").hide();
+        }
+      });
       // Fix Safari font-weight. The bizzare if-clause is feature-detection for Safari.
       if (Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0) { $("body").css("font-weight", "400"); }
 
