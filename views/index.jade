@@ -196,6 +196,7 @@ block content
         $('#phone, #email').attr('class', 'form-control input-md');
         $('#email').addClass('validate[custom[email]]');
         $('#phone').addClass('validate[required, custom[phone-10-digit-US]]');
+        $('#phone').attr('required', true);
 
         validationRules['#phone']['required'] = {
           'message': '* ' + "#{__('A 10-digit phone number is required')}"
