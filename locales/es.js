@@ -24,6 +24,7 @@
 	"Email": "Dirección de Correo Electrónico",
 	"This field is required": "Este campo es obligatorio",
 	"Please provide either a 10-digit phone number or an email address": "Por favor proporcione o bien un número de teléfono de 10 dígitos o una dirección de correo electrónico",
+	"A 10-digit phone number is required": "Un número de teléfono de 10 dígitos es obligatorio",
 	"The phone number is invalid": "El número de teléfono no es válido.",
 	"A valid US zip code is required": "Un código postal válido de EE.UU. es obligatorio",
 	"Please provide either a phone number or an email address": "Por favor proporcione o bien un número de teléfono o una dirección de correo electrónico",

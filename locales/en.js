@@ -29,6 +29,7 @@
 	" at GitHub": " at GitHub",
 	"This field is required": "This field is required",
 	"Please provide either a 10-digit phone number or an email address": "Please provide either a 10-digit phone number or an email address",
+	"A 10-digit phone number is required": "A 10-digit phone number is required",
 	"The phone number is invalid": "The phone number is invalid",
 	"A valid US zip code is required": "A valid US zip code is required",
 	"Please provide either a phone number or an email address": "Please provide either a phone number or an email address",
