@@ -237,7 +237,6 @@ module.exports  = {
       return db.Request.findOne({
           where: {
             name: { $ilike: requestData.name },
-            source: requestData.source,
             address: { $ilike: requestData.street_address },
             city: { $ilike: requestData.city },
             state: { $ilike: requestData.state },

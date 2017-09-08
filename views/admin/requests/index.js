@@ -231,11 +231,11 @@ var getResults = function(callback) {
                     outcome.items.end = outcome.items.total;
                 }
 
-                outcome.results = results_array.map(function(r) {
-                  var duplicateCount = r.RequestDuplicates.length;
-                  r = r.toJSON();
-                  r.duplicate_count = duplicateCount;
-                  return r;
+                outcome.results = results_array.map(function(result) {
+                  var duplicateCount = result.RequestDuplicates.length;
+                  result = result.toJSON();
+                  result.duplicate_count = duplicateCount;
+                  return result;
                 });
                 return callback(null, 'done');
             })
