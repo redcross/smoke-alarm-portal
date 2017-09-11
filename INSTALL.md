@@ -142,6 +142,9 @@ be edited here.
         ### exit psql
         smokealarm_development=# \q        
 
+        ### Run sequelize migrations
+        sequelize db:migrate
+
         ### FOR DEVELOPMENT, load sample requests:
         $ node data/fake_request_data.js 
 

@@ -40,7 +40,7 @@ exports.saveRequest = function(req, res) {
         else {
             requestData.source = 'web-home';
         }
-        return utils.saveRequestData(requestData);
+        return utils.saveOrDuplicateRequest(requestData);
     }).then(function(request) {
         savedRequest = request;
         return utils.isActiveRegion(savedRequest);

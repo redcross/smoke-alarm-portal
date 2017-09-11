@@ -2,6 +2,8 @@
 var _ = require('underscore');
 var json2csv = require('json2csv');
 var moment = require('moment');
+var sequelize = require('sequelize');
+
 exports.find = function(req, res, next) {
     if (_.isUndefined(req.query.page)) {
         req.query.page = 1;
@@ -200,7 +202,8 @@ var getResults = function(callback) {
             limit: limit,
             offset: offset,
             where: filters,
-            order: [[req.query.sort.replace('-',''), sortOrder ]]
+            order: [[req.query.sort.replace('-',''), sortOrder ]],
+            include: [req.app.db.RequestDuplicate]
         }).reduce( function(previousValue, request, index, results) {
             return queryRegionPresentableName(request).then(
                 function (displayName) {
@@ -228,7 +231,12 @@ var getResults = function(callback) {
                     outcome.items.end = outcome.items.total;
                 }
 
-                outcome.results = results_array;
+                outcome.results = results_array.map(function(result) {
+                  var duplicateCount = result.RequestDuplicates.length;
+                  result = result.toJSON();
+                  result.duplicate_count = duplicateCount;
+                  return result;
+                });
                 return callback(null, 'done');
             })
             .catch(function(err) {
@@ -239,8 +247,8 @@ var getResults = function(callback) {
     };
 
     var createCSV = function() {
-        var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created','region', 'source'];
-        var requestFields = ['serial','name','address','city','state','zip','phone','email','createdAt','assigned_rc_region', 'source'];
+        var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created', 'date updated', 'region', 'source', 'count duplicates'];
+        var requestFields = ['serial','name','address','city','state','zip','phone','email','createdAt', 'updatedAt', 'assigned_rc_region', 'source', 'duplicate_count'];
         json2csv({ data: outcome.results, fields: requestFields, fieldNames: requestFieldNames }, function(err, csv) {
             if (err) console.log("ERROR: error converting to CSV" + err);
             res.setHeader('Content-Type','application/csv');
