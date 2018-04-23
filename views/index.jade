@@ -145,46 +145,46 @@ block content
       var validationRules = {
           '#name': {
             'required': {
-              'message': "* " + "#{__('This field is required')}"
+              'message': "* " + "#{__('Required')}"
             }
           },
           '#street_address': {
             'required': {
-              'message': "* " + "#{__('This field is required')}"
+              'message': "* " + "#{__('Required')}"
             }
           },
           '#city': {
             'required': {
-              'message': "* " + "#{__('This field is required')}"
+              'message': "* " + "#{__('Required')}"
             }
           },
           '#state': {
             'required': {
-              'message': "* " + "#{__('This field is required')}"
+              'message': "* " + "#{__('Required')}"
             }
           },
           '#phone': {
             'groupRequired': {
-              'message': "* " + "#{__('Please provide either a 10-digit phone number or an email address')}"
+              'message': "* " + "#{__('Provide_contact')}"
             },
             'custom[phone-10-digit-US]': {
-              'message': "* " + "#{__('The phone number is invalid')}"
+              'message': "* " + "#{__('Phone_invalid')}"
             }
           },
           '#zip': {
             'required': {
-              'message': "* " + "#{__('A valid US zip code is required')}"
+              'message': "* " + "#{__('Zip_required')}"
             },
             'custom[zip]': {
-              'message': "* " + "#{__('A valid US zip code is required')}"
+              'message': "* " + "#{__('Zip_required')}"
             }
           },
           '#email': {
             'groupRequired': {
-              'message': "* " + "#{__('Please provide either a phone number or an email address')}"
+              'message': "* " + "#{__('Provide_contact')}"
             },
             'custom[email]': {
-              'message': "* " + "#{__('The email address is invalid')}"
+              'message': "* " + "#{__('Email_invalid')}"
             }
           }
       };
@@ -199,7 +199,7 @@ block content
         $('#phone').attr('required', true);
 
         validationRules['#phone']['required'] = {
-          'message': '* ' + "#{__('A 10-digit phone number is required')}"
+          'message': '* ' + "#{__('Phone_required')}"
         };
       }
       $(".form-horizontal").validationEngine({
