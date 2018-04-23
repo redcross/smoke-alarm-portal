@@ -7,7 +7,7 @@
 	"After submitting your request, you will be contacted by an American Red Cross representative with information on installation availability in your area.": "Después de enviar su solicitud, un representante de la Cruz Roja Americana se pondrá en contacto con Ud. con información sobre la disponibilidad de instalaciones en su área.",
 	"The American Red Cross and its partners have launched the Home Fire Campaign to reduce deaths and injuries caused by home fires by 25 percent over five years.": "La Cruz Roja Americana y sus socios han iniciado la Campaña Contra Incendios en el Hogar para reducir las muertes y lesiones causadas por incendios en el hogar en un 25 por ciento durante los próximos cinco años.",
 	"The Red Cross asks every household in America to take two simple steps to help save lives: check or install smoke alarms and practice fire drills at home.": "La Cruz Roja pide que todos los propietarios de viviendas tomen dos pasos simples para ayudar a salvar vidas: revisar o instalar detectores de humo y practicar simulacros de incendios en el hogar.",
-    	"availability": "Esta forma puede aceptar solicitudes de los siguientes estados y condados: IA, ID, IL, KS, MN, MO, MT, ND, NE, SD, WA (excepto condados de Clark, Cowlitz, Klickitat, Pacific, Skamania y Wahkiakum), WI y el condado de Malheur, OR.",
+	"availability": "Esta forma puede aceptar solicitudes de los siguientes estados y condados: IA, ID, IL, KS, MN, MO, MT, ND, NE, SD, WA (excepto condados de Clark, Cowlitz, Klickitat, Pacific, Skamania y Wahkiakum), WI y el condado de Malheur, OR.",
 	"Submit": "Enviar",
 	"  If your location is not listed, please call 800-RED-CROSS to be connected to ": " Si no aparece su ubicación, por favor llame al 800-RED-CROSS para hablar con un representante de ",
 	"your": "su",
@@ -69,5 +69,11 @@
 	"Sorry, the Red Cross Region serving %s, %s does not yet accept smoke alarm installation requests by text message. Please call 1-800-RED CROSS (1-800-733-2767) to be connected with your local Region.": "Lo sentimos, pero la región de la Cruz Roja que sirve el condado de %s en el estado de %s does not yet accept smoke alarm installation requests by text message. Por favor llame al 800-RED-CROSS (1-800-733-2767) para hablar con un representante de su oficina local de la Cruz Roja.",
 	"This web site is open source ": "This web site is open source ",
 	" volunteers welcome ": " volunteers welcome ",
-	" at GitHub": " at GitHub"
+	" at GitHub": " at GitHub",
+	"The Red Cross and its partners will install a limited number of free smoke alarms for those who cannot afford to purchase smoke alarms or for those who are physically unable to install a smoke alarm.": "The Red Cross and its partners will install a limited number of free smoke alarms for those who cannot afford to purchase smoke alarms or for those who are physically unable to install a smoke alarm.",
+	"The Red Cross installs a limited number of specialized bedside alarms for individuals who are deaf or hard-of-hearing.": "The Red Cross installs a limited number of specialized bedside alarms for individuals who are deaf or hard-of-hearing.",
+	"To request a free installation, please complete all fields in the form below and click “Submit.”": "To request a free installation, please complete all fields in the form below and click “Submit.”",
+	"Depending on where you live and other factors, either an American Red Cross representative or one of our partner organizations will contact you to schedule an installation appointment.": "Depending on where you live and other factors, either an American Red Cross representative or one of our partner organizations will contact you to schedule an installation appointment.",
+	"If you are able to purchase and install your own smoke alarm, but would like information on home fire safety and smoke alarm installation, please visit ": "If you are able to purchase and install your own smoke alarm, but would like information on home fire safety and smoke alarm installation, please visit ",
+	"redcross.org/sound-the-alarm": "redcross.org/sound-the-alarm"
 }
