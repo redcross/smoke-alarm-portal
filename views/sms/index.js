@@ -164,7 +164,7 @@ exports.respond = function(req, res) {
         if (outcome) {
             msg = __("Thank you for your smoke alarm request! Your request number is %s.");
             msg = msg.replace('%s', request.serial);
-            msg += __(" To contact your local Red Cross about this request, call 1-800-RED-CROSS (1-800-733-2767). We will be in touch with you to schedule an installation.");
+            msg += __("Contact_ARC");
         }
         else {
             if (request.county) {
@@ -180,7 +180,7 @@ exports.respond = function(req, res) {
                 else {
                     var msg_zip = request.raw_zip;
                 }
-                msg = __("Sorry, we don't recognize any U.S. location for Zip Code \"%s\".  Are you sure you entered an accurate Zip Code?");
+                msg = __('Invalid_zip');
                 msg = msg.replace('%s', msg_zip);
             }
         }
@@ -437,7 +437,7 @@ exports.respond = function(req, res) {
     }
     // now we have the element with current highest priority
     // send the text associated with that element
-    var texts = { name: "Welcome to the smoke alarm request system \(para continuar en espanol, mande el texto \"ES\"\)." + " " + "We need to ask four questions to process your request. Please text back the answer to each and wait for the next question. First, what is your name?", address: __('What is your address, including the unit number, city, state, and zipcode?'), zipcode:  __('Sorry, we couldn\'t process your zipcode. Please text us your 5-digit zipcode.'), phone: __('Is the number you\'re texting from the best way to get in touch with you?') + " " + __('If so, text YES. Otherwise, please text a phone number where we can reach you.'), email:  __('One last question: is there an email address we can use to contact you?') + " " + __('If not, text NONE. If yes, please text us the email address.'), help_response: __('This is the smoke alarm request system from the Red Cross.  For more information, call 1-800-RED-CROSS or visit getasmokealarm.org.')};
+    var texts = { name: __('Text_welcome'), address: __('Text_address'), zipcode:  __('Zip_text_error'), phone: __('Text_phone_contact') + " " + __('Text_alternate_phone'), email:  __('Text_email_contact'), help_response: __('Text_help_response')};
     var text_body = texts[text_name];
     twiml.message( __(text_body), {statusCallback: '/sms/response/'});
     if ( help_check || (req.cookies.priorities.email && req.cookies.priorities.email.value == "") ) {
