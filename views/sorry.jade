@@ -10,19 +10,19 @@ block content
   #container.container-fluid
     .row
       .col-sm-12
-        h1 #{__('American Red Cross')}
+        h1 #{__('ARC')}
     #main.row
       #left.col-sm-10
         if county
           p
-            | #{__('Sorry, the Red Cross Region serving %s County, %s does not utilize this website to accept smoke alarm installation requests.', county, state)} #{__('Please call 800-REDCROSS (800-733-2767) to be connected to your servicing Region.')} #{__('Thank you for contacting the Red Cross.')}
+            | #{__('Out_of_region', county, state)}
         else
           p
-            | #{__('Sorry, we don\'t recognize any U.S. location for Zip Code "%s".  Are you sure you entered an accurate Zip Code?', zip)}
+            | #{__('Invalid_zip', zip)}
 
         p
-          a(href="http://www.redcross.org/prepare/location/home-family/prevent-home-fires" target="_blank") #{__('Visit the Red Cross')}
-          | #{__(' to learn how to prepare for and prevent home fires.')}
+          a(href="http://www.redcross.org/prepare/location/home-family/prevent-home-fires" target="_blank") #{__('Visit_ARC')}
+          | #{__('Prepare_prevent')}
 
         if origin == '/kiosk'
           p.redirect
