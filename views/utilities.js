@@ -340,8 +340,13 @@ module.exports  = {
         } 
 
         if (address['county']) {
-            requestData.countyFromZip = address['county'].replace(" County", "");
+            requestData.countyFromZipDropCounty = address['county'].replace(" County", "");
+            requestData.countyFromZip = requestData.countyFromZipDropCounty;
+            // Get the version of the county name with no spaces -
+            // e.g. "LaSalle" instead of "La Salle".  See #251.
+            requestData.countyFromZipNoSpaces = requestData.countyFromZipDropCounty.replace(" ", "");
         }
+
         requestData.stateFromZip = address['state'];
         return db.SelectedCounties.findOne({
             where: {
@@ -359,8 +364,19 @@ module.exports  = {
                 //
                 // http://docs.sequelizejs.com/en/latest/docs/querying/
                 // has more about the use of operators like $ilike.
-                county: { $ilike: requestData.countyFromZip },
-                state: { $ilike: requestData.stateFromZip }
+                state: { $ilike: requestData.stateFromZip },
+                $or: [
+                    {
+                        county: {
+                            $ilike: requestData.countyFromZip
+                        }
+                    },
+                    {
+                        county: {
+                            $ilike: requestData.countyFromZipNoSpaces
+                        }
+                    }
+                ]
             }
         });
     },
