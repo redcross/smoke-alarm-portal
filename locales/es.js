@@ -29,7 +29,7 @@
 	"Open_source": "This web site is open source ",
 	"Volunteers": " volunteers welcome ",
 	"GitHub": " at GitHub",
-	"Purchase": "If you are able to purchase and install your own smoke alarm, but would like information on home fire safety and smoke alarm installation, please visit ",
+	"Purchase": "Si puede comprar e instalar su propia alarma de humo pero desea información acerca de seguridad contra incendios en el hogar e instalación de alarmas de humo, por favor visite ",
 	"Sound_alarm": "redcross.org/sound-the-alarm",
         "Out_of_region": "Lo sentimos, pero la región de la Cruz Roja que sirve el condado de %s en el estado de %s todavía no ofrece un servicio de instalación de detectores de humo.  Sin embargo, hemos notado su solicitud y nos pondremos en contacto con Ud. cuando el servicio de instalación esté disponible en su región.  Gracias por contactar la Cruz Roja.",
 	"Invalid_zip": "Lo sentimos, pero no reconocemos ninguna ubicación que corresponde al código postal \"%s\". ¿Está Ud. serguro/a que el código es válido?",
