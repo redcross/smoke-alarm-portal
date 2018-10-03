@@ -29,6 +29,7 @@ module.exports = function(sequelize, DataTypes) {
             unique: true
         },
         isActive: DataTypes.TEXT,
+        siteAdmin: DataTypes.BOOLEAN,
         resetPasswordToken: DataTypes.TEXT,
         resetPasswordExpires: DataTypes.DATE,
         twitter: DataTypes.JSON,

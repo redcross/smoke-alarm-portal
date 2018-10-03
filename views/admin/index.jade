@@ -10,5 +10,10 @@ block body
   div.row
     div.col-sm-3
       div.page-header
-        p Reports:
-        a(href='/admin/requests/') Smoke Alarm Installation Requests
+        h2 Reports:
+        p
+          a(href='/admin/requests/') Smoke Alarm Installation Requests
+        if user.siteAdmin
+          h2 Administration:
+          p
+            a(href='/admin/users/') Users
