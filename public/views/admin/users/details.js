@@ -30,7 +30,7 @@
       success: false,
       errors: [],
       errfor: {},
-      isActive: '',
+      siteAdmin: false,
       username: '',
       email: ''
     },
@@ -120,7 +120,7 @@
     syncUp: function() {
       this.model.set({
         _id: app.mainView.model.id,
-        isActive: app.mainView.model.get('isActive'),
+        siteAdmin: app.mainView.model.get('siteAdmin'),
         username: app.mainView.model.get('username'),
         email: app.mainView.model.get('email')
       });
@@ -128,15 +128,13 @@
     render: function() {
       this.$el.html(this.template( this.model.attributes ));
 
-      for (var key in this.model.attributes) {
-        if (this.model.attributes.hasOwnProperty(key)) {
-          this.$el.find('[name="'+ key +'"]').val(this.model.attributes[key]);
-        }
-      }
+      this.$el.find('[name="siteAdmin"]').prop('checked', this.model.attributes['siteAdmin']);
+      this.$el.find('[name="username"]').val(this.model.attributes['username']);
+      this.$el.find('[name="email"]').val(this.model.attributes['email']);
     },
     update: function() {
       this.model.save({
-        isActive: this.$el.find('[name="isActive"]').val(),
+        siteAdmin: this.$el.find('[name="siteAdmin"]').prop("checked"),
         username: this.$el.find('[name="username"]').val(),
         email: this.$el.find('[name="email"]').val()
       });

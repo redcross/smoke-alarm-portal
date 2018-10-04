@@ -16,7 +16,7 @@ exports.find = function(req, res, next) {
     }
 
     if (req.query.roles && req.query.roles === 'admin') {
-        filters['roles.admin'] = {
+        filters['roles.siteAdmin'] = {
             $exists: true
         };
     }
@@ -123,8 +123,8 @@ exports.update = function(req, res, next) {
     var workflow = req.app.utility.workflow(req, res);
 
     workflow.on('validate', function() {
-        if (!req.body.isActive) {
-            req.body.isActive = 'no';
+        if (!req.body.siteAdmin) {
+            req.body.siteAdmin = false;
         }
 
         if (!req.body.username) {
@@ -184,7 +184,7 @@ exports.update = function(req, res, next) {
 
     workflow.on('patchUser', function() {
         var fieldsToSet = {
-            isActive: req.body.isActive,
+            siteAdmin: req.body.siteAdmin,
             username: req.body.username,
             email: req.body.email.toLowerCase(),
             search: [

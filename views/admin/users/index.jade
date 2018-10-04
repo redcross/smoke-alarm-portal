@@ -35,10 +35,10 @@ block body
           label Can Play Role
           select.form-control(name='roles')
             option(value='') any
-            option(value='admin') admin
+            option(value='siteAdmin') siteAdmin
             option(value='account') account
         div.col-sm-2
-          label Is Active
+          label Is Site Admin
           select.form-control(name='isActive')
             option(value='') either
             option(value='yes') yes
@@ -67,7 +67,7 @@ block body
           th
           th username
           th.stretch email
-          th active
+          th siteAdmin
           th id
       tbody#results-rows
 
@@ -76,7 +76,7 @@ block body
       input.btn.btn-default.btn-sm.btn-details(type='button', value='Edit')
     td <%= username %>
     td <%= email %>
-    td <%= isActive %>
+    td <%= siteAdmin ? 'Yes' : 'No' %>
     td <%= id %>
 
   script(type='text/template', id='tmpl-results-empty-row')

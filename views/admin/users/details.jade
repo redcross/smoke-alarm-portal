@@ -34,12 +34,10 @@ block body
           button.close(type='button', data-dismiss='alert') &times;
           | Changes have been saved.
         |<% } %>
-      div.form-group(class!='<%- errfor.isActive ? "has-error" : "" %>')
-        label Is Active:
-        select.form-control(name='isActive')
-          option(value='yes') yes
-          option(value='no') no
-        span.help-block <%- errfor.isActive %>
+      div.form-group(class!='<%- errfor.siteAdmin ? "has-error" : "" %>')
+        label Is Site Admin:
+        input(type='checkbox', name='siteAdmin')
+        span.help-block <%- errfor.siteAdmin %>
       div.form-group(class!='<%- errfor.username ? "has-error" : "" %>')
         label Username:
         input.form-control(type='text', name='username', value!='<%= username %>')
