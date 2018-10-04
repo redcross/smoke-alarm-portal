@@ -27,8 +27,8 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/login/');
 }
 
-function ensureAdmin(req, res, next) {
-  if (req.user.canPlayRoleOf('admin')) {
+function ensureSiteAdmin(req, res, next) {
+  if (req.user.siteAdmin) {
     return next();
   }
   res.redirect('/');
@@ -114,7 +114,6 @@ exports = module.exports = function(app, passport) {
 
   //admin
   app.all('/admin*', ensureAuthenticated);
-  app.all('/admin*', ensureAdmin);
   app.get('/admin/', require('./views/admin/index').init);
 
   //admin > requests
@@ -125,6 +124,7 @@ exports = module.exports = function(app, passport) {
 
 
   //admin > users
+  app.all('/admin/users*', ensureSiteAdmin);
   app.get('/admin/users/', require('./views/admin/users/index').find);
   app.post('/admin/users/', require('./views/admin/users/index').create);
   app.get('/admin/users/:id/', require('./views/admin/users/index').read);
