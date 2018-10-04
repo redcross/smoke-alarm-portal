@@ -83,13 +83,8 @@ exports.create = function(req, res, next) {
     });
 
     workflow.on('duplicateUsernameCheck', function() {
-        req.app.db.models.User.findOne({
-            username: req.body.username
-        }, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
+        req.app.db.User.findOne({ where: { username: req.body.username, }
+        }).then(function(user) {
             if (user) {
                 workflow.outcome.errors.push('That username is already taken.');
                 return workflow.emit('response');
@@ -106,11 +101,8 @@ exports.create = function(req, res, next) {
                 req.body.username
             ]
         };
-        req.app.db.models.User.create(fieldsToSet, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
+        req.app.db.User.create(fieldsToSet)
+        .then(function(user) {
             workflow.outcome.record = user;
             return workflow.emit('response');
         });
