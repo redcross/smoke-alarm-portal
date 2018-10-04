@@ -285,7 +285,7 @@ exports.password = function(req, res, next) {
     });
 
     workflow.on('patchUser', function() {
-        req.app.db.models.User.encryptPassword(req.body.newPassword, function(err, hash) {
+        req.app.db.User.encryptPassword(req.body.newPassword, function(err, hash) {
             if (err) {
                 return workflow.emit('exception', err);
             }
@@ -293,22 +293,13 @@ exports.password = function(req, res, next) {
             var fieldsToSet = {
                 password: hash
             };
-            req.app.db.models.User.findByIdAndUpdate(req.params.id, fieldsToSet, function(err, user) {
-                if (err) {
-                    return workflow.emit('exception', err);
-                }
-
-                user.populate('roles.admin roles.account', 'name.full', function(err, user) {
-                    if (err) {
-                        return workflow.emit('exception', err);
-                    }
-
-                    workflow.outcome.user = user;
+            req.app.db.User.update(fieldsToSet, {where: {id: req.params.id} })
+                .then(function(numAffected, err) {
+                    workflow.outcome.user = req.params.id;
                     workflow.outcome.newPassword = '';
                     workflow.outcome.confirm = '';
                     workflow.emit('response');
                 });
-            });
         });
     });
 
