@@ -6,7 +6,7 @@
   app = app || {};
 
   app.User = Backbone.Model.extend({
-    idAttribute: '_id',
+    idAttribute: 'id',
     url: function() {
       return '/admin/users/'+ this.id +'/';
     }
@@ -53,7 +53,6 @@
       success: false,
       errors: [],
       errfor: {},
-      roles: {},
       newAccountId: '',
       newAdminId: ''
     },
@@ -144,91 +143,6 @@
     }
   });
 
-  app.RolesView = Backbone.View.extend({
-    el: '#roles',
-    template: _.template( $('#tmpl-roles').html() ),
-    events: {
-      'click .btn-admin-open': 'adminOpen',
-      'click .btn-admin-link': 'adminLink',
-      'click .btn-admin-unlink': 'adminUnlink',
-      'click .btn-account-open': 'accountOpen',
-      'click .btn-account-link': 'accountLink',
-      'click .btn-account-unlink': 'accountUnlink'
-    },
-    initialize: function() {
-      this.model = new app.Roles();
-      this.syncUp();
-      this.listenTo(app.mainView.model, 'change', this.syncUp);
-      this.listenTo(this.model, 'sync', this.render);
-      this.render();
-    },
-    syncUp: function() {
-      this.model.set({
-        _id: app.mainView.model.id,
-        roles: app.mainView.model.get('roles')
-      });
-    },
-    render: function() {
-      this.$el.html(this.template( this.model.attributes ));
-
-      for (var key in this.model.attributes) {
-        if (this.model.attributes.hasOwnProperty(key)) {
-          this.$el.find('[name="'+ key +'"]').val(this.model.attributes[key]);
-        }
-      }
-    },
-    adminOpen: function() {
-      location.href = '/admin/administrators/'+ this.model.get('roles').admin._id +'/';
-    },
-    adminLink: function() {
-      this.model.save({
-        newAdminId: $('[name="newAdminId"]').val()
-      },{
-        url: this.model.url() +'role-admin/'
-      });
-    },
-    adminUnlink: function() {
-      if (confirm('Are you sure?')) {
-        this.model.destroy({
-          url: this.model.url() +'role-admin/',
-          success: function(model, response) {
-            if (response.user) {
-              app.mainView.model.set(response.user);
-              delete response.user;
-            }
-
-            app.rolesView.model.set(response);
-          }
-        });
-      }
-    },
-    accountOpen: function() {
-      location.href = '/admin/accounts/'+ this.model.get('roles').account._id +'/';
-    },
-    accountLink: function() {
-      this.model.save({
-        newAccountId: $('[name="newAccountId"]').val()
-      },{
-        url: this.model.url() +'role-account/'
-      });
-    },
-    accountUnlink: function() {
-      if (confirm('Are you sure?')) {
-        this.model.destroy({
-          url: this.model.url() +'role-account/',
-          success: function(model, response) {
-            if (response.user) {
-              app.mainView.model.set(response.user);
-              delete response.user;
-            }
-
-            app.rolesView.model.set(response);
-          }
-        });
-      }
-    }
-  });
-
   app.PasswordView = Backbone.View.extend({
     el: '#password',
     template: _.template( $('#tmpl-password').html() ),
@@ -296,7 +210,6 @@
       app.headerView = new app.HeaderView();
       app.identityView = new app.IdentityView();
       app.passwordView = new app.PasswordView();
-      app.rolesView = new app.RolesView();
       app.deleteView = new app.DeleteView();
     }
   });

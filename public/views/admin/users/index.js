@@ -34,7 +34,6 @@
   app.Filter = Backbone.Model.extend({
     defaults: {
       username: '',
-      roles: '',
       isActive: '',
       sort: '',
       limit: ''
@@ -98,7 +97,7 @@
     el: '#results-table',
     template: _.template( $('#tmpl-results-table').html() ),
     initialize: function() {
-      this.collection = new app.RecordCollection( app.mainView.results.data );
+      this.collection = new app.RecordCollection( app.mainView.results );
       this.listenTo(this.collection, 'reset', this.render);
       this.render();
     },
@@ -125,7 +124,7 @@
       'click .btn-details': 'viewDetails'
     },
     viewDetails: function() {
-      location.href = this.model.url();
+      location.href = this.model.url() + this.model.attributes.id + "/";
     },
     render: function() {
       this.$el.html(this.template( this.model.attributes ));

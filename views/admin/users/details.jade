@@ -4,14 +4,13 @@ block head
   title Users / Details
 
 block feet
-  script(src='/views/admin/users/details.min.js?#{cacheBreaker}')
+  script(src='/views/admin/users/details.js')
 
 block body
   div.row
     div.col-xs-12
       div#header
       div#identity
-      div#roles
       div#password
       div#delete
 
@@ -51,45 +50,6 @@ block body
         span.help-block <%- errfor.email %>
       div.form-group
         button.btn.btn-primary.btn-update(type='button') Update
-
-  script(type='text/template', id='tmpl-roles')
-    fieldset
-      legend Roles
-      div.alerts
-        |<% _.each(errors, function(err) { %>
-        div.alert.alert-danger.alert-dismissable
-          button.close(type='button', data-dismiss='alert') &times;
-          |<%- err %>
-        |<% }); %>
-      div.form-group(class!='<%- errfor.newAdminId ? "has-error" : "" %>')
-        label Admin:
-        div.controls
-          div.input-group
-            |<% if (roles && roles.admin) { %>
-            input.form-control(disabled=true, value!='<%= roles.admin.name.full %>')
-            div.input-group-btn
-              button.btn.btn-warning.btn-admin-unlink(type='button') Unlink
-              button.btn.btn-default.btn-admin-open(type='button') Open
-            |<% } else { %>
-            input.form-control(name='newAdminId', type='text', placeholder='enter admin id')
-            div.input-group-btn
-              button.btn.btn-success.btn-admin-link(type='button') Link
-            |<% } %>
-          span.help-block <%- errfor.newAdminId %>
-      div.form-group(class!='<%- errfor.newAccountId ? "has-error" : "" %>')
-        label Account:
-        div.input-group
-          |<% if (roles && roles.account) { %>
-          input.form-control(disabled=true, value!='<%= roles.account.name.full %>')
-          div.input-group-btn
-            button.btn.btn-warning.btn-account-unlink(type='button') Unlink
-            button.btn.btn-default.btn-account-open(type='button') Open
-          |<% } else { %>
-          input.form-control(name='newAccountId', type='text', placeholder='enter account id')
-          div.input-group-btn
-            button.btn.btn-success.btn-account-link(type='button') Link
-          |<% } %>
-        span.help-block <%- errfor.newAccountId %>
 
   script(type='text/template', id='tmpl-password')
     fieldset

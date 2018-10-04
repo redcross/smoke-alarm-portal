@@ -48,21 +48,21 @@ exports.find = function(req, res, next) {
 };
 
 exports.read = function(req, res, next) {
-    req.app.db.models.User.findById(req.params.id).populate('roles.admin', 'name.full').populate('roles.account', 'name.full').exec(function(err, user) {
-        if (err) {
+    req.app.db.User.findById(req.params.id)
+        .then(function(user) {
+            if (req.xhr) {
+                res.send(user);
+            } else {
+                res.render('admin/users/details', {
+                    data: {
+                        record: escape(JSON.stringify(user))
+                    }
+                });
+            }
+        })
+        .catch(function(err) {
             return next(err);
-        }
-
-        if (req.xhr) {
-            res.send(user);
-        } else {
-            res.render('admin/users/details', {
-                data: {
-                    record: escape(JSON.stringify(user))
-                }
-            });
-        }
-    });
+        });
 };
 
 exports.create = function(req, res, next) {
@@ -147,16 +147,14 @@ exports.update = function(req, res, next) {
     });
 
     workflow.on('duplicateUsernameCheck', function() {
-        req.app.db.models.User.findOne({
-            username: req.body.username,
-            _id: {
-                $ne: req.params.id
+        req.app.db.User.findOne({
+            where: {
+                username: req.body.username,
+                id: {
+                    $ne: req.params.id
+                }
             }
-        }, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
+        }).then(function(user) {
             if (user) {
                 workflow.outcome.errfor.username = 'username already taken';
                 return workflow.emit('response');
@@ -167,16 +165,14 @@ exports.update = function(req, res, next) {
     });
 
     workflow.on('duplicateEmailCheck', function() {
-        req.app.db.models.User.findOne({
-            email: req.body.email.toLowerCase(),
-            _id: {
-                $ne: req.params.id
+        req.app.db.User.findOne({
+            where: {
+                email: req.body.email.toLowerCase(),
+                id: {
+                    $ne: req.params.id
+                }
             }
-        }, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
+        }).then(function(user) {
             if (user) {
                 workflow.outcome.errfor.email = 'email already taken';
                 return workflow.emit('response');
@@ -197,13 +193,18 @@ exports.update = function(req, res, next) {
             ]
         };
 
-        req.app.db.models.User.findByIdAndUpdate(req.params.id, fieldsToSet, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
+        req.app.db.User.update(fieldsToSet, {where: {id: req.params.id} })
+            .then(function(user, err) {
+                if (err) {
+                    return workflow.emit('exception', err);
+                }
 
-            workflow.emit('patchAdmin', user);
-        });
+                return req.app.db.User.findById(req.params.id)
+            })
+            .then(function(user, err) {
+                workflow.outcome.user = user;
+                workflow.emit('response');
+            });
     });
 
     workflow.on('patchAdmin', function(user) {

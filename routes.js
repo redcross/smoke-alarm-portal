@@ -54,6 +54,7 @@ function ensureSignupEnabled(req, res, next) {
   }
 }
 exports = module.exports = function(app, passport) {
+  app.locals.pretty = true;
   //front end
   app.get('/', require('./views/index').init);
   app.post('/', require('./views/index').saveRequest);

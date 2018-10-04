@@ -7,7 +7,7 @@ block neck
   link(rel='stylesheet', href='/views/admin/users/index.min.css?#{cacheBreaker}')
 
 block feet
-  script(src='/views/admin/users/index.min.js?#{cacheBreaker}')
+  script(src='/views/admin/users/index.js')
 
 block body
   div.row
@@ -77,7 +77,7 @@ block body
     td <%= username %>
     td <%= email %>
     td <%= isActive %>
-    td <%= _id %>
+    td <%= id %>
 
   script(type='text/template', id='tmpl-results-empty-row')
     tr
