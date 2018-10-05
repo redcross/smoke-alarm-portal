@@ -83,7 +83,9 @@ be edited here.
 
         $ sudo apt-get install nodejs-legacy
 
-1. 	Start Postgres server
+1. Start Postgres server. This step may not needed depending on your OS. (It is
+   not needed on Ubuntu 18.04.) If the `psql` commands in the next step work,
+   then the Postgres server is already up and running.
 
         ### For example, on a Mac with Postgres installed from homebrew:
         $ pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start
