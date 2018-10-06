@@ -67,6 +67,21 @@ db.regionPermission.belongsTo(db.User, {foreignKey:'user_id'});
 db.activeRegion.hasMany(db.regionPermission, {foreignKey:'rc_region'});
 db.SelectedCounties.hasMany(db.Request, {foreignKey:'selected_county'});
 
+db.User.belongsToMany(
+    db.activeRegion,
+    {
+        through: { model: db.regionPermission, unique: false },
+        foreignKey: 'user_id'
+    }
+);
+db.activeRegion.belongsToMany(
+    db.User,
+    {
+        through: { model: db.regionPermission, unique: false },
+        foreignKey: 'rc_region'
+    }
+);
+
 db.sequelize.sync(options);
 
 // TODO: This is a temporary kludge.  These shouldn't really be part

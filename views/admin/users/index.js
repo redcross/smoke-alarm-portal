@@ -47,22 +47,34 @@ exports.find = function(req, res, next) {
         });
 };
 
-exports.read = function(req, res, next) {
+exports.read = function(req, res, next) {  
+    var activeRegions = req.app.db.activeRegion.findAll({
+        attributes: ['rc_region', 'region_name'],
+        where: {rc_region: {ne: 'rc_test_region'} },
+        order: 'region_name'
+    });
+
     req.app.db.User.findById(req.params.id)
-        .then(function(user) {
-            if (req.xhr) {
-                res.send(user);
-            } else {
-                res.render('admin/users/details', {
-                    data: {
-                        record: escape(JSON.stringify(user))
-                    }
-                });
-            }
-        })
-        .catch(function(err) {
-            return next(err);
-        });
+      .then(user => {
+          return Promise.all([
+              activeRegions,
+              user.getActiveRegions(),
+              user])
+    }).then(function ([activeRegions, enabledRegions, user]) {
+        if (req.xhr) {
+            res.send(user);
+        } else {
+            res.render('admin/users/details', {
+                data: {
+                    record: escape(JSON.stringify(user)),
+                    activeRegions: escape(JSON.stringify(activeRegions)),
+                    enabledRegions: escape(JSON.stringify(enabledRegions))
+                }
+            });
+        }
+    }).catch(function(err) {
+        return next(err);
+    });
 };
 
 exports.create = function(req, res, next) {
@@ -296,6 +308,24 @@ exports.password = function(req, res, next) {
     });
 
     workflow.emit('validate');
+};
+
+exports.regions = function(req, res, next) {
+    Promise.all([
+        req.app.db.User.findById(req.params.id),
+        req.app.db.activeRegion.findAll({
+            where: {
+                rc_region:
+                req.body.regions
+                    .filter(region => { return region.enabled; })
+                    .map(region => { return region.rc_region; })
+            }
+        })
+    ]).then(function ([user, newRegions]) {
+        return user.setActiveRegions(newRegions);
+    }).then(() => {
+        res.send({success: true});
+    });
 };
 
 exports.linkAdmin = function(req, res, next) {

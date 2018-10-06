@@ -130,6 +130,7 @@ exports = module.exports = function(app, passport) {
   app.post('/admin/users/', require('./views/admin/users/index').create);
   app.get('/admin/users/:id/', require('./views/admin/users/index').read);
   app.put('/admin/users/:id/', require('./views/admin/users/index').update);
+  app.put('/admin/users/:id/regions/', require('./views/admin/users/index').regions);
   app.put('/admin/users/:id/password/', require('./views/admin/users/index').password);
   app.put('/admin/users/:id/role-admin/', require('./views/admin/users/index').linkAdmin);
   app.delete('/admin/users/:id/role-admin/', require('./views/admin/users/index').unlinkAdmin);

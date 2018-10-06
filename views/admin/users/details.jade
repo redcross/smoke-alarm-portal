@@ -12,6 +12,7 @@ block body
       div#header
       div#identity
       div#password
+      div#regions
       div#delete
 
   script(type='text/template', id='tmpl-header')
@@ -48,6 +49,23 @@ block body
         span.help-block <%- errfor.email %>
       div.form-group
         button.btn.btn-primary.btn-update(type='button') Update
+
+  script(type='text/template', id='tmpl-region')
+    legend Update Regions
+    div.alerts
+      |<% if (success) { %>
+      div.alert.alert-info.alert-dismissable
+        button.close(type='button', data-dismiss='alert') &times;
+        | Changes have been saved.
+      |<% } %>
+    div#region-rows.form-group
+    div.form-group
+      button.btn.btn-primary.btn-regions(type='button') Update
+
+  script(type='text/template', id='tmpl-region-row')
+    input(type='checkbox', name!='<%= rc_region %>')
+    &nbsp;
+    <%- region_name %>
 
   script(type='text/template', id='tmpl-password')
     fieldset
@@ -92,3 +110,5 @@ block body
         button.btn.btn-danger.btn-delete(type='button') Delete
 
   script(type='text/template', id='data-record') !{data.record}
+  script(type='text/template', id='data-active-regions') !{data.activeRegions}
+  script(type='text/template', id='data-enabled-regions') !{data.enabledRegions}

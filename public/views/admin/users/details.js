@@ -69,6 +69,18 @@
     }
   });
 
+  app.Region = Backbone.Model.extend({
+    idAttribute: '_id',
+    defaults: {
+      success: false
+    },
+    url: function() {
+      return '/admin/users/'+ app.mainView.model.id +'/regions/';
+    }
+  });
+
+  app.Regions = Backbone.Collection.extend({ });
+
   app.Password = Backbone.Model.extend({
     idAttribute: '_id',
     defaults: {
@@ -141,6 +153,60 @@
     }
   });
 
+
+  app.RegionView = Backbone.View.extend({
+    el: '#regions',
+    template: _.template( $('#tmpl-region').html() ),
+    events: {
+      'click .btn-regions': 'regions'
+    },
+    initialize: function() {
+      app.mainView.model.activeRegions.forEach(function(activeRegion) {
+        activeRegion.enabled = false;
+        app.mainView.model.enabledRegions.forEach(function(enabledRegion) {
+          if(enabledRegion.rc_region == activeRegion.rc_region) {
+            activeRegion.enabled = true;
+          }
+        });
+      });
+      this.model = new app.Region({
+        _id: app.mainView.model.id,
+        regions: new app.Regions(app.mainView.model.activeRegions)
+      });
+      this.listenTo(this.model, 'sync', this.render);
+      this.render();
+    },
+    render: function() {
+      this.$el.html(this.template(this.model.attributes));
+      var container = this.$el.find("#region-rows");
+
+      this.model.attributes['regions'].each(function(region) {
+        var view = new app.RegionRowView({ model: region });
+        container.append(view.render().el);
+      });
+      return this;
+    },
+    regions: function() {
+      this.model.save();
+    }
+  });
+
+  app.RegionRowView = Backbone.View.extend({
+    tagName: 'div',
+    template:  _.template( $('#tmpl-region-row').html() ),
+    events: {
+      'click input': 'update'
+    },
+    render: function() {
+      this.$el.html(this.template(this.model.attributes));
+      this.$el.find('input').prop('checked', this.model.attributes.enabled);
+      return this;
+    },
+    update: function() {
+      this.model.attributes.enabled = this.$el.find('input').prop('checked');
+    }
+  });
+
   app.PasswordView = Backbone.View.extend({
     el: '#password',
     template: _.template( $('#tmpl-password').html() ),
@@ -205,8 +271,12 @@
       app.mainView = this;
       this.model = new app.User( JSON.parse( unescape($('#data-record').html())) );
 
+      this.model.activeRegions = JSON.parse( unescape($('#data-active-regions').html()));
+      this.model.enabledRegions = JSON.parse( unescape($('#data-enabled-regions').html()));
+
       app.headerView = new app.HeaderView();
       app.identityView = new app.IdentityView();
+      app.regionView = new app.RegionView();
       app.passwordView = new app.PasswordView();
       app.deleteView = new app.DeleteView();
     }
