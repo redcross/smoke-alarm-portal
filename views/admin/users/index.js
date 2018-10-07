@@ -651,11 +651,6 @@ exports.delete = function(req, res, next) {
     var workflow = req.app.utility.workflow(req, res);
 
     workflow.on('validate', function() {
-        if (!req.user.roles.admin.isMemberOf('root')) {
-            workflow.outcome.errors.push('You may not delete users.');
-            return workflow.emit('response');
-        }
-
         if (req.user._id === req.params.id) {
             workflow.outcome.errors.push('You may not delete yourself from user.');
             return workflow.emit('response');
@@ -665,11 +660,15 @@ exports.delete = function(req, res, next) {
     });
 
     workflow.on('deleteUser', function(err) {
-        req.app.db.models.User.findByIdAndRemove(req.params.id, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
+        req.app.db.User.findById(req.params.id)
+        .then(user => {
+            return Promise.all([
+               user,
+               user.setActiveRegions([])
+            ]);
+        }).then(function([user]) {
+            return user.destroy();
+        }).then(() => {
             workflow.emit('response');
         });
     });
