@@ -19,7 +19,7 @@
 'use strict';
 
 function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
+  if (req.isAuthenticated() && req.user.isActive == 'yes') {
     return next();
   }
   res.set('X-Auth-Required', 'true');

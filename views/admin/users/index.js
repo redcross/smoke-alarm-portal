@@ -171,6 +171,7 @@ exports.update = function(req, res, next) {
     workflow.on('patchUser', function() {
         var fieldsToSet = {
             siteAdmin: req.body.siteAdmin,
+            isActive: req.body.isActive ? "yes" : "no",
             username: req.body.username,
             email: req.body.email.toLowerCase(),
             search: [

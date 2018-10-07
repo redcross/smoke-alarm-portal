@@ -39,6 +39,9 @@ block body
         label Is Site Admin:
         input(type='checkbox', name='siteAdmin')
         span.help-block <%- errfor.siteAdmin %>
+      div.form-group()
+        label Is Active:
+        input(type='checkbox', name='isActive')
       div.form-group(class!='<%- errfor.username ? "has-error" : "" %>')
         label Username:
         input.form-control(type='text', name='username', value!='<%= username %>')

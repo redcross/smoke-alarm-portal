@@ -10,7 +10,7 @@ var getReturnUrl = function(req) {
 };
 
 exports.init = function(req, res) {
-    if (req.isAuthenticated()) {
+    if (req.isAuthenticated() && req.user.isActive == 'yes') {
         res.redirect(getReturnUrl(req));
     } else {
         res.render('login/index', {
@@ -98,7 +98,7 @@ exports.login = function(req, res) {
                 return workflow.emit('exception', err);
             }
 
-            if (!user) {
+            if (!user || user.isActive == "no") {
                 var fieldsToSet = {
                     ip: req.ip,
                     user: req.body.username

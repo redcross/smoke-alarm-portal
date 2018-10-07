@@ -40,6 +40,7 @@ block body
           th username
           th.stretch email
           th siteAdmin
+          th active
           th id
       tbody#results-rows
 
@@ -49,6 +50,7 @@ block body
     td <%= username %>
     td <%= email %>
     td <%= siteAdmin ? 'Yes' : 'No' %>
+    td <%= isActive %>
     td <%= id %>
 
   script(type='text/template', id='tmpl-results-empty-row')

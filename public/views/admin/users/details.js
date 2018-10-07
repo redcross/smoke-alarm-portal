@@ -31,6 +31,7 @@
       errors: [],
       errfor: {},
       siteAdmin: false,
+      isActive: false,
       username: '',
       email: ''
     },
@@ -133,6 +134,7 @@
       this.model.set({
         _id: app.mainView.model.id,
         siteAdmin: app.mainView.model.get('siteAdmin'),
+        isActive: app.mainView.model.get('isActive') == 'yes',
         username: app.mainView.model.get('username'),
         email: app.mainView.model.get('email')
       });
@@ -141,12 +143,14 @@
       this.$el.html(this.template( this.model.attributes ));
 
       this.$el.find('[name="siteAdmin"]').prop('checked', this.model.attributes['siteAdmin']);
+      this.$el.find('[name="isActive"]').prop('checked', this.model.attributes['isActive']);
       this.$el.find('[name="username"]').val(this.model.attributes['username']);
       this.$el.find('[name="email"]').val(this.model.attributes['email']);
     },
     update: function() {
       this.model.save({
         siteAdmin: this.$el.find('[name="siteAdmin"]').prop("checked"),
+        isActive: this.$el.find('[name="isActive"]').prop("checked"),
         username: this.$el.find('[name="username"]').val(),
         email: this.$el.find('[name="email"]').val()
       });
