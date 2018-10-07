@@ -8,33 +8,15 @@ exports.find = function(req, res, next) {
 
     var filters = {};
     if (req.query.username) {
-        filters.username = new RegExp('^.*?' + req.query.username + '.*$', 'i');
+        filters.username = { $like: '%' + req.query.username + '%' };
     }
 
-    if (req.query.isActive) {
-        filters.isActive = req.query.isActive;
-    }
-
-    if (req.query.roles && req.query.roles === 'admin') {
-        filters['roles.siteAdmin'] = {
-            $exists: true
-        };
-    }
-
-    if (req.query.roles && req.query.roles === 'account') {
-        filters['roles.account'] = {
-            $exists: true
-        };
-    }
-
-    req.app.db.User.findAll()
+    req.app.db.User.findAll({ where: filters })
         .then(function(results) {
             if (req.xhr) {
                 res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-                results.filters = req.query;
                 res.send(results);
             } else {
-                results.filters = req.query;
                 res.render('admin/users/index', {
                     data: {
                         results: JSON.stringify(results)

@@ -22,12 +22,7 @@
     model: app.Record,
     url: '/admin/users/',
     parse: function(results) {
-      app.pagingView.model.set({
-        pages: results.pages,
-        items: results.items
-      });
-      app.filterView.model.set(results.filters);
-      return results.data;
+      return results;
     }
   });
 
