@@ -48,13 +48,13 @@ didn't, you might want to add one:
 1. Set up the live config files.  Note that there are multiple files to
 be edited here.
 
-  1. Do `cp config.js.tmpl config.js`. For dev, move on to step 2. For non-dev, edit the `config.js` file:
+    1. Do `cp config.js.tmpl config.js`. For dev, move on to step 2. For non-dev, edit the `config.js` file:
 
         * Update `exports.companyName`,
         `exports.projectName`, `exports.signupEnabled`,`exports.systemEmail`, and
         `exports.cryptoKey`.
 
-  1. Do `cp config/config.json.tmpl config/config.json`. For dev, move on to step 3. For non-dev, edit the `config/config.json`:
+    1. Do `cp config/config.json.tmpl config/config.json`. For dev, move on to step 3. For non-dev, edit the `config/config.json`:
 
         * Fill in database usernames and passwords, and
         the Mailgun.com API key and sender information that the app will use to send out email notifications.  You can modify one of the existing top-level environments listed in `config.json` or set up a whole new environment, e.g., "demo" (e.g., based
@@ -63,7 +63,7 @@ be edited here.
         (Don't worry if you don't know how to set up a database
         username / password; that will be explained in a later step.)
 
-  1. Do `cp config/recipients.sql.tmpl config/recipients.sql`, edit the `config/recipients.sql` file:
+    1. Do `cp config/recipients.sql.tmpl config/recipients.sql`, edit the `config/recipients.sql` file:
 
         * Fill in appropriate contact names and email
         addresses.  
