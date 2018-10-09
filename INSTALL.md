@@ -96,6 +96,8 @@ be edited here.
         $ psql
         ### Approach 2: use your user if you have access
         $ psql postgres
+        ### Approach 3: use `sudo` to execute `psql` as the `postgres` user
+        $ sudo -u postgres psql
 
 
         ### Now you can setup the database/user/rights
