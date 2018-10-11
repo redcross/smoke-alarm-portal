@@ -57,6 +57,22 @@ Meanwhile, notification address relations are in the "activeRegions" table:
 developer documentation.  At some point we should probably split it
 out into a separate document.)
 
+## Localization
+
+Localization is handled via [i18n-2](https://www.npmjs.com/package/i18n-2)
+and uses the ```__('...')``` syntax throughout.  When a string is found using
+notation, it is then looked up against locales/en.js or locales/es.js.
+Switching between those locales is handled by cookies and an option on the
+main page.
+
+If you change a string in the codebase, it will be added to those locale files,
+meanining you'll need to commit the changes to github to prevent local changes
+(See [#192](https://github.com/redcross/smoke-alarm-portal/issues/192)).
+
+The current best practice is to use key fields, rather than entire english
+strings, and have the more verbose information in the locale files as a whole
+rather than counting on the system to generate and use with large strings.
+
 ## Coding Practices
 
 ### Change one thing at a time
