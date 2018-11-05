@@ -91,6 +91,7 @@ exports.create = function(req, res, next) {
     workflow.on('createUser', function() {
         var fieldsToSet = {
             username: req.body.username,
+            isActive: "yes",
             search: [
                 req.body.username
             ]

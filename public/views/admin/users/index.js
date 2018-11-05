@@ -77,7 +77,7 @@
           success: function(model, response) {
             if (response.success) {
               model.id = response.record._id;
-              location.href = model.url();
+              location.href = model.url() + response.record.id + "/";
             }
             else {
               alert(response.errors.join('\n'));
