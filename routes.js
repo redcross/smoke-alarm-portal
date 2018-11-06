@@ -19,7 +19,7 @@
 'use strict';
 
 function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
+  if (req.isAuthenticated() && req.user.isActive == 'yes') {
     return next();
   }
   res.set('X-Auth-Required', 'true');
@@ -27,8 +27,8 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/login/');
 }
 
-function ensureAdmin(req, res, next) {
-  if (req.user.canPlayRoleOf('admin')) {
+function ensureSiteAdmin(req, res, next) {
+  if (req.user.siteAdmin) {
     return next();
   }
   res.redirect('/');
@@ -54,6 +54,7 @@ function ensureSignupEnabled(req, res, next) {
   }
 }
 exports = module.exports = function(app, passport) {
+  app.locals.pretty = true;
   //front end
   app.get('/', require('./views/index').init);
   app.post('/', require('./views/index').saveRequest);
@@ -114,7 +115,6 @@ exports = module.exports = function(app, passport) {
 
   //admin
   app.all('/admin*', ensureAuthenticated);
-  app.all('/admin*', ensureAdmin);
   app.get('/admin/', require('./views/admin/index').init);
 
   //admin > requests
@@ -125,10 +125,12 @@ exports = module.exports = function(app, passport) {
 
 
   //admin > users
+  app.all('/admin/users*', ensureSiteAdmin);
   app.get('/admin/users/', require('./views/admin/users/index').find);
   app.post('/admin/users/', require('./views/admin/users/index').create);
   app.get('/admin/users/:id/', require('./views/admin/users/index').read);
   app.put('/admin/users/:id/', require('./views/admin/users/index').update);
+  app.put('/admin/users/:id/regions/', require('./views/admin/users/index').regions);
   app.put('/admin/users/:id/password/', require('./views/admin/users/index').password);
   app.put('/admin/users/:id/role-admin/', require('./views/admin/users/index').linkAdmin);
   app.delete('/admin/users/:id/role-admin/', require('./views/admin/users/index').unlinkAdmin);

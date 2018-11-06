@@ -8,33 +8,15 @@ exports.find = function(req, res, next) {
 
     var filters = {};
     if (req.query.username) {
-        filters.username = new RegExp('^.*?' + req.query.username + '.*$', 'i');
+        filters.username = { $like: '%' + req.query.username + '%' };
     }
 
-    if (req.query.isActive) {
-        filters.isActive = req.query.isActive;
-    }
-
-    if (req.query.roles && req.query.roles === 'admin') {
-        filters['roles.admin'] = {
-            $exists: true
-        };
-    }
-
-    if (req.query.roles && req.query.roles === 'account') {
-        filters['roles.account'] = {
-            $exists: true
-        };
-    }
-
-    req.app.db.User.findAll()
+    req.app.db.User.findAll({ where: filters })
         .then(function(results) {
             if (req.xhr) {
                 res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-                results.filters = req.query;
                 res.send(results);
             } else {
-                results.filters = req.query;
                 res.render('admin/users/index', {
                     data: {
                         results: JSON.stringify(results)
@@ -47,21 +29,33 @@ exports.find = function(req, res, next) {
         });
 };
 
-exports.read = function(req, res, next) {
-    req.app.db.models.User.findById(req.params.id).populate('roles.admin', 'name.full').populate('roles.account', 'name.full').exec(function(err, user) {
-        if (err) {
-            return next(err);
-        }
+exports.read = function(req, res, next) {  
+    var activeRegions = req.app.db.activeRegion.findAll({
+        attributes: ['rc_region', 'region_name'],
+        where: {rc_region: {ne: 'rc_test_region'} },
+        order: 'region_name'
+    });
 
+    req.app.db.User.findById(req.params.id)
+      .then(user => {
+          return Promise.all([
+              activeRegions,
+              user.getActiveRegions(),
+              user])
+    }).then(function ([activeRegions, enabledRegions, user]) {
         if (req.xhr) {
             res.send(user);
         } else {
             res.render('admin/users/details', {
                 data: {
-                    record: escape(JSON.stringify(user))
+                    record: escape(JSON.stringify(user)),
+                    activeRegions: escape(JSON.stringify(activeRegions)),
+                    enabledRegions: escape(JSON.stringify(enabledRegions))
                 }
             });
         }
+    }).catch(function(err) {
+        return next(err);
     });
 };
 
@@ -83,13 +77,8 @@ exports.create = function(req, res, next) {
     });
 
     workflow.on('duplicateUsernameCheck', function() {
-        req.app.db.models.User.findOne({
-            username: req.body.username
-        }, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
+        req.app.db.User.findOne({ where: { username: req.body.username, }
+        }).then(function(user) {
             if (user) {
                 workflow.outcome.errors.push('That username is already taken.');
                 return workflow.emit('response');
@@ -102,15 +91,13 @@ exports.create = function(req, res, next) {
     workflow.on('createUser', function() {
         var fieldsToSet = {
             username: req.body.username,
+            isActive: "yes",
             search: [
                 req.body.username
             ]
         };
-        req.app.db.models.User.create(fieldsToSet, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
+        req.app.db.User.create(fieldsToSet)
+        .then(function(user) {
             workflow.outcome.record = user;
             return workflow.emit('response');
         });
@@ -123,8 +110,8 @@ exports.update = function(req, res, next) {
     var workflow = req.app.utility.workflow(req, res);
 
     workflow.on('validate', function() {
-        if (!req.body.isActive) {
-            req.body.isActive = 'no';
+        if (!req.body.siteAdmin) {
+            req.body.siteAdmin = false;
         }
 
         if (!req.body.username) {
@@ -147,16 +134,14 @@ exports.update = function(req, res, next) {
     });
 
     workflow.on('duplicateUsernameCheck', function() {
-        req.app.db.models.User.findOne({
-            username: req.body.username,
-            _id: {
-                $ne: req.params.id
+        req.app.db.User.findOne({
+            where: {
+                username: req.body.username,
+                id: {
+                    $ne: req.params.id
+                }
             }
-        }, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
+        }).then(function(user) {
             if (user) {
                 workflow.outcome.errfor.username = 'username already taken';
                 return workflow.emit('response');
@@ -167,16 +152,14 @@ exports.update = function(req, res, next) {
     });
 
     workflow.on('duplicateEmailCheck', function() {
-        req.app.db.models.User.findOne({
-            email: req.body.email.toLowerCase(),
-            _id: {
-                $ne: req.params.id
+        req.app.db.User.findOne({
+            where: {
+                email: req.body.email.toLowerCase(),
+                id: {
+                    $ne: req.params.id
+                }
             }
-        }, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
+        }).then(function(user) {
             if (user) {
                 workflow.outcome.errfor.email = 'email already taken';
                 return workflow.emit('response');
@@ -188,7 +171,8 @@ exports.update = function(req, res, next) {
 
     workflow.on('patchUser', function() {
         var fieldsToSet = {
-            isActive: req.body.isActive,
+            siteAdmin: req.body.siteAdmin,
+            isActive: req.body.isActive ? "yes" : "no",
             username: req.body.username,
             email: req.body.email.toLowerCase(),
             search: [
@@ -197,13 +181,18 @@ exports.update = function(req, res, next) {
             ]
         };
 
-        req.app.db.models.User.findByIdAndUpdate(req.params.id, fieldsToSet, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
+        req.app.db.User.update(fieldsToSet, {where: {id: req.params.id} })
+            .then(function(user, err) {
+                if (err) {
+                    return workflow.emit('exception', err);
+                }
 
-            workflow.emit('patchAdmin', user);
-        });
+                return req.app.db.User.findById(req.params.id)
+            })
+            .then(function(user, err) {
+                workflow.outcome.user = user;
+                workflow.emit('response');
+            });
     });
 
     workflow.on('patchAdmin', function(user) {
@@ -284,7 +273,7 @@ exports.password = function(req, res, next) {
     });
 
     workflow.on('patchUser', function() {
-        req.app.db.models.User.encryptPassword(req.body.newPassword, function(err, hash) {
+        req.app.db.User.encryptPassword(req.body.newPassword, function(err, hash) {
             if (err) {
                 return workflow.emit('exception', err);
             }
@@ -292,26 +281,35 @@ exports.password = function(req, res, next) {
             var fieldsToSet = {
                 password: hash
             };
-            req.app.db.models.User.findByIdAndUpdate(req.params.id, fieldsToSet, function(err, user) {
-                if (err) {
-                    return workflow.emit('exception', err);
-                }
-
-                user.populate('roles.admin roles.account', 'name.full', function(err, user) {
-                    if (err) {
-                        return workflow.emit('exception', err);
-                    }
-
-                    workflow.outcome.user = user;
+            req.app.db.User.update(fieldsToSet, {where: {id: req.params.id} })
+                .then(function(numAffected, err) {
+                    workflow.outcome.user = req.params.id;
                     workflow.outcome.newPassword = '';
                     workflow.outcome.confirm = '';
                     workflow.emit('response');
                 });
-            });
         });
     });
 
     workflow.emit('validate');
+};
+
+exports.regions = function(req, res, next) {
+    Promise.all([
+        req.app.db.User.findById(req.params.id),
+        req.app.db.activeRegion.findAll({
+            where: {
+                rc_region:
+                req.body.regions
+                    .filter(region => { return region.enabled; })
+                    .map(region => { return region.rc_region; })
+            }
+        })
+    ]).then(function ([user, newRegions]) {
+        return user.setActiveRegions(newRegions);
+    }).then(() => {
+        res.send({success: true});
+    });
 };
 
 exports.linkAdmin = function(req, res, next) {
@@ -655,11 +653,6 @@ exports.delete = function(req, res, next) {
     var workflow = req.app.utility.workflow(req, res);
 
     workflow.on('validate', function() {
-        if (!req.user.roles.admin.isMemberOf('root')) {
-            workflow.outcome.errors.push('You may not delete users.');
-            return workflow.emit('response');
-        }
-
         if (req.user._id === req.params.id) {
             workflow.outcome.errors.push('You may not delete yourself from user.');
             return workflow.emit('response');
@@ -669,11 +662,15 @@ exports.delete = function(req, res, next) {
     });
 
     workflow.on('deleteUser', function(err) {
-        req.app.db.models.User.findByIdAndRemove(req.params.id, function(err, user) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
+        req.app.db.User.findById(req.params.id)
+        .then(user => {
+            return Promise.all([
+               user,
+               user.setActiveRegions([])
+            ]);
+        }).then(function([user]) {
+            return user.destroy();
+        }).then(() => {
             workflow.emit('response');
         });
     });

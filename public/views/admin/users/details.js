@@ -6,7 +6,7 @@
   app = app || {};
 
   app.User = Backbone.Model.extend({
-    idAttribute: '_id',
+    idAttribute: 'id',
     url: function() {
       return '/admin/users/'+ this.id +'/';
     }
@@ -30,7 +30,8 @@
       success: false,
       errors: [],
       errfor: {},
-      isActive: '',
+      siteAdmin: false,
+      isActive: false,
       username: '',
       email: ''
     },
@@ -53,7 +54,6 @@
       success: false,
       errors: [],
       errfor: {},
-      roles: {},
       newAccountId: '',
       newAdminId: ''
     },
@@ -69,6 +69,18 @@
       return response;
     }
   });
+
+  app.Region = Backbone.Model.extend({
+    idAttribute: '_id',
+    defaults: {
+      success: false
+    },
+    url: function() {
+      return '/admin/users/'+ app.mainView.model.id +'/regions/';
+    }
+  });
+
+  app.Regions = Backbone.Collection.extend({ });
 
   app.Password = Backbone.Model.extend({
     idAttribute: '_id',
@@ -121,7 +133,8 @@
     syncUp: function() {
       this.model.set({
         _id: app.mainView.model.id,
-        isActive: app.mainView.model.get('isActive'),
+        siteAdmin: app.mainView.model.get('siteAdmin'),
+        isActive: app.mainView.model.get('isActive') == 'yes',
         username: app.mainView.model.get('username'),
         email: app.mainView.model.get('email')
       });
@@ -129,103 +142,72 @@
     render: function() {
       this.$el.html(this.template( this.model.attributes ));
 
-      for (var key in this.model.attributes) {
-        if (this.model.attributes.hasOwnProperty(key)) {
-          this.$el.find('[name="'+ key +'"]').val(this.model.attributes[key]);
-        }
-      }
+      this.$el.find('[name="siteAdmin"]').prop('checked', this.model.attributes['siteAdmin']);
+      this.$el.find('[name="isActive"]').prop('checked', this.model.attributes['isActive']);
+      this.$el.find('[name="username"]').val(this.model.attributes['username']);
+      this.$el.find('[name="email"]').val(this.model.attributes['email']);
     },
     update: function() {
       this.model.save({
-        isActive: this.$el.find('[name="isActive"]').val(),
+        siteAdmin: this.$el.find('[name="siteAdmin"]').prop("checked"),
+        isActive: this.$el.find('[name="isActive"]').prop("checked"),
         username: this.$el.find('[name="username"]').val(),
         email: this.$el.find('[name="email"]').val()
       });
     }
   });
 
-  app.RolesView = Backbone.View.extend({
-    el: '#roles',
-    template: _.template( $('#tmpl-roles').html() ),
+
+  app.RegionView = Backbone.View.extend({
+    el: '#regions',
+    template: _.template( $('#tmpl-region').html() ),
     events: {
-      'click .btn-admin-open': 'adminOpen',
-      'click .btn-admin-link': 'adminLink',
-      'click .btn-admin-unlink': 'adminUnlink',
-      'click .btn-account-open': 'accountOpen',
-      'click .btn-account-link': 'accountLink',
-      'click .btn-account-unlink': 'accountUnlink'
+      'click .btn-regions': 'regions'
     },
     initialize: function() {
-      this.model = new app.Roles();
-      this.syncUp();
-      this.listenTo(app.mainView.model, 'change', this.syncUp);
+      app.mainView.model.activeRegions.forEach(function(activeRegion) {
+        activeRegion.enabled = false;
+        app.mainView.model.enabledRegions.forEach(function(enabledRegion) {
+          if(enabledRegion.rc_region == activeRegion.rc_region) {
+            activeRegion.enabled = true;
+          }
+        });
+      });
+      this.model = new app.Region({
+        _id: app.mainView.model.id,
+        regions: new app.Regions(app.mainView.model.activeRegions)
+      });
       this.listenTo(this.model, 'sync', this.render);
       this.render();
     },
-    syncUp: function() {
-      this.model.set({
-        _id: app.mainView.model.id,
-        roles: app.mainView.model.get('roles')
+    render: function() {
+      this.$el.html(this.template(this.model.attributes));
+      var container = this.$el.find("#region-rows");
+
+      this.model.attributes['regions'].each(function(region) {
+        var view = new app.RegionRowView({ model: region });
+        container.append(view.render().el);
       });
+      return this;
+    },
+    regions: function() {
+      this.model.save();
+    }
+  });
+
+  app.RegionRowView = Backbone.View.extend({
+    tagName: 'div',
+    template:  _.template( $('#tmpl-region-row').html() ),
+    events: {
+      'click input': 'update'
     },
     render: function() {
-      this.$el.html(this.template( this.model.attributes ));
-
-      for (var key in this.model.attributes) {
-        if (this.model.attributes.hasOwnProperty(key)) {
-          this.$el.find('[name="'+ key +'"]').val(this.model.attributes[key]);
-        }
-      }
+      this.$el.html(this.template(this.model.attributes));
+      this.$el.find('input').prop('checked', this.model.attributes.enabled);
+      return this;
     },
-    adminOpen: function() {
-      location.href = '/admin/administrators/'+ this.model.get('roles').admin._id +'/';
-    },
-    adminLink: function() {
-      this.model.save({
-        newAdminId: $('[name="newAdminId"]').val()
-      },{
-        url: this.model.url() +'role-admin/'
-      });
-    },
-    adminUnlink: function() {
-      if (confirm('Are you sure?')) {
-        this.model.destroy({
-          url: this.model.url() +'role-admin/',
-          success: function(model, response) {
-            if (response.user) {
-              app.mainView.model.set(response.user);
-              delete response.user;
-            }
-
-            app.rolesView.model.set(response);
-          }
-        });
-      }
-    },
-    accountOpen: function() {
-      location.href = '/admin/accounts/'+ this.model.get('roles').account._id +'/';
-    },
-    accountLink: function() {
-      this.model.save({
-        newAccountId: $('[name="newAccountId"]').val()
-      },{
-        url: this.model.url() +'role-account/'
-      });
-    },
-    accountUnlink: function() {
-      if (confirm('Are you sure?')) {
-        this.model.destroy({
-          url: this.model.url() +'role-account/',
-          success: function(model, response) {
-            if (response.user) {
-              app.mainView.model.set(response.user);
-              delete response.user;
-            }
-
-            app.rolesView.model.set(response);
-          }
-        });
-      }
+    update: function() {
+      this.model.attributes.enabled = this.$el.find('input').prop('checked');
     }
   });
 
@@ -293,10 +275,13 @@
       app.mainView = this;
       this.model = new app.User( JSON.parse( unescape($('#data-record').html())) );
 
+      this.model.activeRegions = JSON.parse( unescape($('#data-active-regions').html()));
+      this.model.enabledRegions = JSON.parse( unescape($('#data-enabled-regions').html()));
+
       app.headerView = new app.HeaderView();
       app.identityView = new app.IdentityView();
+      app.regionView = new app.RegionView();
       app.passwordView = new app.PasswordView();
-      app.rolesView = new app.RolesView();
       app.deleteView = new app.DeleteView();
     }
   });

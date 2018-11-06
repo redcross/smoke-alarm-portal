@@ -7,7 +7,7 @@ block neck
   link(rel='stylesheet', href='/views/admin/users/index.min.css?#{cacheBreaker}')
 
 block feet
-  script(src='/views/admin/users/index.min.js?#{cacheBreaker}')
+  script(src='/views/admin/users/index.js')
 
 block body
   div.row
@@ -31,34 +31,6 @@ block body
         div.col-sm-3
           label Username Search
           input.form-control(name='username', type='text')
-        div.col-sm-3
-          label Can Play Role
-          select.form-control(name='roles')
-            option(value='') any
-            option(value='admin') admin
-            option(value='account') account
-        div.col-sm-2
-          label Is Active
-          select.form-control(name='isActive')
-            option(value='') either
-            option(value='yes') yes
-            option(value='no') no
-        div.col-sm-2
-          label Sort By
-          select.form-control(name='sort')
-            option(value='_id') id &#9650;
-            option(value='-_id') id &#9660;
-            option(value='username') username &#9650;
-            option(value='-username') username &#9660;
-            option(value='email') email &#9650;
-            option(value='-email') email &#9660;
-        div.col-sm-2
-          label Results Per Page
-          select.form-control(name='limit')
-            option(value='10') 10 items
-            option(value='20', selected='selected') 20 items
-            option(value='50') 50 items
-            option(value='100') 100 items
 
   script(type='text/template', id='tmpl-results-table')
     table.table.table-striped
@@ -67,6 +39,7 @@ block body
           th
           th username
           th.stretch email
+          th siteAdmin
           th active
           th id
       tbody#results-rows
@@ -76,8 +49,9 @@ block body
       input.btn.btn-default.btn-sm.btn-details(type='button', value='Edit')
     td <%= username %>
     td <%= email %>
+    td <%= siteAdmin ? 'Yes' : 'No' %>
     td <%= isActive %>
-    td <%= _id %>
+    td <%= id %>
 
   script(type='text/template', id='tmpl-results-empty-row')
     tr

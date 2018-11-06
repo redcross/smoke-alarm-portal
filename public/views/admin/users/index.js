@@ -11,7 +11,7 @@
       _id: undefined,
       username: '',
       email: '',
-      isActive: ''
+      siteAdmin: ''
     },
     url: function() {
       return '/admin/users/'+ (this.isNew() ? '' : this.id +'/');
@@ -22,20 +22,14 @@
     model: app.Record,
     url: '/admin/users/',
     parse: function(results) {
-      app.pagingView.model.set({
-        pages: results.pages,
-        items: results.items
-      });
-      app.filterView.model.set(results.filters);
-      return results.data;
+      return results;
     }
   });
 
   app.Filter = Backbone.Model.extend({
     defaults: {
       username: '',
-      roles: '',
-      isActive: '',
+      siteAdmin: '',
       sort: '',
       limit: ''
     }
@@ -83,7 +77,7 @@
           success: function(model, response) {
             if (response.success) {
               model.id = response.record._id;
-              location.href = model.url();
+              location.href = model.url() + response.record.id + "/";
             }
             else {
               alert(response.errors.join('\n'));
@@ -98,7 +92,7 @@
     el: '#results-table',
     template: _.template( $('#tmpl-results-table').html() ),
     initialize: function() {
-      this.collection = new app.RecordCollection( app.mainView.results.data );
+      this.collection = new app.RecordCollection( app.mainView.results );
       this.listenTo(this.collection, 'reset', this.render);
       this.render();
     },
@@ -125,7 +119,7 @@
       'click .btn-details': 'viewDetails'
     },
     viewDetails: function() {
-      location.href = this.model.url();
+      location.href = this.model.url() + this.model.attributes.id + "/";
     },
     render: function() {
       this.$el.html(this.template( this.model.attributes ));

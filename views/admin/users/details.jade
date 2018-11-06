@@ -4,15 +4,15 @@ block head
   title Users / Details
 
 block feet
-  script(src='/views/admin/users/details.min.js?#{cacheBreaker}')
+  script(src='/views/admin/users/details.js')
 
 block body
   div.row
     div.col-xs-12
       div#header
       div#identity
-      div#roles
       div#password
+      div#regions
       div#delete
 
   script(type='text/template', id='tmpl-header')
@@ -35,12 +35,13 @@ block body
           button.close(type='button', data-dismiss='alert') &times;
           | Changes have been saved.
         |<% } %>
-      div.form-group(class!='<%- errfor.isActive ? "has-error" : "" %>')
+      div.form-group(class!='<%- errfor.siteAdmin ? "has-error" : "" %>')
+        label Is Site Admin:
+        input(type='checkbox', name='siteAdmin')
+        span.help-block <%- errfor.siteAdmin %>
+      div.form-group()
         label Is Active:
-        select.form-control(name='isActive')
-          option(value='yes') yes
-          option(value='no') no
-        span.help-block <%- errfor.isActive %>
+        input(type='checkbox', name='isActive')
       div.form-group(class!='<%- errfor.username ? "has-error" : "" %>')
         label Username:
         input.form-control(type='text', name='username', value!='<%= username %>')
@@ -52,44 +53,22 @@ block body
       div.form-group
         button.btn.btn-primary.btn-update(type='button') Update
 
-  script(type='text/template', id='tmpl-roles')
-    fieldset
-      legend Roles
-      div.alerts
-        |<% _.each(errors, function(err) { %>
-        div.alert.alert-danger.alert-dismissable
-          button.close(type='button', data-dismiss='alert') &times;
-          |<%- err %>
-        |<% }); %>
-      div.form-group(class!='<%- errfor.newAdminId ? "has-error" : "" %>')
-        label Admin:
-        div.controls
-          div.input-group
-            |<% if (roles && roles.admin) { %>
-            input.form-control(disabled=true, value!='<%= roles.admin.name.full %>')
-            div.input-group-btn
-              button.btn.btn-warning.btn-admin-unlink(type='button') Unlink
-              button.btn.btn-default.btn-admin-open(type='button') Open
-            |<% } else { %>
-            input.form-control(name='newAdminId', type='text', placeholder='enter admin id')
-            div.input-group-btn
-              button.btn.btn-success.btn-admin-link(type='button') Link
-            |<% } %>
-          span.help-block <%- errfor.newAdminId %>
-      div.form-group(class!='<%- errfor.newAccountId ? "has-error" : "" %>')
-        label Account:
-        div.input-group
-          |<% if (roles && roles.account) { %>
-          input.form-control(disabled=true, value!='<%= roles.account.name.full %>')
-          div.input-group-btn
-            button.btn.btn-warning.btn-account-unlink(type='button') Unlink
-            button.btn.btn-default.btn-account-open(type='button') Open
-          |<% } else { %>
-          input.form-control(name='newAccountId', type='text', placeholder='enter account id')
-          div.input-group-btn
-            button.btn.btn-success.btn-account-link(type='button') Link
-          |<% } %>
-        span.help-block <%- errfor.newAccountId %>
+  script(type='text/template', id='tmpl-region')
+    legend Update Regions
+    div.alerts
+      |<% if (success) { %>
+      div.alert.alert-info.alert-dismissable
+        button.close(type='button', data-dismiss='alert') &times;
+        | Changes have been saved.
+      |<% } %>
+    div#region-rows.form-group
+    div.form-group
+      button.btn.btn-primary.btn-regions(type='button') Update
+
+  script(type='text/template', id='tmpl-region-row')
+    input(type='checkbox', name!='<%= rc_region %>')
+    &nbsp;
+    <%- region_name %>
 
   script(type='text/template', id='tmpl-password')
     fieldset
@@ -134,3 +113,5 @@ block body
         button.btn.btn-danger.btn-delete(type='button') Delete
 
   script(type='text/template', id='data-record') !{data.record}
+  script(type='text/template', id='data-active-regions') !{data.activeRegions}
+  script(type='text/template', id='data-enabled-regions') !{data.enabledRegions}
