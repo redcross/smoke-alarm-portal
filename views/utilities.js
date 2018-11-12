@@ -197,12 +197,11 @@ module.exports  = {
         return requestData;
     },
 
-    createSerial: function (numberOfRequests, requestData, region) {
+    createPublicId: function (numberOfRequests, requestData, region) {
         // construct today date object
         var today = new Date();
-        // avoid the first request having a serial number of
-        // "region-date-00000."  I think that would be confusing for users.
-        // We might as well start with 1.
+        // avoid the first request having a public_id of "region-date-00000."
+        // I think that would be confusing for users; we might as well start with 1.
         numberOfRequests = numberOfRequests + 1;
         var sequenceNumber = module.exports.padWithZeroes(numberOfRequests.toString(), 5);
          // find fiscal year
@@ -214,7 +213,7 @@ module.exports  = {
         }
         var displayedYear = fiscalYear - 2000;
         if (region) {
-            var serial = region + "-" + displayedYear + "-" + sequenceNumber;
+            var public_id = region + "-" + displayedYear + "-" + sequenceNumber;
         }
         else {
             // construct code from state
@@ -226,10 +225,10 @@ module.exports  = {
             else {
                 state_code = "XXXX";
             }
-            var serial = state_code + "-" + displayedYear + "-" + sequenceNumber;
+            var public_id = state_code + "-" + displayedYear + "-" + sequenceNumber;
         }
 
-        requestData.serial = serial;
+        requestData.public_id = public_id;
         return requestData;
     },
 
@@ -295,7 +294,7 @@ module.exports  = {
             phone: requestData.phone,
             sms_raw_phone: requestData.raw_phone,
             email: requestData.email,
-            serial: requestData.serial,
+            public_id: requestData.public_id,
             assigned_rc_region: requestData.assigned_rc_region,
             status: 'new'
         }).then(function(request) {
@@ -427,7 +426,7 @@ module.exports  = {
         var regionPresentableName = selectedRegion.region_name;
         var regionRecipientName   = selectedRegion.contact_name;
         var regionRecipientEmail  = selectedRegion.contact_email;
-        var thisRequestID = request.serial;
+        var thisRequestID = request.public_id;
 
         var email_text = "We have received a smoke alarm installation request from:\n"
             + "\n"

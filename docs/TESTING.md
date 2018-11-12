@@ -13,7 +13,7 @@ A list of tests to be included in future unit tests:
   - nonexistent zip code gets "Sorry, we didn't recognize..."
   - existent zip without region gets "Sorry" with correct county
   - zip in inactive region gets "Sorry" with correct county
-  - zip in active region gets "Thank you" with ID (serial number)
+  - zip in active region gets "Thank you" with ID (public id)
 - "Thank you" or "Sorry" page shows up as expected
 - Email is sent to correct person/people
 
@@ -45,7 +45,7 @@ A list of tests to be included in future unit tests:
 - all SMS's send, in correct order, in any language
 - save the provided phone number or the "from" number, as directed
 - the correct information is saved in the database
-- requester receives correct final response (sorry, or thank you with serial)
+- requester receives correct final response (sorry, or thank you with public id)
 - suggested texts:
   - active region in english
   - active region in spanish
@@ -76,7 +76,7 @@ A list of tests to be included in future unit tests:
 - selected filters are maintained in exported file
 - all results are exported (not just the first page)
 - after export, new filters/sorting can be applied without error
-- CSV includes correct serial number and region
+- CSV includes correct ID number (public id) and region
 
 ## Kiosk
 

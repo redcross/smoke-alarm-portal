@@ -31,7 +31,7 @@ exports.saveRequest = function(req, res) {
         return utils.countRequestsPerRegion(region_code);
     }).then( function(numRequests) {
         requestData = utils.getRequestData(req, numRequests, region_code);
-        requestData = utils.createSerial(numRequests, requestData, region_code);
+        requestData = utils.createPublicId(numRequests, requestData, region_code);
         
         // Check what url the request came from:
         if (req.url == '/311') {
@@ -47,7 +47,7 @@ exports.saveRequest = function(req, res) {
     }).then( function(activeRegion){
         if (activeRegion) {
             utils.sendEmail(savedRequest, activeRegion);
-            res.render('thankyou.jade', {region: activeRegion.region_name, id: savedRequest.serial, origin: req.url});
+            res.render('thankyou.jade', {region: activeRegion.region_name, id: savedRequest.public_id, origin: req.url});
         }
         else{
             res.render('sorry.jade', {county: requestData.countyFromZip, state: requestData.stateFromZip, zip: requestData.zip_for_lookup, origin: req.url});
