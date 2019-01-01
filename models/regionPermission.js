@@ -19,6 +19,7 @@
 module.exports = function(sequelize, DataTypes) {
     return sequelize.define('regionPermission', {
         rc_region: {type: DataTypes.TEXT},
-        user_id: {type: DataTypes.INTEGER}
+        user_id: {type: DataTypes.INTEGER},
+        contact: DataTypes.BOOLEAN
   })
 }

@@ -170,6 +170,7 @@
         app.mainView.model.enabledRegions.forEach(function(enabledRegion) {
           if(enabledRegion.rc_region == activeRegion.rc_region) {
             activeRegion.enabled = true;
+            activeRegion.contact = enabledRegion.regionPermission.contact;
           }
         });
       });
@@ -203,11 +204,13 @@
     },
     render: function() {
       this.$el.html(this.template(this.model.attributes));
-      this.$el.find('input').prop('checked', this.model.attributes.enabled);
+      this.$el.find('input[name="view"]').prop('checked', this.model.attributes.enabled);
+      this.$el.find('input[name="contact"]').prop('checked', this.model.attributes.contact);
       return this;
     },
     update: function() {
-      this.model.attributes.enabled = this.$el.find('input').prop('checked');
+      this.model.attributes.enabled = this.$el.find('input[name="view"]').prop('checked');
+      this.model.attributes.contact = this.$el.find('input[name="contact"]').prop('checked');
     }
   });
 

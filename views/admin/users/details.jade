@@ -3,6 +3,9 @@ extends ../../../layouts/admin
 block head
   title Users / Details
 
+block neck
+  link(rel='stylesheet', href='/views/admin/users/details.min.css?#{cacheBreaker}')
+
 block feet
   script(src='/views/admin/users/details.js')
 
@@ -66,9 +69,15 @@ block body
       button.btn.btn-primary.btn-regions(type='button') Update
 
   script(type='text/template', id='tmpl-region-row')
-    input(type='checkbox', name!='<%= rc_region %>')
-    &nbsp;
-    <%- region_name %>
+    div.region-row
+      div.region-name
+        <%- region_name %>
+      &nbsp;
+      label View:
+      input(type='checkbox', name!='view')
+      &nbsp;
+      label Contact:
+      input(type='checkbox', name!='contact')
 
   script(type='text/template', id='tmpl-password')
     fieldset

@@ -306,6 +306,14 @@ exports.regions = function(req, res, next) {
             }
         })
     ]).then(function ([user, newRegions]) {
+        newRegions.forEach(region => {
+            region.regionPermission = {
+                contact:
+                req.body.regions.find(reqRegion => {
+                    return reqRegion.rc_region == region.rc_region
+                }).contact
+            }
+        })
         return user.setActiveRegions(newRegions);
     }).then(() => {
         res.send({success: true});
