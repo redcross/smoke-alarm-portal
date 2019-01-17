@@ -433,8 +433,8 @@ module.exports  = {
     sendEmail: function(request, selectedRegion) {
         this.getContacts(selectedRegion).then(users => {
             users.map(user => {
-                var regionPresentableName = ""; //selectedRegion.region_name;
-                var regionRecipientName   = ""; //selectedRegion.contact_name;
+                var regionPresentableName = selectedRegion.region_name;
+                var regionRecipientName   = user.name;
                 var regionRecipientEmail  = user.email;
                 var thisRequestID = request.public_id;
 
