@@ -174,6 +174,7 @@ exports.update = function(req, res, next) {
             siteAdmin: req.body.siteAdmin,
             isActive: req.body.isActive ? "yes" : "no",
             username: req.body.username,
+            name: req.body.name,
             email: req.body.email.toLowerCase(),
             search: [
                 req.body.username,

@@ -33,6 +33,7 @@
       siteAdmin: false,
       isActive: false,
       username: '',
+      name: '',
       email: ''
     },
     url: function() {
@@ -136,6 +137,7 @@
         siteAdmin: app.mainView.model.get('siteAdmin'),
         isActive: app.mainView.model.get('isActive') == 'yes',
         username: app.mainView.model.get('username'),
+        name: app.mainView.model.get('name'),
         email: app.mainView.model.get('email')
       });
     },
@@ -145,6 +147,7 @@
       this.$el.find('[name="siteAdmin"]').prop('checked', this.model.attributes['siteAdmin']);
       this.$el.find('[name="isActive"]').prop('checked', this.model.attributes['isActive']);
       this.$el.find('[name="username"]').val(this.model.attributes['username']);
+      this.$el.find('[name="name"]').val(this.model.attributes['name']);
       this.$el.find('[name="email"]').val(this.model.attributes['email']);
     },
     update: function() {
@@ -152,6 +155,7 @@
         siteAdmin: this.$el.find('[name="siteAdmin"]').prop("checked"),
         isActive: this.$el.find('[name="isActive"]').prop("checked"),
         username: this.$el.find('[name="username"]').val(),
+        name: this.$el.find('[name="name"]').val(),
         email: this.$el.find('[name="email"]').val()
       });
     }

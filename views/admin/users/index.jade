@@ -38,6 +38,7 @@ block body
         tr
           th
           th username
+          th name
           th.stretch email
           th siteAdmin
           th active
@@ -48,6 +49,7 @@ block body
     td
       input.btn.btn-default.btn-sm.btn-details(type='button', value='Edit')
     td <%= username %>
+    td.nowrap <%= name %>
     td <%= email %>
     td <%= siteAdmin ? 'Yes' : 'No' %>
     td <%= isActive %>

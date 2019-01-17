@@ -49,6 +49,9 @@ block body
         label Username:
         input.form-control(type='text', name='username', value!='<%= username %>')
         span.help-block <%- errfor.username %>
+      div.form-group()
+        label Name:
+        input.form-control(type='text', name='name', value!='<%= name %>')
       div.form-group(class!='<%- errfor.email ? "has-error" : "" %>')
         label Email:
         input.form-control(type='text', name='email', value!='<%= email %>')
