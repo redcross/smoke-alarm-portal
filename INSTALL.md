@@ -109,7 +109,24 @@ be edited here.
         ### if you used approach 1, log out; you should be yourself now
         $ exit
 
-1. Generate tables in postgres
+1. Generate tables in postgres and run migrations
+
+        ### Run the initial one of the two sql files (created before migrations
+        ### were being used), or get a recent production dump.
+        ### The first is schema only, and the second includes sample data.  They
+        ### both set up the database to the schema that matched the development
+        ### model as of sha 8e970a3 (master branch around January 2019), after
+        ### which migrations were used.
+        $ psql smokealarm_development
+
+        ### Schema only
+        smokealarm_development=# \i migrations/8e970a3-initial-db.sql
+
+        ### Schema and sample data
+        smokealarm_development=# \i migrations/8e970a3-initial-db-with-sample-data.sql
+
+        ### exit psql
+        smokealarm_development=# \q
 
         ### This one needs to be available system-wide
         $ sudo npm install -g sequelize-cli 
@@ -118,39 +135,9 @@ be edited here.
         $ NODE_ENV="development" 
 
         ### Before you run this command, update the config/config.json with the recently created database username and password.
-        ### 
-        ### This will spew a lot of information to the screen and may
-        ### take several minutes.  It creates the tables and loads data
-        ### into UsAddress and SelectedCounties.
-        $ node data/import_into_postgres.js
-
-
-1. Load sample data and run migrations
-
-        ### Load the active regions and recipients.
-        $ psql smokealarm_development
-        ### Import the regions and recipients to the "activeRegions" table.
-        smokealarm_development=# \i config/recipients.sql
-        # use the most recent region codes in all places
-        smokealarm_development=# \i migrations/20150916-update-regions.sql
-        # add internal codes to regions
-        smokealarm_development=# \i migrations/20150916-internal-regions.sql
-        # add a "no region found" region
-        smokealarm_development=# \i migrations/20151208-create-nonregion.sql
-        
-        # If you already have requests, update them.  Otherwise (e.g. if
-        # you're setting up an empty database) you can skip these migrations.
-        smokealarm_development=# \i migrations/20151208-add-nonregion-code.sql
-        smokealarm_development=# \i migrations/20151217-set-new-status.sql
-
-        ### exit psql
-        smokealarm_development=# \q        
 
         ### Run sequelize migrations
-        sequelize db:migrate
-
-        ### FOR DEVELOPMENT, load sample requests:
-        $ node data/fake_request_data.js 
+        $ sequelize db:migrate
 
 1. Start the smoke-alarm-portal app
 
