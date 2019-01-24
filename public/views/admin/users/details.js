@@ -204,18 +204,30 @@
     tagName: 'div',
     template:  _.template( $('#tmpl-region-row').html() ),
     events: {
-      'click input': 'update'
+      'click input': 'update',
+      'click [name="view"]': 'enableContact'
     },
     render: function() {
       this.$el.html(this.template(this.model.attributes));
       this.$el.find('input[name="view"]').prop('checked', this.model.attributes.enabled);
       this.$el.find('input[name="contact"]').prop('checked', this.model.attributes.contact);
+      this.$el.find('input[name="contact"]').prop('disabled', !this.model.attributes.enabled);
       return this;
     },
     update: function() {
       this.model.attributes.enabled = this.$el.find('input[name="view"]').prop('checked');
       this.model.attributes.contact = this.$el.find('input[name="contact"]').prop('checked');
+    },
+    enableContact: function() {
+      if(this.$el.find('input[name="view"]').prop('checked')) {
+         this.$el.find('input[name="contact"]').prop('disabled', false);
+      } else {
+         this.$el.find('input[name="contact"]').prop('disabled', true);
+         this.$el.find('input[name="contact"]').prop('checked', false);
+         this.model.attributes.contact = false;
+      }
     }
+
   });
 
   app.PasswordView = Backbone.View.extend({
