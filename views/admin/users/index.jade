@@ -28,8 +28,9 @@ block body
   script(type='text/template', id='tmpl-adder')
     form.form-inline
       div.input-group
-        input.form-control(name='username', type='text', placeholder='enter a username', value!='<%= username %>')
-        button.btn.btn-primary.btn-add(type='button') Add New
+        div.input-group-btn
+          button.pull-left.btn.btn-primary.btn-add(type='button') Add New User
+          input.form-control(name='username', type='text', placeholder='Enter new username', value!='<%= username %>')
 
   script(type='text/template', id='tmpl-results-table')
     table.table.table-striped
