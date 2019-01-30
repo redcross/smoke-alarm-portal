@@ -19,10 +19,11 @@ block body
 
   script(type='text/template', id='tmpl-header')
     div.page-header
-      form.filters.pull-right
-        div.row
-          label Username Search
-          input.form-control(name='username', type='text')
+      form.filters.pull-right.form-inline
+        div.input-group
+          input.form-control(name='username', type='text', placeholder='search users')
+          button.pull-right.btn.btn-primary.btn-search(type='button')
+            i.material-icons.md-24 search
       h1 Users
 
   script(type='text/template', id='tmpl-adder')

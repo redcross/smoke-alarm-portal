@@ -132,6 +132,7 @@
     template: _.template( $('#tmpl-header').html() ),
     events: {
       'submit form': 'preventSubmit',
+      'click .btn-search': 'filter',
       'keypress input[type="text"]': 'filterOnEnter',
       'change select': 'filter'
     },
