@@ -43,8 +43,8 @@
   });
 
   app.HeaderView = Backbone.View.extend({
-    el: '#header',
-    template: _.template( $('#tmpl-header').html() ),
+    el: '#adder',
+    template: _.template( $('#tmpl-adder').html() ),
     events: {
       'submit form': 'preventSubmit',
       'keypress input[type="text"]': 'addNewOnEnter',
@@ -128,8 +128,8 @@
   });
 
   app.FilterView = Backbone.View.extend({
-    el: '#filters',
-    template: _.template( $('#tmpl-filters').html() ),
+    el: '#header',
+    template: _.template( $('#tmpl-header').html() ),
     events: {
       'submit form': 'preventSubmit',
       'keypress input[type="text"]': 'filterOnEnter',
@@ -157,7 +157,7 @@
       this.filter();
     },
     filter: function() {
-      var query = $('#filters form').serialize();
+      var query = $('#header form').serialize();
       Backbone.history.navigate('q/'+ query, { trigger: true });
     }
   });

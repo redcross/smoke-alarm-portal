@@ -13,24 +13,23 @@ block body
   div.row
     div.col-xs-12
       div#header
-      div#filters
+      div#adder
       div#results-table
       div#results-paging
 
   script(type='text/template', id='tmpl-header')
     div.page-header
-      form.form-inline.pull-right
-        div.input-group
-          input.form-control(name='username', type='text', placeholder='enter a username', value!='<%= username %>')
-          button.btn.btn-primary.btn-add(type='button') Add New
-      h1 Users
-
-  script(type='text/template', id='tmpl-filters')
-    form.filters
-      div.row
-        div.col-sm-3
+      form.filters.pull-right
+        div.row
           label Username Search
           input.form-control(name='username', type='text')
+      h1 Users
+
+  script(type='text/template', id='tmpl-adder')
+    form.form-inline
+      div.input-group
+        input.form-control(name='username', type='text', placeholder='enter a username', value!='<%= username %>')
+        button.btn.btn-primary.btn-add(type='button') Add New
 
   script(type='text/template', id='tmpl-results-table')
     table.table.table-striped
