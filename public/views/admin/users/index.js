@@ -116,15 +116,31 @@
     tagName: 'tr',
     template: _.template( $('#tmpl-results-row').html() ),
     events: {
-      'click .btn-details': 'viewDetails'
+      'click .btn-details': 'viewDetails',
+      'click input[name="siteAdmin"]': 'update',
+      'click input[name="isActive"]': 'update'
     },
     viewDetails: function() {
-      location.href = this.model.url() + this.model.attributes.id + "/";
+      location.href = this.model.url();
+    },
+    initialize: function() {
+      this.model.set({
+        _id: this.model.attributes.id
+      });
     },
     render: function() {
       this.$el.html(this.template( this.model.attributes ));
+      this.$el.find('[name="siteAdmin"]').prop('checked', this.model.attributes['siteAdmin']);
+      this.$el.find('[name="isActive"]').prop('checked', this.model.attributes['isActive'] == 'yes');
       return this;
-    }
+    },
+    update: function() {
+      this.model.save({
+        siteAdmin: this.$el.find('[name="siteAdmin"]').prop("checked"),
+        isActive: this.$el.find('[name="isActive"]').prop("checked"),
+        propertiesOnly: true
+      });
+    },
   });
 
   app.FilterView = Backbone.View.extend({

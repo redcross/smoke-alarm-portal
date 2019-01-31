@@ -54,8 +54,10 @@ block body
     td <%= username %>
     td.nowrap <%= name %>
     td <%= email %>
-    td <%= siteAdmin ? 'Yes' : 'No' %>
-    td <%= isActive %>
+    td
+      input(type='checkbox', name='siteAdmin')
+    td
+      input(type='checkbox', name='isActive')
     td <%= id %>
 
   script(type='text/template', id='tmpl-results-empty-row')

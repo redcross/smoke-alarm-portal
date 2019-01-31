@@ -247,7 +247,27 @@ exports.update = function(req, res, next) {
         });
     });
 
-    workflow.emit('validate');
+    // This is for patching properties from the list view, so less validation
+    // is required.  Currently only used for active/siteAdmin, but if in the future
+    // there is a need to patch things that need validation, consider going through
+    // entire validation process
+    workflow.on('patchProperties', function() {
+        var fieldsToSet = {
+            siteAdmin: req.body.siteAdmin,
+            isActive: req.body.isActive ? "yes" : "no"
+        };
+
+        req.app.db.User.update(fieldsToSet, {where: {id: req.params.id} })
+            .then(function(user, err) {
+                workflow.emit('response');
+            });
+    });
+
+    if(req.body.propertiesOnly) {
+        workflow.emit('patchProperties');
+    } else {
+        workflow.emit('validate');
+    }
 };
 
 exports.password = function(req, res, next) {
