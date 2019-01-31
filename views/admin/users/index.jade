@@ -41,8 +41,10 @@ block body
           th username
           th name
           th.stretch email
-          th Is site admin?
-          th Is active?
+          th(data-toggle="tooltip", title="Site admins can configure users and regions")
+            | Is site admin?
+          th(data-toggle="tooltip", title="Inactive users cannot log in to the system")
+            | Is active?
           th id
       tbody#results-rows
 
