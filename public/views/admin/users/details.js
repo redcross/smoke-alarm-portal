@@ -194,7 +194,9 @@
       this.render();
     },
     render: function() {
-      this.$el.html(this.template(this.model.attributes));
+      this.$el.html(
+        this.template(
+          _.extend({}, this.model.attributes, app.mainView.model.attributes)));
       var container = this.$el.find("#region-rows");
 
       this.model.attributes['regions'].each(function(region) {
