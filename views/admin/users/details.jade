@@ -39,12 +39,21 @@ block body
           | Changes have been saved.
         |<% } %>
       div.form-group(class!='<%- errfor.siteAdmin ? "has-error" : "" %>')
-        label Is Site Admin:
-        input(type='checkbox', name='siteAdmin')
-        span.help-block <%- errfor.siteAdmin %>
+        label Admin:
+        div.indented
+          input.regularAdmin(type='radio', name='siteAdmin')
+          label Regular Admin
+        div.indented
+          input.siteAdmin(type='radio', name='siteAdmin')
+          label Site Admin
       div.form-group()
-        label Is Active:
-        input(type='checkbox', name='isActive')
+        label Active:
+        div.indented
+          input.inactive(type='radio', name='isActive')
+          label Inactive
+        div.indented
+          input.active(type='radio', name='isActive')
+          label Active
       div.form-group(class!='<%- errfor.username ? "has-error" : "" %>')
         label Username:
         input.form-control(type='text', name='username', value!='<%= username %>')

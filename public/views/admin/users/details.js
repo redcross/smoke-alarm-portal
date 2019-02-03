@@ -144,16 +144,24 @@
     render: function() {
       this.$el.html(this.template( this.model.attributes ));
 
-      this.$el.find('[name="siteAdmin"]').prop('checked', this.model.attributes['siteAdmin']);
-      this.$el.find('[name="isActive"]').prop('checked', this.model.attributes['isActive']);
+      if(this.model.attributes['siteAdmin']) {
+        this.$el.find('.siteAdmin').prop('checked', true);
+      } else {
+        this.$el.find('.regularAdmin').prop('checked', true);
+      }
+      if(this.model.attributes['isActive']) {
+        this.$el.find('.active').prop('checked', true);
+      } else {
+        this.$el.find('.inactive').prop('checked', true);
+      }
       this.$el.find('[name="username"]').val(this.model.attributes['username']);
       this.$el.find('[name="name"]').val(this.model.attributes['name']);
       this.$el.find('[name="email"]').val(this.model.attributes['email']);
     },
     update: function() {
       this.model.save({
-        siteAdmin: this.$el.find('[name="siteAdmin"]').prop("checked"),
-        isActive: this.$el.find('[name="isActive"]').prop("checked"),
+        siteAdmin: this.$el.find('input.siteAdmin').prop("checked"),
+        isActive: this.$el.find('input.active').prop("checked"),
         username: this.$el.find('[name="username"]').val(),
         name: this.$el.find('[name="name"]').val(),
         email: this.$el.find('[name="email"]').val()
