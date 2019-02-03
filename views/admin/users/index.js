@@ -32,7 +32,10 @@ exports.find = function(req, res, next) {
 exports.read = function(req, res, next) {  
     var activeRegions = req.app.db.activeRegion.findAll({
         attributes: ['rc_region', 'region_name'],
-        where: {rc_region: {ne: 'rc_test_region'} },
+        where: {
+          is_active: true,
+          rc_region: {ne: 'rc_test_region'}
+        },
         order: 'region_name'
     });
 
@@ -320,6 +323,7 @@ exports.regions = function(req, res, next) {
         req.app.db.User.findById(req.params.id),
         req.app.db.activeRegion.findAll({
             where: {
+                is_active: true,
                 rc_region:
                 req.body.regions
                     .filter(region => { return region.enabled; })
