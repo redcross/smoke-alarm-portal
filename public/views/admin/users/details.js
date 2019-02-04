@@ -211,7 +211,8 @@
   });
 
   app.RegionRowView = Backbone.View.extend({
-    tagName: 'div',
+    tagName: 'tr',
+    className: 'regionRow',
     template:  _.template( $('#tmpl-region-row').html() ),
     events: {
       'click input': 'update',

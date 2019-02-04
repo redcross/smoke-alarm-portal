@@ -4,7 +4,7 @@ block head
   title Users / Details
 
 block neck
-  link(rel='stylesheet', href='/views/admin/users/details.min.css?#{cacheBreaker}')
+  link(rel='stylesheet', href='/views/admin/users/index.min.css?#{cacheBreaker}')
 
 block feet
   script(src='/views/admin/users/details.js')
@@ -76,19 +76,28 @@ block body
         button.close(type='button', data-dismiss='alert') &times;
         | Changes have been saved.
       |<% } %>
-    div#region-rows.form-group
+    div#results-table
+      table.table.table-striped
+        thead
+          tr
+            th.stretch Region Name
+            th(data-toggle="tooltip",
+               title="Users who can view region requests will see all " +
+                     "the requests in their regions upon logging in.")
+             | Can view region requests
+            th(data-toggle="tooltip",
+               title="Users who are contacts for regions will receive an " +
+                     "email any time a new request comes in for that region.")
+             | Set user as contact for region
+        tbody#region-rows
     div.form-group
       button.btn.btn-primary.btn-regions(type='button') Update
 
   script(type='text/template', id='tmpl-region-row')
-    div.region-row
-      div.region-name
-        <%- region_name %>
-      &nbsp;
-      label View:
+    td.region-name <%- region_name %>
+    td
       input(type='checkbox', name!='view')
-      &nbsp;
-      label Contact:
+    td
       input(type='checkbox', name!='contact')
 
   script(type='text/template', id='tmpl-password')
