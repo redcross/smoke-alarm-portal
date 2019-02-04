@@ -165,6 +165,13 @@
         username: this.$el.find('[name="username"]').val(),
         name: this.$el.find('[name="name"]').val(),
         email: this.$el.find('[name="email"]').val()
+      },
+      {
+        success: function(response) {
+          if(response.attributes.success) {
+            location.href = '/admin/users/';
+          }
+        }
       });
     }
   });
