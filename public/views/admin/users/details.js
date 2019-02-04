@@ -284,7 +284,11 @@
       this.$el.html(this.template( this.model.attributes ));
     },
     delete: function() {
-      if (confirm('Are you sure?')) {
+      var confirmationMessage = "Are you sure you want to delete admin " +
+        app.mainView.model.attributes.username + "?\n\n" +
+        "Deleting a admin is irreversible and may leave uncompleted requests in limbo " +
+        "if there are no other admins enabled for those regions.";
+      if (confirm(confirmationMessage)) {
         this.model.destroy({
           success: function(model, response) {
             if (response.success) {
