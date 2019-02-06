@@ -119,14 +119,23 @@ exports.update = function(req, res, next) {
 
         if (!req.body.username) {
             workflow.outcome.errfor.username = 'required';
+            workflow.outcome.errors.push('Error with username.');
         } else if (!/^[a-zA-Z0-9\-\_]+$/.test(req.body.username)) {
             workflow.outcome.errfor.username = 'only use letters, numbers, \'-\', \'_\'';
+            workflow.outcome.errors.push('Error with username.');
         }
 
         if (!req.body.email) {
             workflow.outcome.errfor.email = 'required';
+            workflow.outcome.errors.push('Error with email.');
         } else if (!/^[a-zA-Z0-9\-\_\.\+]+@[a-zA-Z0-9\-\_\.]+\.[a-zA-Z0-9\-\_]+$/.test(req.body.email)) {
             workflow.outcome.errfor.email = 'invalid email format';
+            workflow.outcome.errors.push('Error with email.');
+        }
+
+        if (req.body.newPassword !== req.body.confirm) {
+            workflow.outcome.errfor.password = 'passwords do not match';
+            workflow.outcome.errors.push('Passwords do not match.');
         }
 
         if (workflow.hasErrors()) {
@@ -173,81 +182,66 @@ exports.update = function(req, res, next) {
     });
 
     workflow.on('patchUser', function() {
-        var fieldsToSet = {
-            siteAdmin: req.body.siteAdmin,
-            isActive: req.body.isActive ? "yes" : "no",
-            username: req.body.username,
-            name: req.body.name,
-            email: req.body.email.toLowerCase(),
-            search: [
-                req.body.username,
-                req.body.email
-            ]
-        };
-
-        req.app.db.User.update(fieldsToSet, {where: {id: req.params.id} })
-            .then(function(user, err) {
-                if (err) {
-                    return workflow.emit('exception', err);
-                }
-
-                return req.app.db.User.findById(req.params.id)
-            })
-            .then(function(user, err) {
-                workflow.outcome.user = user;
-                workflow.emit('response');
-            });
-    });
-
-    workflow.on('patchAdmin', function(user) {
-        if (user.roles.admin) {
+        var save = function(pwHash) {
+            
             var fieldsToSet = {
-                user: {
-                    id: req.params.id,
-                    name: user.username
-                }
+                siteAdmin: req.body.siteAdmin,
+                isActive: req.body.isActive ? "yes" : "no",
+                username: req.body.username,
+                name: req.body.name,
+                email: req.body.email.toLowerCase(),
+                search: [
+                    req.body.username,
+                    req.body.email
+                ]
             };
-            req.app.db.models.Admin.findByIdAndUpdate(user.roles.admin, fieldsToSet, function(err, admin) {
-                if (err) {
-                    return workflow.emit('exception', err);
-                }
 
-                workflow.emit('patchAccount', user);
-            });
-        } else {
-            workflow.emit('patchAccount', user);
-        }
-    });
-
-    workflow.on('patchAccount', function(user) {
-        if (user.roles.account) {
-            var fieldsToSet = {
-                user: {
-                    id: req.params.id,
-                    name: user.username
-                }
-            };
-            req.app.db.models.Account.findByIdAndUpdate(user.roles.account, fieldsToSet, function(err, account) {
-                if (err) {
-                    return workflow.emit('exception', err);
-                }
-
-                workflow.emit('populateRoles', user);
-            });
-        } else {
-            workflow.emit('populateRoles', user);
-        }
-    });
-
-    workflow.on('populateRoles', function(user) {
-        user.populate('roles.admin roles.account', 'name.full', function(err, populatedUser) {
-            if (err) {
-                return workflow.emit('exception', err);
+            if(pwHash) {
+                fieldsToSet.password = pwHash;
             }
 
-            workflow.outcome.user = populatedUser;
-            workflow.emit('response');
-        });
+            req.app.db.User.update(fieldsToSet, {where: {id: req.params.id} })
+                .then(function(user) {
+                    return req.app.db.User.findById(req.params.id)
+                }).then(user => {
+                    return Promise.all([
+                        user,
+                        req.app.db.activeRegion.findAll({
+                            where: {
+                                is_active: true,
+                                rc_region:
+                                req.body.activeRegions
+                                    .filter(region => { return region.enabled; })
+                                    .map(region => { return region.rc_region; })
+                            }
+                        })
+                    ])
+                }).then(function ([user, newRegions]) {
+                    newRegions.forEach(region => {
+                       region.regionPermission = {
+                           contact:
+                           req.body.activeRegions.find(reqRegion => {
+                               return reqRegion.rc_region == region.rc_region
+                           }).contact
+                       }
+                   })
+                   return Promise.all([user, user.setActiveRegions(newRegions)]);
+               }).then(user => {
+                   workflow.outcome.user = user;
+                   workflow.emit('response');
+               });
+        }
+
+        if(req.body.newPassword) {
+            req.app.db.User.encryptPassword(req.body.newPassword, function(err, hash) {
+                if (err) {
+                    return workflow.emit('exception', err);
+                }
+                save(hash);
+            });
+        } else {
+            save(false);
+        }
     });
 
     // This is for patching properties from the list view, so less validation
@@ -273,76 +267,7 @@ exports.update = function(req, res, next) {
     }
 };
 
-exports.password = function(req, res, next) {
-    var workflow = req.app.utility.workflow(req, res);
-
-    workflow.on('validate', function() {
-        if (!req.body.newPassword) {
-            workflow.outcome.errfor.newPassword = 'required';
-        }
-
-        if (!req.body.confirm) {
-            workflow.outcome.errfor.confirm = 'required';
-        }
-
-        if (req.body.newPassword !== req.body.confirm) {
-            workflow.outcome.errors.push('Passwords do not match.');
-        }
-
-        if (workflow.hasErrors()) {
-            return workflow.emit('response');
-        }
-
-        workflow.emit('patchUser');
-    });
-
-    workflow.on('patchUser', function() {
-        req.app.db.User.encryptPassword(req.body.newPassword, function(err, hash) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
-            var fieldsToSet = {
-                password: hash
-            };
-            req.app.db.User.update(fieldsToSet, {where: {id: req.params.id} })
-                .then(function(numAffected, err) {
-                    workflow.outcome.user = req.params.id;
-                    workflow.outcome.newPassword = '';
-                    workflow.outcome.confirm = '';
-                    workflow.emit('response');
-                });
-        });
-    });
-
-    workflow.emit('validate');
-};
-
 exports.regions = function(req, res, next) {
-    Promise.all([
-        req.app.db.User.findById(req.params.id),
-        req.app.db.activeRegion.findAll({
-            where: {
-                is_active: true,
-                rc_region:
-                req.body.regions
-                    .filter(region => { return region.enabled; })
-                    .map(region => { return region.rc_region; })
-            }
-        })
-    ]).then(function ([user, newRegions]) {
-        newRegions.forEach(region => {
-            region.regionPermission = {
-                contact:
-                req.body.regions.find(reqRegion => {
-                    return reqRegion.rc_region == region.rc_region
-                }).contact
-            }
-        })
-        return user.setActiveRegions(newRegions);
-    }).then(() => {
-        res.send({success: true});
-    });
 };
 
 exports.linkAdmin = function(req, res, next) {

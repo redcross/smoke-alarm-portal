@@ -16,6 +16,7 @@ block body
       div#identity
       div#password
       div#regions
+      div#update
       div#delete
 
   script(type='text/template', id='tmpl-header')
@@ -27,18 +28,7 @@ block body
   script(type='text/template', id='tmpl-identity')
     fieldset
       legend Identity
-      div.alerts
-        |<% _.each(errors, function(err) { %>
-        div.alert.alert-danger.alert-dismissable
-          button.close(type='button', data-dismiss='alert') &times;
-          |<%- err %>
-        |<% }); %>
-        |<% if (success) { %>
-        div.alert.alert-info.alert-dismissable
-          button.close(type='button', data-dismiss='alert') &times;
-          | Changes have been saved.
-        |<% } %>
-      div.form-group(class!='<%- errfor.siteAdmin ? "has-error" : "" %>')
+      div.form-group
         label Admin:
         div.indented
           input.regularAdmin(type='radio', name='siteAdmin')
@@ -65,17 +55,9 @@ block body
         label Email:
         input.form-control(type='text', name='email', value!='<%= email %>')
         span.help-block <%- errfor.email %>
-      div.form-group
-        button.btn.btn-primary.btn-update(type='button') Update
 
   script(type='text/template', id='tmpl-region')
     legend Update Regions for <%= username %>
-    div.alerts
-      |<% if (success) { %>
-      div.alert.alert-info.alert-dismissable
-        button.close(type='button', data-dismiss='alert') &times;
-        | Changes have been saved.
-      |<% } %>
     div#results-table
       table.table.table-striped
         thead
@@ -90,8 +72,6 @@ block body
                      "email any time a new request comes in for that region.")
              | Set user as contact for region
         tbody#region-rows
-    div.form-group
-      button.btn.btn-primary.btn-regions(type='button') Update
 
   script(type='text/template', id='tmpl-region-row')
     td.region-name <%- region_name %>
@@ -103,6 +83,17 @@ block body
   script(type='text/template', id='tmpl-password')
     fieldset
       legend Set Password
+      div.form-group(class!='<%- errfor.password ? "has-error" : "" %>')
+        label New Password:
+        input.form-control(type='password', name='newPassword', value!='<%= newPassword %>')
+        span.help-block <%- errfor.password %>
+      div.form-group(class!='<%- errfor.password ? "has-error" : "" %>')
+        label Confirm Password:
+        input.form-control(type='password', name='confirm', value!='<%= confirm %>')
+        span.help-block <%- errfor.password %>
+
+  script(type='text/template', id='tmpl-update')
+    div.form-group
       div.alerts
         |<% _.each(errors, function(err) { %>
         div.alert.alert-danger.alert-dismissable
@@ -112,18 +103,9 @@ block body
       |<% if (success) { %>
       div.alert.alert-info.alert-dismissable
         button.close(type='button', data-dismiss='alert') &times;
-        | A new password has been set.
+        | Changes have been saved.
       |<% } %>
-      div.form-group(class!='<%- errfor.newPassword ? "has-error" : "" %>')
-        label New Password:
-        input.form-control(type='password', name='newPassword', value!='<%= newPassword %>')
-        span.help-block <%- errfor.newPassword %>
-      div.form-group(class!='<%- errfor.confirm ? "has-error" : "" %>')
-        label Confirm Password:
-        input.form-control(type='password', name='confirm', value!='<%= confirm %>')
-        span.help-block <%- errfor.confirm %>
-      div.form-group
-        button.btn.btn-primary.btn-password(type='button') Set Password
+      button.btn.btn-primary.btn-update(type='button') Update User
 
   script(type='text/template', id='tmpl-delete')
     fieldset
@@ -135,7 +117,7 @@ block body
           |<%- err %>
         |<% }); %>
       div.form-group
-        button.btn.btn-danger.btn-delete(type='button') Delete
+        button.btn.btn-danger.btn-delete(type='button') Delete User
 
   script(type='text/template', id='data-record') !{data.record}
   script(type='text/template', id='data-active-regions') !{data.activeRegions}
