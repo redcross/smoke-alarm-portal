@@ -12,7 +12,7 @@
       errors: [],
       errfor: {},
       siteAdmin: false,
-      isActive: false,
+      isActive: true,
       username: '',
       name: '',
       email: '',
@@ -21,7 +21,7 @@
       activeRegions: []
     },
     url: function() {
-      return '/admin/users/'+ this.id +'/';
+      return '/admin/users/' + (this.isNew() ? '' : this.id + '/');
     },
     parse: function(response) {
       if (response.user) {
@@ -188,6 +188,7 @@
       this.render();
     },
     render: function() {
+      this.model.set('action', this.model.isNew() ? 'Add' : 'Update');
       this.$el.html(this.template( this.model.attributes ));
     },
     update: function() {
@@ -208,9 +209,11 @@
       'click .btn-delete': 'delete',
     },
     initialize: function() {
-      this.model = new app.Delete({ _id: app.mainView.model.id });
-      this.listenTo(this.model, 'sync', this.render);
-      this.render();
+      if(!app.mainView.model.isNew()) {
+        this.model = new app.Delete({ _id: app.mainView.model.id });
+        this.listenTo(this.model, 'sync', this.render);
+        this.render();
+      }
     },
     render: function() {
       this.$el.html(this.template( this.model.attributes ));

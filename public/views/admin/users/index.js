@@ -14,7 +14,7 @@
       siteAdmin: ''
     },
     url: function() {
-      return '/admin/users/'+ (this.isNew() ? '' : this.id +'/');
+      return '/admin/users/'+ (this.isNew() ? 'new' : this.id +'/');
     }
   });
 
@@ -46,8 +46,6 @@
     el: '#adder',
     template: _.template( $('#tmpl-adder').html() ),
     events: {
-      'submit form': 'preventSubmit',
-      'keypress input[type="text"]': 'addNewOnEnter',
       'click .btn-add': 'addNew'
     },
     initialize: function() {
@@ -58,33 +56,8 @@
     render: function() {
       this.$el.html(this.template( this.model.attributes ));
     },
-    preventSubmit: function(event) {
-      event.preventDefault();
-    },
-    addNewOnEnter: function(event) {
-      if (event.keyCode !== 13) { return; }
-      event.preventDefault();
-      this.addNew();
-    },
     addNew: function() {
-      if (this.$el.find('[name="username"]').val() === '') {
-        alert('Please enter a username.');
-      }
-      else {
-        this.model.save({
-          username: this.$el.find('[name="username"]').val()
-        },{
-          success: function(model, response) {
-            if (response.success) {
-              model.id = response.record._id;
-              location.href = model.url() + response.record.id + "/";
-            }
-            else {
-              alert(response.errors.join('\n'));
-            }
-          }
-        });
-      }
+      location.href = this.model.url();
     }
   });
 

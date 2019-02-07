@@ -23,7 +23,7 @@ block body
     div.page-header
       h1
         a(href='/admin/users/') Users
-        |  / <%= username %>
+        |  / <%= username || 'New User' %>
 
   script(type='text/template', id='tmpl-identity')
     fieldset
@@ -105,7 +105,8 @@ block body
         button.close(type='button', data-dismiss='alert') &times;
         | Changes have been saved.
       |<% } %>
-      button.btn.btn-primary.btn-update(type='button') Update User
+      button.btn.btn-primary.btn-update(type='button')
+        <%= action %> User
 
   script(type='text/template', id='tmpl-delete')
     fieldset
