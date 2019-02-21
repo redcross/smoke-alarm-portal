@@ -32,7 +32,6 @@
       errfor: {},
       name: '',
       address: '',
-      assigned_rc_region: '',
       city: '',
       state: '',
       zip: ''
@@ -105,7 +104,6 @@
         id: app.mainView.model.id,
         name: app.mainView.model.get('name'),
         address: app.mainView.model.get('address'),
-        assigned_rc_region: app.mainView.model.get('assigned_rc_region'),
         city: app.mainView.model.get('city'),
         state: app.mainView.model.get('state'),
         zip: app.mainView.model.get('zip')
@@ -124,7 +122,6 @@
       this.model.save({
         name: this.$el.find('[name="name"]').val(),
         address: this.$el.find('[name="address"]').val(),
-        assigned_rc_region: this.$el.find('[name="assigned_rc_region"]').val(),
         city: this.$el.find('[name="city"]').val(),
         state: this.$el.find('[name="state"]').val(),
         zip: this.$el.find('[name="zip"]').val()

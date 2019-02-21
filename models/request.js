@@ -21,7 +21,6 @@ module.exports = function(sequelize, DataTypes) {
     name: DataTypes.TEXT,
     address: DataTypes.TEXT,
     sms_raw_address: DataTypes.TEXT,
-    assigned_rc_region: DataTypes.TEXT,
     city: DataTypes.TEXT,
     state: DataTypes.TEXT,
     zip: DataTypes.TEXT,

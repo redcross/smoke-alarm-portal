@@ -82,15 +82,23 @@ module.exports  = {
     countRequestsPerRegion: function (region) {
         if (region){
             return db.Request.count({
-                where: {
-                    assigned_rc_region: region
-                }
+                include: [
+                    { model: db.SelectedCounties,
+                      include: [
+                        { model: db.chapter,
+                          include: [
+                            { model: db.activeRegion,
+                              where: { rc_region: region } }
+                          ] }
+                      ]
+                    }
+                  ]
             });
         }
         else {
             return db.Request.count({
                 where: {
-                    assigned_rc_region: null
+                    SelectedCounty: null
                 }
             });
         }
@@ -159,7 +167,7 @@ module.exports  = {
         return requestZip;
     },
 
-    getRequestData: function(req, numberOfRequests, region) {
+    getRequestData: function(req, numberOfRequests) {
         var zipArray = module.exports.findZipForLookup(req);
         requestData.zip_for_lookup = zipArray.zip_for_lookup;
         requestData.zip_final = zipArray.zip_final;
@@ -192,7 +200,6 @@ module.exports  = {
         requestData.state = req.body.state.trim().replace(/\s+/g, ' ');
         requestData.phone = req.body.phone.trim().replace(/\s+/g, ' ');
         requestData.email = req.body.email.trim().replace(/\s+/g, ' ');
-        requestData.assigned_rc_region = region;
 
         return requestData;
     },
@@ -295,7 +302,6 @@ module.exports  = {
             sms_raw_phone: requestData.raw_phone,
             email: requestData.email,
             public_id: requestData.public_id,
-            assigned_rc_region: requestData.assigned_rc_region,
             status: 'new'
         }).then(function(request) {
             request.setSelectedCounty(requestData.county);
@@ -405,16 +411,6 @@ module.exports  = {
                         }
                     }
                 ]
-            }
-        });
-    },
-
-    // find out whether a region is active or not
-    isActiveRegion: function(request) {
-        return db.activeRegion.findOne({
-            where: {
-                rc_region: request.assigned_rc_region,
-                is_active: true
             }
         });
     },

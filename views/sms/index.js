@@ -236,7 +236,6 @@ exports.respond = function(req, res) {
                 req.cookies.request_object.city = null;
                 req.cookies.request_object.zip_final = zip;
             }
-            req.cookies.request_object.assigned_rc_region = region_code;
             return Promise.all([
               save_utils.countRequestsPerRegion(region_code),
               county_id]) ;
