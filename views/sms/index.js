@@ -237,13 +237,16 @@ exports.respond = function(req, res) {
                 req.cookies.request_object.zip_final = zip;
             }
             req.cookies.request_object.assigned_rc_region = region_code;
-            return save_utils.countRequestsPerRegion(region_code);
-        }).then( function(numRequests) {
+            return Promise.all([
+              save_utils.countRequestsPerRegion(region_code),
+              county_id]) ;
+        }).then( function([numRequests, county]) {
             requestData = save_utils.createPublicId(numRequests, req.cookies.request_object, region_code);
             requestData.source = 'sms';
             requestData.name = req.cookies.priorities.name.value;
             requestData.phone = req.cookies.priorities.phone.value;
             requestData.email = req.cookies.priorities.email.value;
+            requestData.county = county;
             return save_utils.saveRequestData(requestData);
         }).then(function(request) {
             savedRequest = request;

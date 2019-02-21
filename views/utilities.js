@@ -298,6 +298,7 @@ module.exports  = {
             assigned_rc_region: requestData.assigned_rc_region,
             status: 'new'
         }).then(function(request) {
+            request.setSelectedCounty(requestData.county);
             savedRequest = request;
             var query = [
                 request.address,

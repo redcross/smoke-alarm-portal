@@ -28,10 +28,13 @@ exports.saveRequest = function(req, res) {
         else {
             region_code = 'XXXX';
         }
-        return utils.countRequestsPerRegion(region_code);
-    }).then( function(numRequests) {
+        return Promise.all([
+          utils.countRequestsPerRegion(region_code),
+          county_id]) ;
+    }).then( function([numRequests, county]) {
         requestData = utils.getRequestData(req, numRequests, region_code);
         requestData = utils.createPublicId(numRequests, requestData, region_code);
+        requestData.county = county;
         
         // Check what url the request came from:
         if (req.url == '/311') {
