@@ -26,7 +26,7 @@
     "helmet": "^0.7.x",
     "i18n-2": "^0.4.6",
     "jade": "^1.x.x",
-    "json2csv": "^2.11.0",
+    "json2csv": "^4.3.x",
     "mailgun-js": "~0.7.1",
     "method-override": "^2.x.x",
     "moment": "^2.10.6",

@@ -255,14 +255,28 @@ var getResults = function(callback) {
     };
 
     var createCSV = function() {
-        var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created', 'date updated', 'region', 'source', 'count duplicates'];
-        var requestFields = ['public_id','name','address','city','state','zip','phone','email','createdAt', 'updatedAt', 'assigned_rc_region', 'source', 'duplicate_count'];
-        json2csv({ data: outcome.results, fields: requestFields, fieldNames: requestFieldNames }, function(err, csv) {
-            if (err) console.log("ERROR: error converting to CSV" + err);
-            res.setHeader('Content-Type','application/csv');
-            res.setHeader('Content-Disposition','attachment; filename=smoke-alarm-requests-' + moment().format() + '.csv;');
-            res.send(csv);
-        });
+        var fields = [
+          { label: 'id', value: 'public_id' },
+          'name',
+          'address',
+          'city',
+          'state',
+          'zip',
+          'phone',
+          'email',
+          { label: 'date created', value: 'createdAt' },
+          { label: 'date updated', value: 'updatedAt' },
+          { label: 'county', value: 'SelectedCounty.county' },
+          { label: 'chapter', value: 'SelectedCounty.chapter.name' },
+          { label: 'region', value: 'SelectedCounty.chapter.activeRegion.region_name' },
+          'source',
+          { label: 'count duplicates', value: 'duplicate_count' }
+        ]
+        var parser = new json2csv.Parser({ fields });
+        var csv = parser.parse(outcome.results);
+        res.setHeader('Content-Type','application/csv');
+        res.setHeader('Content-Disposition','attachment; filename=smoke-alarm-requests-' + moment().format() + '.csv;');
+        res.send(csv);
     }
 
     var asyncFinally = function(err, results) {
