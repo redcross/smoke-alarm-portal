@@ -203,7 +203,15 @@ var getResults = function(callback) {
             offset: offset,
             where: filters,
             order: [[req.query.sort.replace('-',''), sortOrder ]],
-            include: [req.app.db.RequestDuplicate]
+            include: [
+              req.app.db.RequestDuplicate,
+              { model: req.app.db.SelectedCounties,
+                include: [
+                  { model: req.app.db.chapter,
+                    include: [req.app.db.activeRegion] }
+                ]
+              }
+            ]
         }).reduce( function(previousValue, request, index, results) {
             return queryRegionPresentableName(request).then(
                 function (displayName) {
