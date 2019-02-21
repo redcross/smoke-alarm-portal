@@ -18,7 +18,10 @@
 
 module.exports = function(sequelize, DataTypes) {
 	return sequelize.define('SelectedCounties', {
-		region: DataTypes.TEXT,
+		chapter_code: {
+      field: 'chapter',
+      type: DataTypes.TEXT
+    },
 		state: DataTypes.TEXT,
 		county: DataTypes.TEXT
 	})

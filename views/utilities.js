@@ -375,6 +375,7 @@ module.exports  = {
 
         requestData.stateFromZip = address['state'];
         return db.SelectedCounties.findOne({
+            include: [ db.chapter ],
             where: {
                 // Use the PostgreSQL "ILIKE" (case-insensitive LIKE)
                 // operator so that internal inconsistencies in the

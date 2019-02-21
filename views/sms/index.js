@@ -209,7 +209,7 @@ exports.respond = function(req, res) {
             return save_utils.findCountyFromAddress(address, zip);
         }).then( function(county_id){
             if (county_id){
-                region_code = county_id.region;
+                region_code = county_id.chapter.region;
             }
             else {
                 region_code = 'XXXX';

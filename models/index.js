@@ -82,6 +82,8 @@ db.activeRegion.belongsToMany(
     }
 );
 
+db.SelectedCounties.belongsTo(db.chapter, {foreignKey:'chapter_code', targetKey:'code'});
+
 db.sequelize.sync(options);
 
 // TODO: This is a temporary kludge.  These shouldn't really be part
