@@ -67,30 +67,31 @@ block body
                option(value='inprogress') in-progress
                option(value='installed') installed
                option(value='canceled') canceled
-        div.col-sm-3
-          label Region
-          br
-          .allowed_region
-                each item in data.usable_regions
-                     input(type="checkbox" name="region[]" value="#{item.rc_region}")
-                     | &nbsp #{item.region_name}
-                     br
-          br
-          if (data.non_region.disabled === true)
-             .disabled_region
-                input(type="checkbox" name="region[]" value="XXXX" disabled)
-                | &nbsp No Region Found
-          else
-             .allowed_region
-                input(type="checkbox" name="region[]" value="XXXX")
-                | &nbsp No Region Found
+        if data.usable_regions
+          div.col-sm-3
+            label Region
+            br
+            .allowed_region
+                  each item in data.usable_regions
+                       input(type="checkbox" name="region[]" value="#{item.rc_region}")
+                       | &nbsp #{item.region_name}
+                       br
+            br
+            if (data.non_region.disabled === true)
+               .disabled_region
+                  input(type="checkbox" name="region[]" value="XXXX" disabled)
+                  | &nbsp No Region Found
+            else
+               .allowed_region
+                  input(type="checkbox" name="region[]" value="XXXX")
+                  | &nbsp No Region Found
 
-          label
-          .disabled_region 
-               each item in data.disabled_regions
-                   input(type="checkbox" disabled="true" name="region[]" value="#{item}")
-                   | &nbsp #{item}
-                   br
+            label
+            .disabled_region 
+                 each item in data.disabled_regions
+                     input(type="checkbox" disabled="true" name="region[]" value="#{item}")
+                     | &nbsp #{item}
+                     br
       div.row
         div.col-sm-12
           input#applyFilters(type='button', value='apply filters')
@@ -131,11 +132,15 @@ block body
       | Email: <%- email %>
     td <%- moment(createdAt).format("YYYY-MM-DD HH:mm") %>
     td
+      <% if (typeof(SelectedCounty) != "undefined") { %>
       | County: <%- SelectedCounty.county %>
       br
       | Chapter: <%- SelectedCounty.chapter.name %>
       br
       | Region: <%- SelectedCounty.chapter.activeRegion.region_name %>
+      <% } else { %>
+      | Unassigned
+      <% } %>
     td <%- source %>
       div
       div
