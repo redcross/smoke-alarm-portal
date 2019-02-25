@@ -417,77 +417,89 @@ module.exports  = {
         });
     },
 
+    getContacts: function(region) {
+        return db.User.findAll({
+            include: [{
+                model: db.activeRegion,
+                where: { rc_region: region.rc_region },
+                through: {
+                    where: { contact: true }
+                }
+            }]
+        });
+    },
 
-
-
-    // sends an email to the regional representative
+    // sends an email to the regional representatives
     sendEmail: function(request, selectedRegion) {
-        // selectedRegion is now a row from the activeRegions table
-        var regionPresentableName = selectedRegion.region_name;
-        var regionRecipientName   = selectedRegion.contact_name;
-        var regionRecipientEmail  = selectedRegion.contact_email;
-        var thisRequestID = request.public_id;
+        this.getContacts(selectedRegion).then(users => {
+            users.map(user => {
+                var regionPresentableName = selectedRegion.region_name;
+                var regionRecipientName   = user.name;
+                var regionRecipientEmail  = user.email;
+                var thisRequestID = request.public_id;
 
-        var email_text = "We have received a smoke alarm installation request from:\n"
-            + "\n"
-            + "  " + request.name + "\n"
-            + "  " + request.address + "\n"
-            + "  " + request.city + ", ";
-        if (state_abbrevs[request.state]){
-            email_text = email_text + state_abbrevs[request.state];
-        }
-        else {
-            email_text = email_text + request.state;
-        }
-        email_text = email_text + "  " + request.zip + "\n";
+                var email_text = "We have received a smoke alarm installation request from:\n"
+                    + "\n"
+                    + "  " + request.name + "\n"
+                    + "  " + request.address + "\n"
+                    + "  " + request.city + ", ";
+                if (state_abbrevs[request.state]){
+                    email_text = email_text + state_abbrevs[request.state];
+                }
+                else {
+                    email_text = email_text + request.state;
+                }
+                email_text = email_text + "  " + request.zip + "\n";
 
-        if (request.phone) {
-            email_text += "  Phone: " + request.phone + "\n";
-        } else {
-            email_text += "  Phone: ---\n";
-        };
-        if (request.email) {
-            email_text += "  Email: <" + request.email + ">\n";
-        } else {
-            email_text += "  Email: ---\n";
-        };
+                if (request.phone) {
+                    email_text += "  Phone: " + request.phone + "\n";
+                } else {
+                    email_text += "  Phone: ---\n";
+                };
+                if (request.email) {
+                    email_text += "  Email: <" + request.email + ">\n";
+                } else {
+                    email_text += "  Email: ---\n";
+                };
 
-        email_text += "\n"
-            + "This is installation request #" + thisRequestID
-            + ".  It was received via " + request.source + ".\n"
-            + "\n"
-            + "We're directing this request to the administrator for the\n"
-            + "ARC North Central Division, " + regionPresentableName + " region:\n"
-            + "\n"
-            + "  " + regionRecipientName + " <" + regionRecipientEmail + ">\n"
-            + "\n"
-            + "Thank you,\n"
-            + "-The Smoke Alarm Request Portal\n";
+                email_text += "\n"
+                    + "This is installation request #" + thisRequestID
+                    + ".  It was received via " + request.source + ".\n"
+                    + "\n"
+                    + "We're directing this request to the administrator for the\n"
+                    + "ARC North Central Division, " + regionPresentableName + " region:\n"
+                    + "\n"
+                    + "  " + regionRecipientName + " <" + regionRecipientEmail + ">\n"
+                    + "\n"
+                    + "Thank you,\n"
+                    + "-The Smoke Alarm Request Portal\n";
 
-        // Send an email to the appropriate Red Cross administrator.
-        var outbound_email = {
-            from: db.mail_from_addr,
-            to: regionRecipientName + " <" + regionRecipientEmail + ">",
-            subject: "Smoke alarm install request from " 
-                + request.name + " (#" + thisRequestID + ")",
-            text: email_text
-        };
+                // Send an email to the appropriate Red Cross administrator.
+                var outbound_email = {
+                    from: db.mail_from_addr,
+                    to: regionRecipientName + " <" + regionRecipientEmail + ">",
+                    subject: "Smoke alarm install request from " 
+                        + request.name + " (#" + thisRequestID + ")",
+                    text: email_text
+                };
 
-        db.mailgun.messages().send(outbound_email, function (error, body) {
-            if (!body) return;
+                db.mailgun.messages().send(outbound_email, function (error, body) {
+                    if (!body) return;
 
-            // TODO: We need to record the sent message's Message-ID 
-            // (which is body.id) in the database, with the request.
-            if (body.id === undefined) {
-                console.log("DEBUG: sent mail ID was undefined");
-            } else {
-                console.log("DEBUG: sent mail ID:  '" + body.id + "'");
-            }
-            if (body.message === undefined) {
-                console.log("DEBUG: sent mail msg was undefined");
-            } else {
-                console.log("DEBUG: sent mail msg: '" + body.message + "'");
-            }
+                    // TODO: We need to record the sent message's Message-ID 
+                    // (which is body.id) in the database, with the request.
+                    if (body.id === undefined) {
+                        console.log("DEBUG: sent mail ID was undefined");
+                    } else {
+                        console.log("DEBUG: sent mail ID:  '" + body.id + "'");
+                    }
+                    if (body.message === undefined) {
+                        console.log("DEBUG: sent mail msg was undefined");
+                    } else {
+                        console.log("DEBUG: sent mail msg: '" + body.message + "'");
+                    }
+                });
+            });
         });
     }
 }

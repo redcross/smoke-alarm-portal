@@ -24,6 +24,7 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false
         },
         password: DataTypes.TEXT,
+        name: DataTypes.TEXT,
         email: {
             type: DataTypes.TEXT,
             unique: true

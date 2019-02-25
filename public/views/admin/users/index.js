@@ -14,7 +14,7 @@
       siteAdmin: ''
     },
     url: function() {
-      return '/admin/users/'+ (this.isNew() ? '' : this.id +'/');
+      return '/admin/users/'+ (this.isNew() ? 'new' : this.id +'/');
     }
   });
 
@@ -43,11 +43,9 @@
   });
 
   app.HeaderView = Backbone.View.extend({
-    el: '#header',
-    template: _.template( $('#tmpl-header').html() ),
+    el: '#adder',
+    template: _.template( $('#tmpl-adder').html() ),
     events: {
-      'submit form': 'preventSubmit',
-      'keypress input[type="text"]': 'addNewOnEnter',
       'click .btn-add': 'addNew'
     },
     initialize: function() {
@@ -58,33 +56,8 @@
     render: function() {
       this.$el.html(this.template( this.model.attributes ));
     },
-    preventSubmit: function(event) {
-      event.preventDefault();
-    },
-    addNewOnEnter: function(event) {
-      if (event.keyCode !== 13) { return; }
-      event.preventDefault();
-      this.addNew();
-    },
     addNew: function() {
-      if (this.$el.find('[name="username"]').val() === '') {
-        alert('Please enter a username.');
-      }
-      else {
-        this.model.save({
-          username: this.$el.find('[name="username"]').val()
-        },{
-          success: function(model, response) {
-            if (response.success) {
-              model.id = response.record._id;
-              location.href = model.url() + response.record.id + "/";
-            }
-            else {
-              alert(response.errors.join('\n'));
-            }
-          }
-        });
-      }
+      location.href = this.model.url();
     }
   });
 
@@ -116,22 +89,39 @@
     tagName: 'tr',
     template: _.template( $('#tmpl-results-row').html() ),
     events: {
-      'click .btn-details': 'viewDetails'
+      'click .btn-details': 'viewDetails',
+      'click input[name="siteAdmin"]': 'update',
+      'click input[name="isActive"]': 'update'
     },
     viewDetails: function() {
-      location.href = this.model.url() + this.model.attributes.id + "/";
+      location.href = this.model.url();
+    },
+    initialize: function() {
+      this.model.set({
+        _id: this.model.attributes.id
+      });
     },
     render: function() {
       this.$el.html(this.template( this.model.attributes ));
+      this.$el.find('[name="siteAdmin"]').prop('checked', this.model.attributes['siteAdmin']);
+      this.$el.find('[name="isActive"]').prop('checked', this.model.attributes['isActive'] == 'yes');
       return this;
-    }
+    },
+    update: function() {
+      this.model.save({
+        siteAdmin: this.$el.find('[name="siteAdmin"]').prop("checked"),
+        isActive: this.$el.find('[name="isActive"]').prop("checked"),
+        propertiesOnly: true
+      });
+    },
   });
 
   app.FilterView = Backbone.View.extend({
-    el: '#filters',
-    template: _.template( $('#tmpl-filters').html() ),
+    el: '#header',
+    template: _.template( $('#tmpl-header').html() ),
     events: {
       'submit form': 'preventSubmit',
+      'click .btn-search': 'filter',
       'keypress input[type="text"]': 'filterOnEnter',
       'change select': 'filter'
     },
@@ -157,7 +147,7 @@
       this.filter();
     },
     filter: function() {
-      var query = $('#filters form').serialize();
+      var query = $('#header form').serialize();
       Backbone.history.navigate('q/'+ query, { trigger: true });
     }
   });

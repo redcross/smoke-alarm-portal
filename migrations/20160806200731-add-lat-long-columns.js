@@ -2,12 +2,16 @@
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
-    queryInterface.addColumn('Requests', 'latitude', Sequelize.DOUBLE);
-    queryInterface.addColumn('Requests', 'longitude', Sequelize.DOUBLE);
+    return Promise.all([
+      queryInterface.addColumn('Requests', 'latitude', Sequelize.DOUBLE),
+      queryInterface.addColumn('Requests', 'longitude', Sequelize.DOUBLE)
+    ]);
   },
 
   down: function (queryInterface, Sequelize) {
-    queryInterface.removeColumn('Requests', 'latitude');
-    queryInterface.removeColumn('Requests', 'longitude');
+    return Promise.all([
+      queryInterface.removeColumn('Requests', 'latitude'),
+      queryInterface.removeColumn('Requests', 'longitude')
+    ]);
   }
 };

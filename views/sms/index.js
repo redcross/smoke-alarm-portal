@@ -153,13 +153,12 @@ exports.respond = function(req, res) {
      * If the outcome was successful:
      * public_id: the unique ID number assigned to the request
      * county: the county found based on the entered zipcode
-     * contact: the phone number for this RC region
      *
-     * Returns: a message with "thank you," the ID number (public id), and a contact
-     * phone for successful outcomes and a "sorry" message with a generic RC
+     * Returns: a message with "thank you," and the ID number (public id),
+     * successful outcomes and a "sorry" message with a generic RC
      * phone number for out-of-area zip codes (just like the website).
      */
-    var constructFinalText = function (outcome, request, contact) {
+    var constructFinalText = function (outcome, request) {
         var twiml = new twilio.TwimlResponse();
         if (outcome) {
             msg = __("Thank you for your smoke alarm request! Your request number is %s.");
@@ -251,21 +250,19 @@ exports.respond = function(req, res) {
             return save_utils.isActiveRegion(savedRequest);
         }).then( function(activeRegion){
             var is_valid = null;
-            var contact_num = null;
             if (activeRegion) {
                 save_utils.sendEmail(savedRequest, activeRegion);
                 is_valid = true;
-                contact_num = activeRegion.contact_phone;
             }
             else{
                 is_valid = false;
             }
-            constructFinalText(is_valid, req.cookies.request_object, contact_num); 
+            constructFinalText(is_valid, req.cookies.request_object);
 
         }).catch(function(error) {
             console.log("DEBUG: caught error " + error);
             // send sorry
-            constructFinalText(false, req.cookies.request_object, null);
+            constructFinalText(false, req.cookies.request_object);
         });
     };
 

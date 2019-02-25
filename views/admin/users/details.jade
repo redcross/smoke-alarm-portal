@@ -3,6 +3,9 @@ extends ../../../layouts/admin
 block head
   title Users / Details
 
+block neck
+  link(rel='stylesheet', href='/views/admin/users/index.min.css?#{cacheBreaker}')
+
 block feet
   script(src='/views/admin/users/details.js')
 
@@ -13,91 +16,101 @@ block body
       div#identity
       div#password
       div#regions
+      div#update
       div#delete
 
   script(type='text/template', id='tmpl-header')
     div.page-header
       h1
         a(href='/admin/users/') Users
-        |  / <%= username %>
+        |  / <%= username || 'New User' %>
 
   script(type='text/template', id='tmpl-identity')
     fieldset
       legend Identity
+      div.form-group
+        label Admin:
+        div.indented
+          input.regularAdmin(type='radio', name='siteAdmin')
+          label Regular Admin
+        div.indented
+          input.siteAdmin(type='radio', name='siteAdmin')
+          label Site Admin
+      div.form-group()
+        label Active:
+        div.indented
+          input.inactive(type='radio', name='isActive')
+          label Inactive
+        div.indented
+          input.active(type='radio', name='isActive')
+          label Active
+      div.form-group(class!='<%- errfor.username ? "has-error" : "" %>')
+        label Username:
+        input.form-control(type='text', name='username', value!='<%= username %>')
+        span.help-block <%- errfor.username %>
+      div.form-group()
+        label Name:
+        input.form-control(type='text', name='name', value!='<%= name %>')
+      div.form-group(class!='<%- errfor.email ? "has-error" : "" %>')
+        label Email:
+        input.form-control(type='text', name='email', value!='<%= email %>')
+        span.help-block <%- errfor.email %>
+
+  script(type='text/template', id='tmpl-region')
+    legend Update Regions for <%= username %>
+    div#results-table
+      table.table.table-striped
+        thead
+          tr
+            th.stretch Region Name
+            th(data-toggle="tooltip",
+               title="Users who can view region requests will see all " +
+                     "the requests in their regions upon logging in.")
+             | Can view region requests
+            th(data-toggle="tooltip",
+               title="Users who are contacts for regions will receive an " +
+                     "email any time a new request comes in for that region.")
+             | Set user as contact for region
+        tbody#region-rows
+
+  script(type='text/template', id='tmpl-region-row')
+    td.region-name <%- region_name %>
+    td
+      input(type='checkbox', name!='view')
+    td
+      input(type='checkbox', name!='contact')
+
+  script(type='text/template', id='tmpl-password')
+    fieldset
+      legend Set Password
+      div.form-group(class!='<%- errfor.password ? "has-error" : "" %>')
+        label New Password:
+        input.form-control(type='password', name='newPassword', value!='<%= newPassword %>')
+        span.help-block <%- errfor.password %>
+      div.form-group(class!='<%- errfor.password ? "has-error" : "" %>')
+        label Confirm Password:
+        input.form-control(type='password', name='confirm', value!='<%= confirm %>')
+        span.help-block <%- errfor.password %>
+
+  script(type='text/template', id='tmpl-update')
+    div.form-group
       div.alerts
         |<% _.each(errors, function(err) { %>
         div.alert.alert-danger.alert-dismissable
           button.close(type='button', data-dismiss='alert') &times;
           |<%- err %>
         |<% }); %>
-        |<% if (success) { %>
-        div.alert.alert-info.alert-dismissable
-          button.close(type='button', data-dismiss='alert') &times;
-          | Changes have been saved.
-        |<% } %>
-      div.form-group(class!='<%- errfor.siteAdmin ? "has-error" : "" %>')
-        label Is Site Admin:
-        input(type='checkbox', name='siteAdmin')
-        span.help-block <%- errfor.siteAdmin %>
-      div.form-group()
-        label Is Active:
-        input(type='checkbox', name='isActive')
-      div.form-group(class!='<%- errfor.username ? "has-error" : "" %>')
-        label Username:
-        input.form-control(type='text', name='username', value!='<%= username %>')
-        span.help-block <%- errfor.username %>
-      div.form-group(class!='<%- errfor.email ? "has-error" : "" %>')
-        label Email:
-        input.form-control(type='text', name='email', value!='<%= email %>')
-        span.help-block <%- errfor.email %>
-      div.form-group
-        button.btn.btn-primary.btn-update(type='button') Update
-
-  script(type='text/template', id='tmpl-region')
-    legend Update Regions
-    div.alerts
       |<% if (success) { %>
       div.alert.alert-info.alert-dismissable
         button.close(type='button', data-dismiss='alert') &times;
         | Changes have been saved.
       |<% } %>
-    div#region-rows.form-group
-    div.form-group
-      button.btn.btn-primary.btn-regions(type='button') Update
-
-  script(type='text/template', id='tmpl-region-row')
-    input(type='checkbox', name!='<%= rc_region %>')
-    &nbsp;
-    <%- region_name %>
-
-  script(type='text/template', id='tmpl-password')
-    fieldset
-      legend Set Password
-      div.alerts
-        |<% _.each(errors, function(err) { %>
-        div.alert.alert-danger.alert-dismissable
-          button.close(type='button', data-dismiss='alert') &times;
-          |<%- err %>
-        |<% }); %>
-      |<% if (success) { %>
-      div.alert.alert-info.alert-dismissable
-        button.close(type='button', data-dismiss='alert') &times;
-        | A new password has been set.
-      |<% } %>
-      div.form-group(class!='<%- errfor.newPassword ? "has-error" : "" %>')
-        label New Password:
-        input.form-control(type='password', name='newPassword', value!='<%= newPassword %>')
-        span.help-block <%- errfor.newPassword %>
-      div.form-group(class!='<%- errfor.confirm ? "has-error" : "" %>')
-        label Confirm Password:
-        input.form-control(type='password', name='confirm', value!='<%= confirm %>')
-        span.help-block <%- errfor.confirm %>
-      div.form-group
-        button.btn.btn-primary.btn-password(type='button') Set Password
+      button.btn.btn-primary.btn-update(type='button')
+        <%= action %> User
 
   script(type='text/template', id='tmpl-delete')
     fieldset
-      legend Danger Zone
+      legend Delete User
       div.alerts
         |<% _.each(errors, function(err) { %>
         div.alert.alert-danger.alert-dismissable
@@ -105,12 +118,7 @@ block body
           |<%- err %>
         |<% }); %>
       div.form-group
-        span.help-block
-          span.label.label-danger If you do this, it cannot be undone.
-          |&nbsp;
-          span.text-muted You may also create orphaned document relationships too.
-      div.form-group
-        button.btn.btn-danger.btn-delete(type='button') Delete
+        button.btn.btn-danger.btn-delete(type='button') Delete User
 
   script(type='text/template', id='data-record') !{data.record}
   script(type='text/template', id='data-active-regions') !{data.activeRegions}

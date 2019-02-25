@@ -13,24 +13,23 @@ block body
   div.row
     div.col-xs-12
       div#header
-      div#filters
+      div#adder
       div#results-table
       div#results-paging
 
   script(type='text/template', id='tmpl-header')
     div.page-header
-      form.form-inline.pull-right
+      form.filters.pull-right.form-inline
         div.input-group
-          input.form-control(name='username', type='text', placeholder='enter a username', value!='<%= username %>')
-          button.btn.btn-primary.btn-add(type='button') Add New
+          input.form-control(name='username', type='text', placeholder='search users')
+          button.pull-right.btn.btn-primary.btn-search(type='button')
+            i.material-icons.md-24 search
       h1 Users
 
-  script(type='text/template', id='tmpl-filters')
-    form.filters
-      div.row
-        div.col-sm-3
-          label Username Search
-          input.form-control(name='username', type='text')
+  script(type='text/template', id='tmpl-adder')
+    div.input-group
+      div.input-group-btn
+        button.btn.btn-primary.btn-add(type='button') Add New User
 
   script(type='text/template', id='tmpl-results-table')
     table.table.table-striped
@@ -38,9 +37,12 @@ block body
         tr
           th
           th username
+          th name
           th.stretch email
-          th siteAdmin
-          th active
+          th(data-toggle="tooltip", title="Site admins can configure users and regions")
+            | Is site admin?
+          th(data-toggle="tooltip", title="Inactive users cannot log in to the system")
+            | Is active?
           th id
       tbody#results-rows
 
@@ -48,9 +50,12 @@ block body
     td
       input.btn.btn-default.btn-sm.btn-details(type='button', value='Edit')
     td <%= username %>
+    td.nowrap <%= name %>
     td <%= email %>
-    td <%= siteAdmin ? 'Yes' : 'No' %>
-    td <%= isActive %>
+    td
+      input(type='checkbox', name='siteAdmin')
+    td
+      input(type='checkbox', name='isActive')
     td <%= id %>
 
   script(type='text/template', id='tmpl-results-empty-row')

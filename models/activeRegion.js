@@ -20,9 +20,6 @@ module.exports = function(sequelize, DataTypes) {
   return sequelize.define('activeRegion', {
       rc_region: {type: DataTypes.TEXT, primaryKey: true},
       region_name: DataTypes.TEXT,
-      contact_name: DataTypes.TEXT,
-      contact_email: DataTypes.TEXT,
-      contact_phone: DataTypes.TEXT,      
       is_active: DataTypes.BOOLEAN
   })
 }

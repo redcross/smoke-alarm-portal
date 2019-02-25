@@ -32,81 +32,57 @@ exports.find = function(req, res, next) {
 exports.read = function(req, res, next) {  
     var activeRegions = req.app.db.activeRegion.findAll({
         attributes: ['rc_region', 'region_name'],
-        where: {rc_region: {ne: 'rc_test_region'} },
+        where: {
+          is_active: true,
+          rc_region: {ne: 'rc_test_region'}
+        },
         order: 'region_name'
     });
 
-    req.app.db.User.findById(req.params.id)
-      .then(user => {
-          return Promise.all([
-              activeRegions,
-              user.getActiveRegions(),
-              user])
-    }).then(function ([activeRegions, enabledRegions, user]) {
-        if (req.xhr) {
-            res.send(user);
-        } else {
-            res.render('admin/users/details', {
-                data: {
-                    record: escape(JSON.stringify(user)),
-                    activeRegions: escape(JSON.stringify(activeRegions)),
-                    enabledRegions: escape(JSON.stringify(enabledRegions))
-                }
-            });
-        }
-    }).catch(function(err) {
-        return next(err);
-    });
-};
-
-exports.create = function(req, res, next) {
-    var workflow = req.app.utility.workflow(req, res);
-
-    workflow.on('validate', function() {
-        if (!req.body.username) {
-            workflow.outcome.errors.push('Please enter a username.');
-            return workflow.emit('response');
-        }
-
-        if (!/^[a-zA-Z0-9\-\_]+$/.test(req.body.username)) {
-            workflow.outcome.errors.push('only use letters, numbers, -, _');
-            return workflow.emit('response');
-        }
-
-        workflow.emit('duplicateUsernameCheck');
-    });
-
-    workflow.on('duplicateUsernameCheck', function() {
-        req.app.db.User.findOne({ where: { username: req.body.username, }
-        }).then(function(user) {
-            if (user) {
-                workflow.outcome.errors.push('That username is already taken.');
-                return workflow.emit('response');
-            }
-
-            workflow.emit('createUser');
+    if(req.params.id == 'new') {
+      activeRegions.then(activeRegions => {
+        res.render('admin/users/details', {
+          data: {
+            record: escape(JSON.stringify({})),
+            activeRegions: escape(JSON.stringify(activeRegions)),
+            enabledRegions: escape(JSON.stringify([]))
+          }
         });
-    });
-
-    workflow.on('createUser', function() {
-        var fieldsToSet = {
-            username: req.body.username,
-            isActive: "yes",
-            search: [
-                req.body.username
-            ]
-        };
-        req.app.db.User.create(fieldsToSet)
-        .then(function(user) {
-            workflow.outcome.record = user;
-            return workflow.emit('response');
-        });
-    });
-
-    workflow.emit('validate');
+      });
+    } else {
+      req.app.db.User.findById(req.params.id)
+        .then(user => {
+            return Promise.all([
+                activeRegions,
+                user.getActiveRegions(),
+                user])
+      }).then(function ([activeRegions, enabledRegions, user]) {
+          if (req.xhr) {
+              res.send(user);
+          } else {
+              res.render('admin/users/details', {
+                  data: {
+                      record: escape(JSON.stringify(user)),
+                      activeRegions: escape(JSON.stringify(activeRegions)),
+                      enabledRegions: escape(JSON.stringify(enabledRegions))
+                  }
+              });
+          }
+      }).catch(function(err) {
+          return next(err);
+      });
+    }
 };
 
 exports.update = function(req, res, next) {
+    updateOrCreate(req, res, false);
+}
+
+exports.create = function(req, res, next) {
+    updateOrCreate(req, res, true);
+}
+
+var updateOrCreate = function(req, res, newUser) {
     var workflow = req.app.utility.workflow(req, res);
 
     workflow.on('validate', function() {
@@ -116,14 +92,28 @@ exports.update = function(req, res, next) {
 
         if (!req.body.username) {
             workflow.outcome.errfor.username = 'required';
+            workflow.outcome.errors.push('Error with username.');
         } else if (!/^[a-zA-Z0-9\-\_]+$/.test(req.body.username)) {
             workflow.outcome.errfor.username = 'only use letters, numbers, \'-\', \'_\'';
+            workflow.outcome.errors.push('Error with username.');
         }
 
         if (!req.body.email) {
             workflow.outcome.errfor.email = 'required';
+            workflow.outcome.errors.push('Error with email.');
         } else if (!/^[a-zA-Z0-9\-\_\.\+]+@[a-zA-Z0-9\-\_\.]+\.[a-zA-Z0-9\-\_]+$/.test(req.body.email)) {
             workflow.outcome.errfor.email = 'invalid email format';
+            workflow.outcome.errors.push('Error with email.');
+        }
+
+        if (req.body.newPassword !== req.body.confirm) {
+            workflow.outcome.errfor.password = 'passwords do not match';
+            workflow.outcome.errors.push('Passwords do not match.');
+        }
+
+        if (newUser && !req.body.newPassword) {
+            workflow.outcome.errfor.password = 'password required';
+            workflow.outcome.errors.push('Password Required for New User');
         }
 
         if (workflow.hasErrors()) {
@@ -134,16 +124,15 @@ exports.update = function(req, res, next) {
     });
 
     workflow.on('duplicateUsernameCheck', function() {
-        req.app.db.User.findOne({
-            where: {
-                username: req.body.username,
-                id: {
-                    $ne: req.params.id
-                }
-            }
-        }).then(function(user) {
+        var whereClause = { username: req.body.username };
+        if(!newUser) {
+            whereClause.id = { $ne: req.params.id };
+        }
+        req.app.db.User.findOne({ where: whereClause }
+        ).then(function(user) {
             if (user) {
                 workflow.outcome.errfor.username = 'username already taken';
+                workflow.outcome.errors.push('Problem with username.');
                 return workflow.emit('response');
             }
 
@@ -152,16 +141,15 @@ exports.update = function(req, res, next) {
     });
 
     workflow.on('duplicateEmailCheck', function() {
-        req.app.db.User.findOne({
-            where: {
-                email: req.body.email.toLowerCase(),
-                id: {
-                    $ne: req.params.id
-                }
-            }
-        }).then(function(user) {
+        var whereClause = { email: req.body.email.toLowerCase() };
+        if(!newUser) {
+            whereClause.id = { $ne: req.params.id };
+        }
+        req.app.db.User.findOne({ where: whereClause }
+        ).then(function(user) {
             if (user) {
                 workflow.outcome.errfor.email = 'email already taken';
+                workflow.outcome.errors.push('Problem with email.');
                 return workflow.emit('response');
             }
 
@@ -170,146 +158,86 @@ exports.update = function(req, res, next) {
     });
 
     workflow.on('patchUser', function() {
+        var save = function(pwHash) {
+
+            (newUser ?
+                req.app.db.User.create({username: req.body.username}) :
+                req.app.db.User.findById(req.params.id))
+                .then(function(user) {
+                    user.siteAdmin = req.body.siteAdmin;
+                    user.isActive = req.body.isActive ? "yes" : "no";
+                    user.username = req.body.username;
+                    user.name = req.body.name;
+                    user.email = req.body.email.toLowerCase();
+                    if(pwHash) {
+                        user.password = pwHash;
+                    }
+                    return user.save()
+                }).then(user => {
+                    return Promise.all([
+                        user,
+                        req.app.db.activeRegion.findAll({
+                            where: {
+                                is_active: true,
+                                rc_region:
+                                req.body.activeRegions
+                                    .filter(region => { return region.enabled; })
+                                    .map(region => { return region.rc_region; })
+                            }
+                        })
+                    ])
+                }).then(function ([user, newRegions]) {
+                    newRegions.forEach(region => {
+                       region.regionPermission = {
+                           contact:
+                           req.body.activeRegions.find(reqRegion => {
+                               return reqRegion.rc_region == region.rc_region
+                           }).contact
+                       }
+                   })
+                   return Promise.all([user, user.setActiveRegions(newRegions)]);
+               }).then(user => {
+                   workflow.outcome.user = user;
+                   workflow.emit('response');
+               });
+        }
+
+        if(req.body.newPassword) {
+            req.app.db.User.encryptPassword(req.body.newPassword, function(err, hash) {
+                if (err) {
+                    return workflow.emit('exception', err);
+                }
+                save(hash);
+            });
+        } else {
+            save(false);
+        }
+    });
+
+    // This is for patching properties from the list view, so less validation
+    // is required.  Currently only used for active/siteAdmin, but if in the future
+    // there is a need to patch things that need validation, consider going through
+    // entire validation process
+    workflow.on('patchProperties', function() {
         var fieldsToSet = {
             siteAdmin: req.body.siteAdmin,
-            isActive: req.body.isActive ? "yes" : "no",
-            username: req.body.username,
-            email: req.body.email.toLowerCase(),
-            search: [
-                req.body.username,
-                req.body.email
-            ]
+            isActive: req.body.isActive ? "yes" : "no"
         };
 
         req.app.db.User.update(fieldsToSet, {where: {id: req.params.id} })
             .then(function(user, err) {
-                if (err) {
-                    return workflow.emit('exception', err);
-                }
-
-                return req.app.db.User.findById(req.params.id)
-            })
-            .then(function(user, err) {
-                workflow.outcome.user = user;
                 workflow.emit('response');
             });
     });
 
-    workflow.on('patchAdmin', function(user) {
-        if (user.roles.admin) {
-            var fieldsToSet = {
-                user: {
-                    id: req.params.id,
-                    name: user.username
-                }
-            };
-            req.app.db.models.Admin.findByIdAndUpdate(user.roles.admin, fieldsToSet, function(err, admin) {
-                if (err) {
-                    return workflow.emit('exception', err);
-                }
-
-                workflow.emit('patchAccount', user);
-            });
-        } else {
-            workflow.emit('patchAccount', user);
-        }
-    });
-
-    workflow.on('patchAccount', function(user) {
-        if (user.roles.account) {
-            var fieldsToSet = {
-                user: {
-                    id: req.params.id,
-                    name: user.username
-                }
-            };
-            req.app.db.models.Account.findByIdAndUpdate(user.roles.account, fieldsToSet, function(err, account) {
-                if (err) {
-                    return workflow.emit('exception', err);
-                }
-
-                workflow.emit('populateRoles', user);
-            });
-        } else {
-            workflow.emit('populateRoles', user);
-        }
-    });
-
-    workflow.on('populateRoles', function(user) {
-        user.populate('roles.admin roles.account', 'name.full', function(err, populatedUser) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
-            workflow.outcome.user = populatedUser;
-            workflow.emit('response');
-        });
-    });
-
-    workflow.emit('validate');
-};
-
-exports.password = function(req, res, next) {
-    var workflow = req.app.utility.workflow(req, res);
-
-    workflow.on('validate', function() {
-        if (!req.body.newPassword) {
-            workflow.outcome.errfor.newPassword = 'required';
-        }
-
-        if (!req.body.confirm) {
-            workflow.outcome.errfor.confirm = 'required';
-        }
-
-        if (req.body.newPassword !== req.body.confirm) {
-            workflow.outcome.errors.push('Passwords do not match.');
-        }
-
-        if (workflow.hasErrors()) {
-            return workflow.emit('response');
-        }
-
-        workflow.emit('patchUser');
-    });
-
-    workflow.on('patchUser', function() {
-        req.app.db.User.encryptPassword(req.body.newPassword, function(err, hash) {
-            if (err) {
-                return workflow.emit('exception', err);
-            }
-
-            var fieldsToSet = {
-                password: hash
-            };
-            req.app.db.User.update(fieldsToSet, {where: {id: req.params.id} })
-                .then(function(numAffected, err) {
-                    workflow.outcome.user = req.params.id;
-                    workflow.outcome.newPassword = '';
-                    workflow.outcome.confirm = '';
-                    workflow.emit('response');
-                });
-        });
-    });
-
-    workflow.emit('validate');
+    if(req.body.propertiesOnly) {
+        workflow.emit('patchProperties');
+    } else {
+        workflow.emit('validate');
+    }
 };
 
 exports.regions = function(req, res, next) {
-    Promise.all([
-        req.app.db.User.findById(req.params.id),
-        req.app.db.activeRegion.findAll({
-            where: {
-                rc_region:
-                req.body.regions
-                    .filter(region => { return region.enabled; })
-                    .map(region => { return region.rc_region; })
-            }
-        })
-    ]).then(function ([user, newRegions]) {
-        return user.setActiveRegions(newRegions);
-    }).then(() => {
-        res.send({success: true});
-    });
 };
 
 exports.linkAdmin = function(req, res, next) {
