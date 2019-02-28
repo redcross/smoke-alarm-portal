@@ -419,6 +419,7 @@ module.exports  = {
 
     getContacts: function(region) {
         return db.User.findAll({
+            where: {isActive: "yes"},
             include: [{
                 model: db.activeRegion,
                 where: { rc_region: region.rc_region },
