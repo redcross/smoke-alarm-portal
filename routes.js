@@ -125,6 +125,7 @@ exports = module.exports = function(app, passport) {
   app.get('/admin/requests/:id/', require('./views/admin/requests/index').read);
   app.delete('/admin/requests/:id/', require('./views/admin/requests/index').delete);
 
+  app.get('/admin/counties/', require('./views/admin/counties/index').list);
 
   //admin > users
   app.all('/admin/users*', ensureSiteAdmin);

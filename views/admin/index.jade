@@ -10,8 +10,10 @@ block body
   div.row
     div.col-sm-3
       div.page-header
+        h2 Administration:
+        p
+          a(href='/admin/counties/') List of Enabled Counties (CSV)
         if user.siteAdmin
-          h2 Administration:
           p
             a(href='/admin/users/') Users
         h2 Reports:
