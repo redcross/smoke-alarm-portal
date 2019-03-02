@@ -16,7 +16,7 @@
 	"Submit_btn": "Submit",
 	"Home_fire_campaign": "The American Red Cross and its partners have launched the Home Fire Campaign to reduce deaths and injuries caused by home fires by 25 percent over five years.  Depending on where you live and other factors, either an American Red Cross representative or one of our partner organizations will contact you to schedule an installation appointment.",
 	"Installation_text": "The Red Cross and its partners will install a limited number of free smoke alarms for those who cannot afford to purchase smoke alarms or for those who are physically unable to install a smoke alarm.  The Red Cross installs a limited number of specialized bedside alarms for individuals who are deaf or hard-of-hearing.  To request a free installation, please complete all fields in the form below and click “Submit.”",
-	"availability": "This form can accept requests from the following States and Counties: IA, ID, IL, KS, MN, MO, MT, ND, NE, SD, WA (except Clark, Cowlitz, Klickitat, Pacific, Skamania and Wahkiakum Counties), WI and Malheur County, OR.",
+	"availability": "his form can accept requests from the following states and counties: AR (except Crittenden and Miller Counties), IA, ID, IL, KS, MN, MO, MT, ND, NE, SD, WA (except Clark, Cowlitz, Klickitat, Pacific, Skamania and Wahkiakum Counties), WI and Malheur County, OR.",
 	"Your_location": "  If your location is not listed, please call 800-RED-CROSS to be connected to ",
 	"your_emphasis": "your",
 	"Chapter": " local Red Cross Chapter.",
