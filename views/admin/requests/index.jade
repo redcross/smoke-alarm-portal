@@ -67,30 +67,15 @@ block body
                option(value='inprogress') in-progress
                option(value='installed') installed
                option(value='canceled') canceled
-        div.col-sm-3
-          label Region
-          br
-          .allowed_region
-                each item in data.usable_regions
-                     input(type="checkbox" name="region[]" value="#{item.rc_region}")
-                     | &nbsp #{item.region_name}
-                     br
-          br
-          if (data.non_region.disabled === true)
-             .disabled_region
-                input(type="checkbox" name="region[]" value="XXXX" disabled)
-                | &nbsp No Region Found
-          else
-             .allowed_region
-                input(type="checkbox" name="region[]" value="XXXX")
-                | &nbsp No Region Found
-
-          label
-          .disabled_region 
-               each item in data.disabled_regions
-                   input(type="checkbox" disabled="true" name="region[]" value="#{item}")
-                   | &nbsp #{item}
-                   br
+        if data.usable_regions
+          div.col-sm-3
+            label Region
+            br
+            .allowed_region
+                  each item in data.usable_regions
+                       input(type="checkbox" name="region[]" value="#{item.rc_region}")
+                       | &nbsp #{item.region_name}
+                       br
       div.row
         div.col-sm-12
           input#applyFilters(type='button', value='apply filters')
@@ -105,11 +90,7 @@ block body
           th id
           th name
           th address
-          th city
-          th state
-          th zip
-          th phone
-          th email
+          th contact
           th date created 
           th region
           th source
@@ -125,14 +106,25 @@ block body
                option(value='canceled') canceled
     td <%- public_id %>
     td <%- name %>
-    td <%- address %>
-    td <%- city %>
-    td <%- state %>
-    td <%- zip %>
-    td <%- phone %>
-    td <%- email %>
+    td
+      | <%- address %>
+      br
+      | <%- city %>, <%- state %> <%- zip %>
+    td
+      | Phone: <%- phone %>
+      br
+      | Email: <%- email %>
     td <%- moment(createdAt).format("YYYY-MM-DD HH:mm") %>
-    td <%- assigned_rc_region %>
+    td
+      <% if (typeof(SelectedCounty) != "undefined") { %>
+      | County: <%- SelectedCounty.county %>
+      br
+      | Chapter: <%- SelectedCounty.chapter.name %>
+      br
+      | Region: <%- SelectedCounty.chapter.activeRegion.region_name %>
+      <% } else { %>
+      | Unassigned
+      <% } %>
     td <%- source %>
       div
       div

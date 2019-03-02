@@ -119,6 +119,8 @@ exports = module.exports = function(app, passport) {
 
   //admin > requests
   app.get('/admin/requests/', require('./views/admin/requests/index').find);
+  app.get('/admin/requests/unknown/', ensureSiteAdmin);
+  app.get('/admin/requests/unknown/', require('./views/admin/requests/index').unknown);
   app.put('/admin/requests/:id/', require('./views/admin/requests/index').update);
   app.get('/admin/requests/:id/', require('./views/admin/requests/index').read);
   app.delete('/admin/requests/:id/', require('./views/admin/requests/index').delete);

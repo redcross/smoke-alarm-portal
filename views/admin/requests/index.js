@@ -29,73 +29,38 @@ exports.find = function(req, res, next) {
     };
     var countResults = function(callback) {
         var filters = getFilters().then( function(filters) {
-            req.app.db.Request.count( { where: filters }).then(function(results) {
+            var regions = filters.regions;
+            delete filters.regions;
+            req.app.db.Request.count( {
+              where: filters,
+              include: [
+                req.app.db.RequestDuplicate,
+                { model: req.app.db.SelectedCounties,
+                  include: [
+                    { model: req.app.db.chapter,
+                      include: [
+                        { model: req.app.db.activeRegion,
+                          where: { rc_region: regions } }
+                      ] }
+                  ]
+                }
+              ]
+            }).then(function(results) {
                 outcome.items.total = results;
                 callback(null, 'done counting');
             });
         });
     };
 
-    var queryRegionPresentableName = function(request) {
-        var selectedRegion = request.assigned_rc_region;
-        return req.app.db.activeRegion.findOne({
-            where: { rc_region: selectedRegion }
-        });
-    };
-
-    /* Return the list of regions from the database, except our testing region. */
-    var queryAllRegions = function() {
-        return req.app.db.activeRegion.findAll({
-            attributes: ['rc_region', 'region_name'],
-            where: {rc_region: {ne: 'rc_test_region'} },
-            order: 'region_name'
-        });
-    };
-
-    /* Return the list of regions that the logged-in user has access to.
-
-       In SQL:
-       SELECT * FROM "activeRegions" INNER JOIN "regionPermissions" ON
-       "activeRegions"."rc_region" = "regionPermissions"."rc_region"
-       WHERE "regionPermissions"."user_id" = logged_in_user_id;
-    */
     var queryUsableRegions = function() {
         var loggedin_id = String(req.user.id);
         var usableRegions =  req.app.db.activeRegion.findAll({
             attributes: ['rc_region', 'region_name'],
             include: [{ model: req.app.db.regionPermission, where: {user_id: loggedin_id } }],
-            where: {rc_region: {ne: 'rc_test_region'} },
+            where: {is_active: true},
             order: 'region_name'
         });
         return usableRegions;
-    };
-
-    /*
-     * This function finds the difference of the array of all regions
-     * and the array of regions that the user has access to.
-     *
-     * Takes:
-     * usableRegions: array of regions that the logged-in user has
-     * permission to access
-     * allRegions: array of all regions in the "activeRegions" db table.
-     *
-     * Returns:
-     * disabledRegions: array of the regions that the logged-in user is
-     * forbidden to access (purely for UI display)
-     */
-    var getForbiddenRegions = function(usableRegions, allRegions) {
-        var disabledRegions = {};
-        // first disable all regions
-        allRegions.forEach( function (region) {
-            disabledRegions[region.rc_region] = region.region_name;
-        });
-        usableRegions.forEach( function (allowed_region) {
-            // Re-enable the regions that the user is allowed to access
-            if (disabledRegions.hasOwnProperty(allowed_region.rc_region)) {
-                delete disabledRegions[allowed_region.rc_region];
-            }
-        });
-        return disabledRegions;
     };
 
     /*
@@ -140,15 +105,15 @@ exports.find = function(req, res, next) {
         }
 
         if (req.query.region) {
-            filters.assigned_rc_region = req.query.region
+            filters.regions = req.query.region
         }
         return queryUsableRegions().then( function (usableRegions) {
             // find intersection of allowed and filtered regions and set
             // that as our filter
-            // On first load, filters.assigned_rc_region will be
+            // On first load, filters.regions will be
             // undefined.  For a query with no regions checked,
-            // filters.assigned_rc_region will be an empty array
-            var entered_regions = filters.assigned_rc_region;
+            // filters.regions will be an empty array
+            var entered_regions = filters.regions;
             var allowed_regions = [];
             usableRegions.forEach( function (region) {
                 allowed_regions.push(region.rc_region);
@@ -166,20 +131,18 @@ exports.find = function(req, res, next) {
                     }
                     i++;
                 });
-                filters.assigned_rc_region = entered_regions;
+                filters.regions = entered_regions;
             }
             // else if they are allowed to see any regions but haven't
             // filtered, because this is the first page load
             else if (allowed_regions.length > 0 && ! entered_regions) {
-                filters.assigned_rc_region = allowed_regions;
+                filters.regions = allowed_regions;
             }
             // otherwise they don't have access to any regions and
             // should not get any results.
             else {
-                filters.assigned_rc_region = [];
+                filters.regions = [];
             }
-            // TODO: how do I show requests that aren't linked to a
-            // region (for full-powered admins)?
             return filters;
     });
 }
@@ -197,64 +160,82 @@ var getResults = function(callback) {
             limit = req.query.limit;
             offset = req.query.offset;
         }
+
+        // This is bit strange, but based on some legacy code, where
+        // the region was on the request field, so the filters acted
+        // on that, but it had to later be moved into the join.  The
+        // code was a little complex to untangle and refactor, so that
+        // is to be left for a later day.
+        var regions = filters.regions;
+        delete filters.regions;
         // Determine whether to filter by date
         req.app.db.Request.findAll({
-            limit: limit,
-            offset: offset,
             where: filters,
             order: [[req.query.sort.replace('-',''), sortOrder ]],
-            include: [req.app.db.RequestDuplicate]
-        }).reduce( function(previousValue, request, index, results) {
-            return queryRegionPresentableName(request).then(
-                function (displayName) {
-                    if (displayName) {
-                        request.assigned_rc_region = displayName.region_name;
-                    }
-                    if (previousValue[0]) {
-                        // if this is not the first call of this
-                        // anonymous function
-                        previousValue.push(request);
-                    }
-                    else {
-                        previousValue = [request];
-                    }
-                    return previousValue;
-                });
-            }, []).then( function (results_array) {
-                outcome.data = results_array;
-                outcome.pages.total = Math.ceil(outcome.items.total / req.query.limit);
-                outcome.pages.next = ((outcome.pages.current + 1) > outcome.pages.total ? 0 : outcome.pages.current + 1);
-                outcome.pages.hasNext = (outcome.pages.next !== 0);
-                outcome.pages.prev = outcome.pages.current - 1;
-                outcome.pages.hasPrev = (outcome.pages.prev !== 0);
-                if (outcome.items.end > outcome.items.total) {
-                    outcome.items.end = outcome.items.total;
-                }
+            include: [
+              req.app.db.RequestDuplicate,
+              { model: req.app.db.SelectedCounties,
+                required: true,
+                include: [
+                  { model: req.app.db.chapter,
+                    required: true,
+                    include: [
+                      { model: req.app.db.activeRegion,
+                        required: true,
+                        where: { rc_region: regions } }
+                    ] }
+                ]
+              }
+            ],
+            limit: limit,
+            offset: offset
+        }).then( function (results_array) {
+            outcome.data = results_array;
+            outcome.pages.total = Math.ceil(outcome.items.total / req.query.limit);
+            outcome.pages.next = ((outcome.pages.current + 1) > outcome.pages.total ? 0 : outcome.pages.current + 1);
+            outcome.pages.hasNext = (outcome.pages.next !== 0);
+            outcome.pages.prev = outcome.pages.current - 1;
+            outcome.pages.hasPrev = (outcome.pages.prev !== 0);
+            if (outcome.items.end > outcome.items.total) {
+                outcome.items.end = outcome.items.total;
+            }
 
-                outcome.results = results_array.map(function(result) {
-                  var duplicateCount = result.RequestDuplicates.length;
-                  result = result.toJSON();
-                  result.duplicate_count = duplicateCount;
-                  return result;
-                });
-                return callback(null, 'done');
-            })
-            .catch(function(err) {
-                console.log("ERROR calling callback: " + err);
-                return callback(err, null);
+            outcome.results = results_array.map(function(result) {
+              var duplicateCount = result.RequestDuplicates.length;
+              result = result.toJSON();
+              result.duplicate_count = duplicateCount;
+              return result;
             });
+            return callback(null, 'done');
+        }).catch(function(err) {
+            console.log("ERROR calling callback: " + err);
+            return callback(err, null);
         });
-    };
+    }); };
 
     var createCSV = function() {
-        var requestFieldNames = ['id','name','address','city','state','zip','phone','email','date created', 'date updated', 'region', 'source', 'count duplicates'];
-        var requestFields = ['public_id','name','address','city','state','zip','phone','email','createdAt', 'updatedAt', 'assigned_rc_region', 'source', 'duplicate_count'];
-        json2csv({ data: outcome.results, fields: requestFields, fieldNames: requestFieldNames }, function(err, csv) {
-            if (err) console.log("ERROR: error converting to CSV" + err);
-            res.setHeader('Content-Type','application/csv');
-            res.setHeader('Content-Disposition','attachment; filename=smoke-alarm-requests-' + moment().format() + '.csv;');
-            res.send(csv);
-        });
+        var fields = [
+          { label: 'id', value: 'public_id' },
+          'name',
+          'address',
+          'city',
+          'state',
+          'zip',
+          'phone',
+          'email',
+          { label: 'date created', value: 'createdAt' },
+          { label: 'date updated', value: 'updatedAt' },
+          { label: 'county', value: 'SelectedCounty.county' },
+          { label: 'chapter', value: 'SelectedCounty.chapter.name' },
+          { label: 'region', value: 'SelectedCounty.chapter.activeRegion.region_name' },
+          'source',
+          { label: 'count duplicates', value: 'duplicate_count' }
+        ]
+        var parser = new json2csv.Parser({ fields });
+        var csv = parser.parse(outcome.results);
+        res.setHeader('Content-Type','application/csv');
+        res.setHeader('Content-Disposition','attachment; filename=smoke-alarm-requests-' + moment().format() + '.csv;');
+        res.send(csv);
     }
 
     var asyncFinally = function(err, results) {
@@ -276,51 +257,205 @@ var getResults = function(callback) {
             }
         } else {
             return queryUsableRegions().then( function (regions) {
+                console.log(regions.map(region => region.rc_region));
                 //get list of all regions
-                return queryAllRegions().then( function (allRegions) {
-                    var disabledRegions = getForbiddenRegions(regions, allRegions);
-                    // if nonregion is in disabled regions then set
-                    // disabled to true and pop it off the
-                    // disabledRegions array
-                    var non_region_code = 'XXXX';
-                    var non_region_disabled = null;
-                    if (disabledRegions.hasOwnProperty(non_region_code)) {
-                        non_region_disabled = true;
-                        delete disabledRegions[non_region_code];
-                    }
-                    // else, set disabled to false and pop it off the
-                    // regions array
-                    else {
-                        non_region_disabled = false;
-                        var index = 0;
-                        regions.forEach( function (region) {
-                            if (region.rc_region == non_region_code) {
-                                regions.splice(index, 1);
-                            }
-                            index++;
-                        });
-                    }
-                    outcome.results.filters = req.query;
-                    if (req.query.format !== "csv") {
-                        res.render('admin/requests/index', {
-                            data: {
-                                csrfToken: res.locals.csrfToken,
-                                results: escape(JSON.stringify(outcome)),
-                                usable_regions: regions,
-                                disabled_regions: disabledRegions,
-                                non_region: {disabled: non_region_disabled}
-                            }
-                        });
-                    } else {
-                        createCSV();
-                    }
-                });
+                outcome.results.filters = req.query;
+                if (req.query.format !== "csv") {
+                    res.render('admin/requests/index', {
+                        data: {
+                            csrfToken: res.locals.csrfToken,
+                            results: escape(JSON.stringify(outcome)),
+                            usable_regions: regions
+                        }
+                    });
+                } else {
+                    createCSV();
+                }
             });
         }
     };
     require('async').parallel([countResults, getResults], asyncFinally);
 };
 
+exports.unknown = function(req, res, next) {
+    if (_.isUndefined(req.query.page)) {
+        req.query.page = 1;
+    }
+    if (_.isUndefined(req.query.limit)) {
+        req.query.limit  = 20;
+    }
+    var outcome = {
+        data: null,
+        pages: {
+            current: parseInt(req.query.page, null),
+            prev: 0,
+            hasPrev: false,
+            next: 0,
+            hasNext: false,
+            total: 0
+        },
+        items: {
+            begin: ((req.query.page * req.query.limit) - req.query.limit) + 1,
+            end: req.query.page * req.query.limit,
+            total: 0
+        }
+    };
+    var countResults = function(callback) {
+        var filters = getFilters()
+        req.app.db.Request.count( {
+          where: filters
+        }).then(function(results) {
+            outcome.items.total = results;
+            callback(null, 'done counting');
+        });
+    };
+
+    /*
+     * Return promise object, then return filter object based on request
+     * data from global req.query, suitable for passing to sequelize functions
+     */
+    var getFilters = function() {
+        var filters = { selected_county: null};
+        req.query.search = req.query.search ? req.query.search : '';
+        req.query.limit = req.query.limit ? parseInt(req.query.limit, null) : 20;
+        req.query.page = req.query.page ? parseInt(req.query.page, null) : 1;
+        req.query.sort = req.query.sort ? req.query.sort : '-createdAt';
+        req.query.offset = (req.query.page - 1) * req.query.limit;
+        req.query.startDate = (req.query.startDate) ? moment(req.query.startDate): '';
+        req.query.endDate = (req.query.endDate) ? moment(req.query.endDate) : '';
+        req.query.format = (req.query.format) ? req.query.format : 'json';
+
+        if (req.query.startDate != '' && req.query.endDate != '') {
+            filters.createdAt = {
+                $between:[req.query.startDate.format(), moment(req.query.endDate).endOf("day").format()]
+            };
+        }
+        else {
+            if (req.query.startDate != '') {
+                filters.createdAt = {
+                    gte:req.query.startDate.format()
+                };
+            }
+            else if (req.query.endDate != '') {
+                filters.createdAt = {
+                    lte:moment(req.query.endDate).endOf("day").format()
+                };
+            }
+        }
+        if (req.query.status && req.query.status != 'all') {
+            filters.status = req.query.status;
+        }
+        if (req.query.search) {
+            filters.name = {
+                $ilike: '%' + req.query.search + '%'
+            };
+        }
+
+        return filters;
+    };
+
+    var getResults = function(callback) {
+        var filters = getFilters();
+        // Determine direction for order
+        var sortOrder = (req.query.sort[0] === '-')? 'DESC' : 'ASC';
+        var limit;
+        var offset;
+        if (req.query.format == 'csv') {
+            limit = null;
+            offset = null;
+        }
+        else {
+            limit = req.query.limit;
+            offset = req.query.offset;
+        }
+
+        // Determine whether to filter by date
+        req.app.db.Request.findAll({
+            where: filters,
+            order: [[req.query.sort.replace('-',''), sortOrder ]],
+            limit: limit,
+            include: [req.app.db.RequestDuplicate],
+            offset: offset
+        }).then( function (results_array) {
+            outcome.data = results_array;
+            outcome.pages.total = Math.ceil(outcome.items.total / req.query.limit);
+            outcome.pages.next = ((outcome.pages.current + 1) > outcome.pages.total ? 0 : outcome.pages.current + 1);
+            outcome.pages.hasNext = (outcome.pages.next !== 0);
+            outcome.pages.prev = outcome.pages.current - 1;
+            outcome.pages.hasPrev = (outcome.pages.prev !== 0);
+            if (outcome.items.end > outcome.items.total) {
+                outcome.items.end = outcome.items.total;
+            }
+            outcome.unknown = true;
+
+            outcome.results = results_array.map(function(result) {
+              var duplicateCount = result.RequestDuplicates.length;
+              result = result.toJSON();
+              result.duplicate_count = duplicateCount;
+              return result;
+            });
+            return callback(null, 'done');
+        }).catch(function(err) {
+            console.log("ERROR calling callback: " + err);
+            return callback(err, null);
+        });
+    };
+
+    var createCSV = function() {
+        var fields = [
+          { label: 'id', value: 'public_id' },
+          'name',
+          'address',
+          'city',
+          'state',
+          'zip',
+          'phone',
+          'email',
+          { label: 'date created', value: 'createdAt' },
+          { label: 'date updated', value: 'updatedAt' },
+          'source',
+          { label: 'count duplicates', value: 'duplicate_count' }
+        ]
+        var parser = new json2csv.Parser({ fields });
+        var csv = parser.parse(outcome.results);
+        res.setHeader('Content-Type','application/csv');
+        res.setHeader('Content-Disposition','attachment; filename=smoke-alarm-requests-' + moment().format() + '.csv;');
+        res.send(csv);
+    }
+
+    var asyncFinally = function(err, results) {
+        if (err) {
+            return next(err);
+        }
+
+        // TODO: This section has duplicated logic which can be removed
+        // For some reason, after using a filter, Backbone treats all links
+        // as XHR requests, even if they're not. This works around the
+        // issue for now, but should be fixed moving forward
+        outcome.filters = req.query;
+        if (req.xhr) {
+            if (req.query.format !== "csv") {
+                res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+                res.send(outcome);
+            } else {
+                createCSV();
+            }
+        } else {
+            outcome.results.filters = req.query;
+            if (req.query.format !== "csv") {
+                res.render('admin/requests/index', {
+                    data: {
+                        csrfToken: res.locals.csrfToken,
+                        results: escape(JSON.stringify(outcome))
+                    }
+                });
+            } else {
+                createCSV();
+            }
+        }
+    };
+    require('async').parallel([countResults, getResults], asyncFinally);
+};
 
 
 exports.read = function(req, res, next) {

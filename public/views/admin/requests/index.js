@@ -11,7 +11,6 @@
       id: undefined,
       name: '',
       address: '',
-      assigned_rc_region: '',
       city: '',
       state: '',
       zip: '',
@@ -26,7 +25,9 @@
 
   app.RecordCollection = Backbone.Collection.extend({
     model: app.Record,
-    url: '/admin/requests/',
+    url: function() {
+      return this.unknown ? '/admin/requests/unknown' : '/admin/requests/';
+    },
     parse: function(results) {
       app.pagingView.model.set({
         pages: results.pages,
@@ -106,6 +107,7 @@
     template: _.template( $('#tmpl-results-table').html() ),
     initialize: function() {
       this.collection = new app.RecordCollection( app.mainView.results.data );
+      this.collection.unknown = app.mainView.results.unknown;
       this.listenTo(this.collection, 'reset', this.render);
       this.render();
     },
@@ -269,7 +271,10 @@
           query = "?format=csv&" + query;
           // using Backbone.history.navigate does not download the file,
           // perhaps because it doesn't reload the page?
-          window.location.assign('/admin/requests/' + query);
+          window.location.assign(
+            '/admin/requests/' +
+            (app.mainView.results.unknown ? "unknown/" : "") +
+            query);
       },
     onSelect: function(dateText) {
       // $(this) is the (hidden) input field to which the datepicker is attached.

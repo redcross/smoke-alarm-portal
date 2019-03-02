@@ -17,3 +17,6 @@ block body
         h2 Reports:
         p
           a(href='/admin/requests/') Smoke Alarm Installation Requests
+        if user.siteAdmin
+          p
+            a(href='/admin/requests/unknown/') Smoke Alarm Installation Requests in Unassigned Regions
