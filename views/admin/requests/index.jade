@@ -76,22 +76,6 @@ block body
                        input(type="checkbox" name="region[]" value="#{item.rc_region}")
                        | &nbsp #{item.region_name}
                        br
-            br
-            if (data.non_region.disabled === true)
-               .disabled_region
-                  input(type="checkbox" name="region[]" value="XXXX" disabled)
-                  | &nbsp No Region Found
-            else
-               .allowed_region
-                  input(type="checkbox" name="region[]" value="XXXX")
-                  | &nbsp No Region Found
-
-            label
-            .disabled_region 
-                 each item in data.disabled_regions
-                     input(type="checkbox" disabled="true" name="region[]" value="#{item}")
-                     | &nbsp #{item}
-                     br
       div.row
         div.col-sm-12
           input#applyFilters(type='button', value='apply filters')

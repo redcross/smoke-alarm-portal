@@ -52,59 +52,15 @@ exports.find = function(req, res, next) {
         });
     };
 
-    /* Return the list of regions from the database, except our testing region. */
-    var queryAllRegions = function() {
-        return req.app.db.activeRegion.findAll({
-            attributes: ['rc_region', 'region_name'],
-            where: {rc_region: {ne: 'rc_test_region'} },
-            order: 'region_name'
-        });
-    };
-
-    /* Return the list of regions that the logged-in user has access to.
-
-       In SQL:
-       SELECT * FROM "activeRegions" INNER JOIN "regionPermissions" ON
-       "activeRegions"."rc_region" = "regionPermissions"."rc_region"
-       WHERE "regionPermissions"."user_id" = logged_in_user_id;
-    */
     var queryUsableRegions = function() {
         var loggedin_id = String(req.user.id);
         var usableRegions =  req.app.db.activeRegion.findAll({
             attributes: ['rc_region', 'region_name'],
             include: [{ model: req.app.db.regionPermission, where: {user_id: loggedin_id } }],
-            where: {rc_region: {ne: 'rc_test_region'} },
+            where: {is_active: true},
             order: 'region_name'
         });
         return usableRegions;
-    };
-
-    /*
-     * This function finds the difference of the array of all regions
-     * and the array of regions that the user has access to.
-     *
-     * Takes:
-     * usableRegions: array of regions that the logged-in user has
-     * permission to access
-     * allRegions: array of all regions in the "activeRegions" db table.
-     *
-     * Returns:
-     * disabledRegions: array of the regions that the logged-in user is
-     * forbidden to access (purely for UI display)
-     */
-    var getForbiddenRegions = function(usableRegions, allRegions) {
-        var disabledRegions = {};
-        // first disable all regions
-        allRegions.forEach( function (region) {
-            disabledRegions[region.rc_region] = region.region_name;
-        });
-        usableRegions.forEach( function (allowed_region) {
-            // Re-enable the regions that the user is allowed to access
-            if (disabledRegions.hasOwnProperty(allowed_region.rc_region)) {
-                delete disabledRegions[allowed_region.rc_region];
-            }
-        });
-        return disabledRegions;
     };
 
     /*
@@ -301,45 +257,20 @@ var getResults = function(callback) {
             }
         } else {
             return queryUsableRegions().then( function (regions) {
+                console.log(regions.map(region => region.rc_region));
                 //get list of all regions
-                return queryAllRegions().then( function (allRegions) {
-                    var disabledRegions = getForbiddenRegions(regions, allRegions);
-                    // if nonregion is in disabled regions then set
-                    // disabled to true and pop it off the
-                    // disabledRegions array
-                    var non_region_code = 'XXXX';
-                    var non_region_disabled = null;
-                    if (disabledRegions.hasOwnProperty(non_region_code)) {
-                        non_region_disabled = true;
-                        delete disabledRegions[non_region_code];
-                    }
-                    // else, set disabled to false and pop it off the
-                    // regions array
-                    else {
-                        non_region_disabled = false;
-                        var index = 0;
-                        regions.forEach( function (region) {
-                            if (region.rc_region == non_region_code) {
-                                regions.splice(index, 1);
-                            }
-                            index++;
-                        });
-                    }
-                    outcome.results.filters = req.query;
-                    if (req.query.format !== "csv") {
-                        res.render('admin/requests/index', {
-                            data: {
-                                csrfToken: res.locals.csrfToken,
-                                results: escape(JSON.stringify(outcome)),
-                                usable_regions: regions,
-                                disabled_regions: disabledRegions,
-                                non_region: {disabled: non_region_disabled}
-                            }
-                        });
-                    } else {
-                        createCSV();
-                    }
-                });
+                outcome.results.filters = req.query;
+                if (req.query.format !== "csv") {
+                    res.render('admin/requests/index', {
+                        data: {
+                            csrfToken: res.locals.csrfToken,
+                            results: escape(JSON.stringify(outcome)),
+                            usable_regions: regions
+                        }
+                    });
+                } else {
+                    createCSV();
+                }
             });
         }
     };
