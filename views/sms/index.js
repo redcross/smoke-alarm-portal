@@ -168,7 +168,7 @@ exports.respond = function(req, res) {
         else {
             if (request.county) {
                 msg = __("Sorry, the Red Cross Region serving %s, %s does not yet accept smoke alarm installation requests by text message. Please call 1-800-RED CROSS (1-800-733-2767) to be connected with your local Region.");
-                msg = msg.replace('%s', request.county);
+                msg = msg.replace('%s', request.county.county);
                 msg = msg.replace('%s', request.state);
             }
             else {
@@ -246,14 +246,18 @@ exports.respond = function(req, res) {
             requestData.phone = req.cookies.priorities.phone.value;
             requestData.email = req.cookies.priorities.email.value;
             requestData.county = county;
-            return save_utils.saveRequestData(requestData);
+            return save_utils.saveOrDuplicateRequest(requestData);
         }).then(function(request) {
-            savedRequest = request;
-            return save_utils.isActiveRegion(savedRequest);
-        }).then( function(activeRegion){
+            return Promise.all([
+              request,
+              request.getSelectedCounty()
+                .then(county => county && county.getChapter())
+                .then(chapter => chapter && chapter.getActiveRegion())
+            ]);
+        }).then( function([request, activeRegion]){
             var is_valid = null;
-            if (activeRegion) {
-                save_utils.sendEmail(savedRequest, activeRegion);
+            if (activeRegion && activeRegion.is_active) {
+                save_utils.sendEmail(request, activeRegion);
                 is_valid = true;
             }
             else{
