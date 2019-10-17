@@ -41,11 +41,8 @@ A list of tests to be included in future unit tests:
 
 ## SMS:
 
-For testing in development, you'll need to acquire a twilio phone number
-(remember to cancel it after you're done!).  When adding an active number,
-the sms has to be available from the outside world, and you have to set
-a messaging webhook to a place the open internet can access your development
-machine, and then set it to `HTTP GET`
+For testing in development, you'll need to acquire a twilio phone number.
+See ../INSTALL.md for detailed instructions.
 
 - can switch language from english to spanish and vice versa
 - all SMS's send, in correct order, in any language

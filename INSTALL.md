@@ -204,8 +204,17 @@ be edited here.
    page (http://localhost:3000/) before any requests would be listed
    on the /admin/requests page.)
 
-1. Sign up for [Twilio](https://www.twilio.com).  Set up a number that
-uses `<your url>/sms` with `HTTP GET` for incoming SMS requests.
+1. Sign up for [Twilio](https://www.twilio.com):  Set up a number that
+
+  * Create account, or use the OTS account (if part of OTS)
+  * Get a new phone number (in Manage Phone Numbers)
+  * Update `config/config.json` twilio parameters to the account SID/Auth Token
+    in your settings on twilio
+  * Setup the phone number in twilio messaging section to be
+    * Webhook -> `http://<yourtestsite>/sms`, using `HTTP GET`
+
+  Then when you start your server up, you should be able to text the number you
+  set up to test the system.
 
 1. Manually perform tests listed in [TESTING.md](docs/TESTING.md).
 
