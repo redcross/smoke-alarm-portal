@@ -215,6 +215,7 @@ var getResults = function(callback) {
 
     var createCSV = function() {
         var fields = [
+          'status',
           { label: 'id', value: 'public_id' },
           'name',
           'address',
