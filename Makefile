@@ -1,6 +1,9 @@
 dev:
 	docker-compose up
 
+test:
+	docker-compose -f docker-compose.testing.yml run --rm test
+
 setup:
 	cp -i config.js.tmpl config.js
 	cp -i config/config.json.tmpl config/config.json

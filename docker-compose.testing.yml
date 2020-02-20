@@ -1,0 +1,34 @@
+version: '2'
+services:
+  base:
+    image: node:8
+    ports:
+      - 3000:3000
+    volumes:
+      - smokealarm_nodemodules:/usr/src/app/node_modules
+      - .:/usr/src/app
+    working_dir: /usr/src/app
+
+  db:
+    image: postgres:12
+    ports:
+      - 5432:5432
+    volumes:
+      - ./migrations/8e970a3-initial-db-with-sample-data.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: smokealarm_development
+
+  test:
+    extends:
+      service: base
+    depends_on:
+      - db
+    command: >
+      bash -c "./node_modules/sequelize-cli/bin/sequelize db:migrate
+      && npm run test"
+
+volumes:
+  smokealarm_nodemodules:
+    external: true
