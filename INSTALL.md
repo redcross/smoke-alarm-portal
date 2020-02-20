@@ -1,3 +1,10 @@
+# Setting up with docker
+
+1. `$ make setup`
+2. `$ make migrate`
+3. `$ make dev`
+4. Setup an admin user (see instructions below).
+
 # Installing smoke-alarm-portal
 
 These installation instructions assume a Debian GNU/Linux 'testing'
