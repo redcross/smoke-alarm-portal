@@ -5,6 +5,7 @@
   "engine": "node 4.2.0",
   "scripts": {
     "start": "nodemon ./bin/www",
+    "dev": "nodemon ./bin/www",
     "test": "NODE_ENV=test mocha tests"
   },
   "dependencies": {
