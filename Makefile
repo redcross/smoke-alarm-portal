@@ -23,5 +23,5 @@ clean:
 	-rm -rf node_modules
 
 	docker-compose rm -f
-	docker volume rm smokealarm_nodemodules
-	docker volume rm smokealarm_postgres
+	docker volume rm -f smokealarm_nodemodules
+	docker volume rm -f smokealarm_postgres
