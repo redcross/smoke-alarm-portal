@@ -18,18 +18,20 @@
 
 'use strict';
 
+require('dotenv').config()
+
 exports.port = process.env.PORT || 3000;
-exports.companyName = 'Acme, Inc.';
-exports.projectName = 'New Horizons Ansible Retrofit Project';
-exports.systemEmail = 'jrandom@example.com';
+exports.companyName = process.env.COMPANY_NAME;
+exports.projectName = process.env.PROJECT_NAME;
+exports.systemEmail = process.env.SYSTEM_EMAIL;
 // This confirms whether the signup route is available
 // or not. This affects both the availability of the signup
 // URL as well as the navigation link to "Sign Up" at the top
 // of the navigation for the admin section.
-exports.signupEnabled = false;
+exports.signupEnabled = process.env.SIGNUP_ENABLED;
 
 // Configure Geocoding API API key
-exports.googleMapsApiKey = 'YOUR_API_KEY_HERE';
+exports.googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
 
 // Make up your own key here.  More background:
 //
@@ -46,14 +48,14 @@ exports.googleMapsApiKey = 'YOUR_API_KEY_HERE';
 // 
 //   http://stackoverflow.com/questions/18565512/importance-of-session-secret-key-in-express-web-framework
 //   http://stackoverflow.com/questions/6719036/why-cherrypy-session-does-not-require-a-secret-key
-exports.cryptoKey = 'k3yb0ardc4t';
+exports.cryptoKey = process.env.CRYPTO_KEY;
 
 exports.loginAttempts = {
-  forIp: 50,
-  forIpAndUser: 7,
-  logExpiration: '20m'
+  forIp: process.env.ALLOWED_LOGIN_ATTEMPS_IP,
+  forIpAndUser: process.env.ALLOWED_LOGIN_ATTEMPTS_USER,
+  logExpiration: process.env.LOG_EXPIRATION
 };
-exports.requireAccountVerification = false;
+exports.requireAccountVerification = process.env.REQUIRE_ACCOUNT_VERIFICATION;
 exports.smtp = {
   from: {
     name: process.env.SMTP_FROM_NAME || exports.projectName +' Website',
@@ -68,23 +70,23 @@ exports.smtp = {
 };
 exports.oauth = {
   twitter: {
-    key: process.env.TWITTER_OAUTH_KEY || '',
-    secret: process.env.TWITTER_OAUTH_SECRET || ''
+    key: process.env.OAUTH_TWITTER_KEY || '',
+    secret: process.env.OAUTH_TWITTER_SECRET || ''
   },
   facebook: {
-    key: process.env.FACEBOOK_OAUTH_KEY || '',
-    secret: process.env.FACEBOOK_OAUTH_SECRET || ''
+    key: process.env.OAUTH_FACEBOOK_KEY || '',
+    secret: process.env.OAUTH_FACEBOOK_SECRET || ''
   },
   github: {
-    key: process.env.GITHUB_OAUTH_KEY || '',
-    secret: process.env.GITHUB_OAUTH_SECRET || ''
+    key: process.env.OAUTH_GITHUB_KEY || '',
+    secret: process.env.OAUTH_GITHUB_SECRET || ''
   },
   google: {
-    key: process.env.GOOGLE_OAUTH_KEY || '',
-    secret: process.env.GOOGLE_OAUTH_SECRET || ''
+    key: process.env.OAUTH_GOOGLE_KEY || '',
+    secret: process.env.OAUTH_GOOGLE_SECRET || ''
   },
   tumblr: {
-    key: process.env.TUMBLR_OAUTH_KEY || '',
-    secret: process.env.TUMBLR_OAUTH_SECRET || ''
+    key: process.env.OAUTH_TUMBLR_KEY || '',
+    secret: process.env.OAUTH_TUMBLR_SECRET || ''
   }
 };

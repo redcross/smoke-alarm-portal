@@ -20,6 +20,7 @@
     "cookie-session": "^1.2.0",
     "csurf": "^1.x.x",
     "debug": "~2.6.9",
+    "dotenv": "8.2.0",
     "emailjs": "^1.0.4",
     "express": "^4.12.x",
     "express-session": "^1.11.3",

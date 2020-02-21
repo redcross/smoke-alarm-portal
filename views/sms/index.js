@@ -1,5 +1,4 @@
 var env = process.env.NODE_ENV || 'development';
-var config = require('../../config/config.json')[env];
 var twilio = require('twilio');
 var parser = require('parse-address'); 
 
@@ -22,8 +21,8 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(cookieParser());
 
-var accountSid = config.twilio_accountSid;
-var authToken = config.twilio_authToken;
+var accountSid = process.env.TWILIO_ACCOUNT_SID;
+var authToken = process.env.TWILIO_AUTH_TOKEN;
 var client = require('twilio')(accountSid, authToken);
 
 app.use(function(req, res, next) {
@@ -460,7 +459,7 @@ exports.resend = function (req, res) {
         if (message.status == 'failed' || message.status == 'undelivered'){
             // then resend
             client.messages.create({
-                to: message.to, from: config.twilio_phone, body: message.body, statusCallback: config.server_root + '/sms/response/'
+                to: message.to, from: process.env.TWILIO_PHONE, body: message.body, statusCallback: process.env.SERVER_ROOT + '/sms/response/'
             }, function (err, message) {
                 console.log("DEBUG: resent message.");
                 if (err) {

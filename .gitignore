@@ -4,6 +4,7 @@ err.log
 out.log
 config.js
 *.idea
+.env
 
 # OSX 
 .DS_Store
