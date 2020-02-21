@@ -17,10 +17,10 @@ migrate:
 	docker-compose -f docker-compose.builder.yml run --rm migrate
 
 clean:
-	-rm -f config.js
-	-rm -f config/config.json
-	-rm -f config/recipients.sql
-	-rm -rf node_modules
+	rm -f config.js
+	rm -f config/config.json
+	rm -f config/recipients.sql
+	rm -rf node_modules
 
 	docker-compose rm -f
 	docker volume rm -f smokealarm_nodemodules
