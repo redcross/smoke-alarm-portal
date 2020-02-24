@@ -1,9 +1,9 @@
-dev:
+run:
 	docker-compose up
 
 test:
 	docker-compose -f docker-compose.testing.yml run --rm test
-
+build: setup migrate
 setup:
 	cp -f config/recipients.sql.tmpl config/recipients.sql
 
