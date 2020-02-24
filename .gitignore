@@ -4,6 +4,7 @@ err.log
 out.log
 *.idea
 .env
+config/recipients.sql
 
 # OSX 
 .DS_Store

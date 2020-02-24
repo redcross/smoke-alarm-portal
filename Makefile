@@ -5,8 +5,7 @@ test:
 	docker-compose -f docker-compose.testing.yml run --rm test
 
 setup:
-	-cp -i .env.tmpl .env
-	-cp -i config/recipients.sql.tmpl config/recipients.sql
+	cp -f config/recipients.sql.tmpl config/recipients.sql
 
 	docker volume create smokealarm_nodemodules
 	docker volume create smokealarm_postgres
