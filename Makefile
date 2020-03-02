@@ -18,6 +18,7 @@ clean:
 	rm -f config/recipients.sql
 	rm -rf node_modules
 
+	docker-compose kill
 	docker-compose rm -f
 	docker volume rm -f smokealarm_nodemodules
 	docker volume rm -f smokealarm_postgres
