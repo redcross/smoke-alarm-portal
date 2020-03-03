@@ -27,11 +27,12 @@ services:
     command: npm install
 
   migrate:
+    restart: always
     extends:
       service: base
     depends_on:
       - db
-    command: ./node_modules/sequelize-cli/bin/sequelize db:migrate
+    command: ['bash', '-c', 'sleep 5 && ./node_modules/sequelize-cli/bin/sequelize db:migrate']
 
 volumes:
   smokealarm_postgres:
