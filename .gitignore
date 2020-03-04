@@ -3,8 +3,8 @@ npm-debug.log
 err.log
 out.log
 *.idea
-.env
 config/recipients.sql
+config.js
 
 # OSX 
 .DS_Store

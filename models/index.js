@@ -18,25 +18,18 @@
 
 'use strict';
 
-// console.log(process.env);
-
 var fs = require('fs');
 var path = require('path');
-var config = require('../config/config');
 var Sequelize = require('sequelize');
 var basename = path.basename(module.filename);
 var env = process.env.NODE_ENV || 'development';
+var config = require('../config/config.json')[env];
 var mailgun = require('mailgun-js')({
-    apiKey: process.env.MAILGUN_API_KEY,
-    domain: process.env.MAILGUN_DOMAIN
+    apiKey: config.mailgun_api_key, 
+    domain: config.mail_domain
 });
-var mail_from_addr = process.env.MAILGUN_FROM_ADDR || '';
-var sequelize = new Sequelize(
-    process.env.DB_DATABASE,
-    process.env.DB_USERNAME,
-    process.env.DB_PASSWORD,
-    config[env]
-);
+var mail_from_addr = config.mail_from_addr;
+var sequelize = new Sequelize(config.database, config.username, config.password, config);
 var db = {};
 
 

@@ -18,8 +18,6 @@
 
 'use strict';
 
-require('dotenv').config();
-
 var config = require('./config'),
     express = require('express'),
     cookieParser = require('cookie-parser'),
