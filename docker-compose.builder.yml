@@ -17,9 +17,9 @@ services:
       - smokealarm_postgres:/var/lib/postgresql/data
       - ./migrations/8e970a3-initial-db.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      POSTGRES_USER: "${DB_USERNAME}"
-      POSTGRES_PASSWORD: "${DB_PASSWORD}"
-      POSTGRES_DB: "${DB_DATABASE}"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "smokealarm_development"
 
   npm_install:
     extends:

@@ -4,6 +4,7 @@ err.log
 out.log
 *.idea
 config/recipients.sql
+config/config.json
 config.js
 
 # OSX 
