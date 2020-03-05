@@ -1,5 +1,5 @@
 run:
-	docker-compose up
+	docker-compose up --remove-orphans
 
 test:
 	docker-compose -f docker-compose.testing.yml run --rm test
