@@ -1,77 +1,78 @@
 # Installing smoke-alarm-portal
 
+    $ git clone https://github.com/redcross/smoke-alarm-portal.git
+    $ cd smoke-alarm-portal
+    
+## Configuring
+
+    $ cp .env.tmpl .env
+
+For development/production, fill in the following values in `.env`:
+
+    * COMPANY_NAME
+    * PROJECT_NAME
+    * SYSTEM_EMAIL
+    * CRYPTO_KEY
+    * MAILGUN_API_KEY
+    * MAIL_DOMAIN
+    * MAIL_FROM_ADDR
+    * GOOGLE_MAPS_API_KEY
+    
+Non-docker only:
+
+    * DB_USERNAME
+    * DB_PASSWORD
+    * DB_DATABASE
+    * DB_HOST
+
+## Installing with Docker
+
+Make sure you have [Docker](https://docs.docker.com/install/) and [Docker
+Compose](https://docs.docker.com/compose/install/) installed. 
+
+    $ make build
+    $ make run
+
+## Installing Locally
+
 These installation instructions assume a Debian GNU/Linux 'testing'
 distribution operating system, but they should be portable without
 much difficulty to most other Unix-like operating systems.
 
-1. Download the code.
+1. Install dependencies
 
-        $ git clone https://github.com/OpenTechStrategies/smoke-alarm-portal.git
-        $ cd smoke-alarm-portal
+    **Debian:**
 
-1. Install [Node](https://nodejs.org/download/) and npm (a package manager).
-   On Debian, run:
+        $ sudo apt-get install nodejs npm postgresql-9.4
 
-        $ sudo apt-get install nodejs
-        $ sudo apt-get install npm
+    (This may result in your having multiple versions of PostgreSQL installed,
+    which in turn can lead to mysterious errors in the coming import step.  If
+    you encounter such errors, see the appropriate part of the "Troubleshooting"
+    section later on.)
 
-   On Max OSX, use the Macintosh installer which can be downloaded
-   from https://nodejs.org/download/, to install both node and
-   npm.  In Terminal, run:
+    **MacOS:**
+
+    Use the Macintosh installer which can be downloaded from
+    https://nodejs.org/download/, to install both node and npm and run:
 
         $ sudo npm install npm -g
 
-1. Install PostgreSQL, at least version 9.2 (to support `JSON` column type).
-
-   On Debian:
-
-        $ sudo apt-get install postgresql-9.4  # for example
-
-   (This may result in your having multiple versions of PostgreSQL
-   installed, which in turn can lead to mysterious errors in the
-   coming import step.  If you encounter such errors, see the
-   appropriate part of the "Troubleshooting" section later on.)
-
-   On Mac OS X:
-
-   Install PostgreSQL via Brew (http://exponential.io/blog/2015/02/21/install-postgresql-on-mac-os-x-via-brew/). 
+    Install PostgreSQL via Homebrew
+    (http://exponential.io/blog/2015/02/21/install-postgresql-on-mac-os-x-via-brew/).
     Installation instructions for brew can be found on the [Homebrew website](http://brew.sh).
 
         $ brew update
         $ brew install postgres
 
-1. OPTIONAL: PostgreSQL probably created a `postgres` user, but if it
-didn't, you might want to add one:
+2. OPTIONAL: PostgreSQL probably created a `postgres` user, but if it didn't,
+   you might want to add one:
 
         $ adduser postgres
 
-1. Set up the live config files.  Note that there are multiple files to
-be edited here.
+3. Do `cp config/recipients.sql.tmpl config/recipients.sql`, edit the `config/recipients.sql` file:
 
-    1. Do `cp config.js.tmpl config.js`. For dev, move on to step 2. For non-dev, edit the `config.js` file:
-
-        * Update `exports.companyName`,
-        `exports.projectName`, `exports.signupEnabled`,`exports.systemEmail`, and
-        `exports.cryptoKey`.
-
-    1. Do `cp config/config.json.tmpl config/config.json`. For dev, move on to step 3. For non-dev, edit the `config/config.json`:
-
-        * Fill in database usernames and passwords, and
-        the Mailgun.com API key and sender information that the app will use to send out email notifications.  
-        You can modify one of the existing top-level environments listed in `config.json` 
-        or set up a whole new environment, e.g., "demo" (e.g., based on the "test" example).
-
-        To enable Geocoding of entered addresses, make sure to configure your
-        Google Maps geocoding API key: `googleMapsApiKey`
-
-        (Don't worry if you don't know how to set up a database
-        username / password; that will be explained in a later step.)
-
-    1. Do `cp config/recipients.sql.tmpl config/recipients.sql`, edit the `config/recipients.sql` file:
-
-        * Fill in appropriate contact names and email
-        addresses.  
-        * For dev, either leave the placeholders intact (if you didn't set up Mailgun and don't want to test the email-sending functionality) or replace the placeholders with your name and email address (so that when you submit test requests to your local instance, all the emails generated come to you).
+    * Fill in appropriate contact names and email addresses.  
+    * For dev, either leave the placeholders intact (if you didn't set up Mailgun and don't want to test the email-sending functionality) or replace the placeholders with your name and email address (so that when you submit test requests to your local instance, all the emails generated come to you).
 
 1. Get other required node modules.
 
@@ -159,40 +160,34 @@ be edited here.
 
         $ ./node_modules/.bin/forever -da start --watchDirectory . -l forever.log -o out.log -e err.log ./bin/www
 
-1. See if it's working, by visiting http://localhost:3000/
+## Creating an admin user
 
-   TBD: Need instructions for changing to port 80 and eventually 443
-   for demo and production.
+   To create the admin user, you must first temporarily re-enable signups, which
+   are disabled by default.
 
-1. Create an admin user.
+   1. In `.env`, change `SIGNUP_ENABLED` from `0` to `1`.
 
-   To create the admin user, you must first temporarily re-enable
-   signups, which are disabled by default.
+   2. Visit http://localhost:3000/signup in your browser
 
-   1. In `config.js`, change `exports.signupEnabled` from `false` to `true`.  
+   3. Create a user named `admin` there (remember the password you choose)
 
-   1. Visit http://localhost:3000/signup in your browser
-
-   1. Create a user named `admin` there (remember the password you choose)
-
-   1. In `config.js`, change `exports.signupEnabled` back to `false`.
+   4. In `.env`, change `SIGNUP_ENABLED` back to `0`.
       (If you don't do this step, anyone who can figure out the URL can
       create a user account with administrative privileges, which would
       obviously be bad.)
 
-   1. Grant your new admin user permission to view requests from all
-      regions, using this file:
+   5. Grant your new admin user permission to view requests from all regions,
+      using this file:
       [migrations/20151208-admin-access.sql.tmpl](migrations/20151208-admin-access.sql.tmpl).
       Following the instructions in the file, copy it to
-      `migrations/20151208-admin-access.sql` and replace the
-      `__USER_ID__` with the id of your new admin user (if the admin
-      user was the first user you created, then this will probably be
-      `1`).  Once you've done that, run the following commands:
-
-      ```
-      $ psql smokealarm_development  
-      smokealarm_development=# \i migrations/20151208-admin-access.sql
-      ```
+      migrations/20151208-admin-access.sql` and replace the __USER_ID__` with
+      the id of your new admin user (if the admin user was the first user you
+      created, then this will probably be 1).
+      
+   6. Once you've done that, run the following commands:
+      
+   Docker: `docker-compose run db psql -d smokealarm_development -f migrations/20151208-admin-access.sql`
+   Local: `psql -d smokealarm_development -f migrations/20151208-admin-access.sql`
 
    Now you can visit http://localhost:3000/login/ at any time, log in
    as `admin`, and from there click on "Smoke Alarm Installation Requests"
@@ -204,19 +199,20 @@ be edited here.
    page (http://localhost:3000/) before any requests would be listed
    on the /admin/requests page.)
 
-1. Sign up for [Twilio](https://www.twilio.com):  Set up a number that
+## Signing up for [Twilio](https://www.twilio.com)
 
-  * Create account, or use the OTS account (if part of OTS)
-  * Get a new phone number (in Manage Phone Numbers)
-  * Update `config/config.json` twilio parameters to the account SID/Auth Token
-    in your settings on twilio
-  * Setup the phone number in twilio messaging section to be
-    * Webhook -> `http://<yourtestsite>/sms`, using `HTTP GET`
+   * Create account, or use the OTS account (if part of OTS)
+   * Get a new phone number (in Manage Phone Numbers)
+   * Update `config/config.json` twilio parameters to the account SID/Auth Token in your settings on twilio 
+   * Setup the phone number in twilio messaging section to be
+     * Webhook -> `http://<yourtestsite>/sms`, using `HTTP GET`
 
-  Then when you start your server up, you should be able to text the number you
-  set up to test the system.
+   Then when you start your server up, you should be able to text the number you
+   set up to test the system.
+  
+## Testing
 
-1. Manually perform tests listed in [TESTING.md](docs/TESTING.md).
+See testing instructions at [TESTING.md](docs/TESTING.md).
 
 Appendix A: Setting up Apache->Node ProxyPass with https://
 -----------------------------------------------------------
