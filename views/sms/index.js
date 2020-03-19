@@ -161,9 +161,10 @@ exports.respond = function(req, res) {
     var constructFinalText = function (outcome, request) {
         var twiml = new twilio.TwimlResponse();
         if (outcome) {
-            msg = __("Thank you for your smoke alarm request! Your request number is %s.");
+            msg = __("Thank_request_text");
             msg = msg.replace('%s', request.public_id);
-            msg += __(" To contact your local Red Cross about this request, call 1-800-RED-CROSS (1-800-733-2767). We will be in touch with you to schedule an installation.");
+            // Commented out because we don't have a spanish version, and with the COVID crisis, is not important
+            //msg += __(" To contact your local Red Cross about this request, call 1-800-RED-CROSS (1-800-733-2767). We will be in touch with you to schedule an installation.");
         }
         else {
             if (request.county) {
